@@ -32,97 +32,117 @@
     body.dark-mode .bg-accent { background-color: #ffffff !important; color: #000000 !important; }
     body.dark-mode .bg-accent.text-white { color: #000000 !important; }
     body.dark-mode .bg-accent.text-white svg { color: #000000 !important; stroke: #000000 !important; }
-    body.dark-mode button[onclick="backToAdd()"] { background-color: #000000 !important; border: 1.5px solid rgba(255,255,255,0.4) !important; color: #ffffff !important; }
-    body.dark-mode button[onclick="backToAdd()"]:hover { background-color: #1a1a1a !important; border-color: rgba(255,255,255,0.7) !important; }
-    body.dark-mode button[onclick="backToAdd()"] svg { color: #ffffff !important; stroke: #ffffff !important; }
-    #cta-done { transition: transform .3s cubic-bezier(.2,.7,.3,1), opacity .3s ease; }
-    #cta-done.hidden-cta { transform: translateY(120%); opacity: 0; pointer-events: none; }
-    body.dark-mode #cta-bar-bg { background-image: linear-gradient(to top, #000000 0%, rgba(0,0,0,0.9) 60%, transparent 100%); }
-    .dns-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    body.dark-mode button[onclick="goBack()"] { background-color: #000000 !important; border: 1.5px solid rgba(255,255,255,0.4) !important; color: #ffffff !important; }
+    body.dark-mode button[onclick="goBack()"]:hover { background-color: #1a1a1a !important; border-color: rgba(255,255,255,0.7) !important; }
+    body.dark-mode button[onclick="goBack()"] svg { color: #ffffff !important; stroke: #ffffff !important; }
+    body.dark-mode .pill-amber { background-color: rgba(245,158,11,0.12) !important; border-color: rgba(245,158,11,0.25) !important; color: #fbbf24 !important; }
+    body.dark-mode .pill-green { background-color: rgba(16,185,129,0.12) !important; border-color: rgba(16,185,129,0.25) !important; color: #34d399 !important; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    body.dark-mode #cta-bar-bg { background-image: linear-gradient(to top, #000000 0%, rgba(0,0,0,0.9) 60%, transparent 100%); }
     textarea:focus { outline: none!important; box-shadow: none!important; }
 </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-900 pt-20">
 <script>(function(){try{var t=localStorage.getItem('clinqoo_theme')||'Sistem (Default)';var d=(t==='Gelap')||(t==='Sistem (Default)'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.body.classList.add('dark-mode');var a=localStorage.getItem('clinqoo_accent')||'Hitam (Default)';var am={'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};var c=am[a]||am['Hitam (Default)'];document.documentElement.style.setProperty('--accent-color',c.m);document.documentElement.style.setProperty('--accent-hover',c.h);}catch(e){}})();</script>
 
-<main class="flex-1 w-full max-w-2xl mx-auto pb-12 flex-col justify-start relative">
-    <!-- Header ala halaman Profil Clincoo -->
-    <button onclick="backToAdd()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
+<main class="flex-1 w-full max-w-2xl mx-auto pb-32 flex-col justify-start relative">
+    <!-- Header -->
+    <button onclick="goBack()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </button>
-    <div class="flex flex-col px-7 pb-6 relative">
+    <div class="flex flex-col px-7 pb-4 relative">
         <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Verifikasi Domain</h2>
         <p id="v-domain" class="text-[14px] text-gray-500 font-medium mt-0.5">memuat…</p>
     </div>
 
-    <!-- Konten -->
-    <div class="px-5 md:px-7" id="v-content">
-        <!-- Status -->
-        <div id="status-card" class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 mb-5">
-            <div class="flex items-center gap-3">
-                <div id="status-icon-wrap" class="w-9 h-9 rounded-full bg-white border border-gray-100 flex items-center justify-center shrink-0">
-                    <i data-lucide="loader" class="w-4 h-4 text-gray-400"></i>
-                </div>
-                <div>
-                    <p class="text-[14px] font-semibold text-gray-900" id="status-title">Menunggu verifikasi</p>
-                    <p class="text-[12px] text-gray-500 mt-0.5" id="status-sub">Ikuti salah satu langkah di bawah, lalu periksa status.</p>
-                </div>
-            </div>
-        </div>
+    <!-- Status pill (flat) -->
+    <div class="px-7">
+        <span id="status-pill" class="pill-amber inline-flex items-center gap-1.5 text-[12px] font-semibold bg-amber-50 border border-amber-100 text-amber-600 rounded-full px-3 py-1.5">
+            <span id="status-dot" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            <span id="status-text">Belum terverifikasi</span>
+        </span>
+        <p id="status-sub" class="text-[12px] text-gray-500 mt-2 leading-relaxed">Pilih salah satu metode di bawah, lalu periksa statusnya. Propagasi DNS biasanya 5 menit–24 jam.</p>
+    </div>
 
-        <!-- Tabs: Record DNS / Nameserver -->
-        <div class="flex gap-1 bg-gray-50 border border-gray-100 rounded-full p-1 mb-4 w-fit mx-auto">
+    <!-- Tabs: Record DNS / Nameserver -->
+    <div class="px-7 mt-6">
+        <div class="flex gap-1 bg-gray-50 border border-gray-100 rounded-full p-1 mb-1 w-fit">
             <button id="tab-dns" onclick="switchTab('dns')" class="text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all bg-accent text-white">Record DNS</button>
             <button id="tab-ns" onclick="switchTab('ns')" class="text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all text-gray-500 hover:text-gray-900">Nameserver</button>
         </div>
+    </div>
 
-        <!-- Panel: Record DNS -->
-        <div id="panel-dns" class="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5">
-            <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-3">Tambahkan Record TXT</h3>
-            <p class="text-[13px] text-gray-500 leading-relaxed mb-4">Masuk ke pengaturan DNS penyedia domain-mu, lalu tambahkan record berikut:</p>
-            <div class="flex flex-col gap-2">
-                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
-                    <div><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Tipe</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">TXT</p></div>
+    <!-- Panel: Record DNS (flat list) -->
+    <div id="panel-dns" class="px-7">
+        <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider mt-6">Tambahkan Record TXT</h3>
+        <p class="text-[13px] text-gray-500 leading-relaxed mt-1.5">Masuk ke pengaturan DNS penyedia domain-mu, lalu tambahkan record berikut:</p>
+        <div class="mt-1">
+            <div class="flex items-center justify-between gap-3 py-3 border-b border-gray-100">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Tipe</p>
+                    <p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">TXT</p>
                 </div>
-                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
-                    <div class="min-w-0"><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nama / Host</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-name">_clincoo-challenge</p></div>
-                    <button onclick="copyText('txt-name')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-3 py-3 border-b border-gray-100">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nama / Host</p>
+                    <p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-name">_clincoo-challenge</p>
                 </div>
-                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
-                    <div class="min-w-0"><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nilai</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-value">clincoo-verify=</p></div>
-                    <button onclick="copyText('txt-value')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+                <button onclick="copyText('txt-name')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-3 py-3 border-b border-gray-100">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nilai</p>
+                    <p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-value">clincoo-verify=</p>
+                </div>
+                <button onclick="copyText('txt-value')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-3 py-3 border-b border-gray-100">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">TTL</p>
+                    <p class="text-[13px] font-semibold text-gray-900 mt-0.5">Otomatis (atau 3600)</p>
                 </div>
             </div>
         </div>
+        <p class="text-[12px] text-gray-500 leading-relaxed mt-3">Record TXT boleh dihapus setelah verifikasi selesai.</p>
+    </div>
 
-        <!-- Panel: Nameserver -->
-        <div id="panel-ns" class="hidden bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5">
-            <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-3">Arahkan Nameserver</h3>
-            <p class="text-[13px] text-gray-500 leading-relaxed mb-4">Ganti nameserver di registrar domain-mu (tempat kamu membeli domain) menjadi:</p>
-            <div class="flex flex-col gap-2">
-                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
-                    <div><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nameserver 1</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">ns1.clincoo.buzz</p></div>
-                    <button onclick="copyValue('ns1.clincoo.buzz')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+    <!-- Panel: Nameserver (flat list) -->
+    <div id="panel-ns" class="hidden px-7">
+        <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider mt-6">Ganti Nameserver</h3>
+        <p class="text-[13px] text-gray-500 leading-relaxed mt-1.5">Ubah nameserver di registrar tempat kamu membeli domain menjadi:</p>
+        <div class="mt-1">
+            <div class="flex items-center justify-between gap-3 py-3 border-b border-gray-100">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nameserver 1</p>
+                    <p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">ns1.clincoo.buzz</p>
                 </div>
-                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
-                    <div><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nameserver 2</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">ns2.clincoo.buzz</p></div>
-                    <button onclick="copyValue('ns2.clincoo.buzz')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+                <button onclick="copyValue('ns1.clincoo.buzz')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-3 py-3 border-b border-gray-100">
+                <div class="min-w-0">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nameserver 2</p>
+                    <p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">ns2.clincoo.buzz</p>
                 </div>
+                <button onclick="copyValue('ns2.clincoo.buzz')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
             </div>
         </div>
+        <p class="text-[12px] text-red-600 font-medium leading-relaxed mt-3">Perhatian: mengganti nameserver mengarahkan seluruh zona DNS domain-mu. Metode record TXT lebih aman jika domain-mu sudah aktif dipakai.</p>
+    </div>
 
-        <!-- Tombol periksa -->
-        <button id="check-btn" onclick="checkVerification()" class="w-full mt-5 border border-gray-200 rounded-full py-3 text-[14px] font-bold text-gray-900 hover:bg-gray-50 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+    <!-- Tombol periksa -->
+    <div class="px-7 mt-6">
+        <button id="check-btn" onclick="checkVerification()" class="w-full border border-gray-200 rounded-full py-3 text-[14px] font-bold text-gray-900 hover:bg-gray-50 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
             <i data-lucide="refresh-cw" class="w-4 h-4"></i>Periksa Status Verifikasi
         </button>
     </div>
 
-    <!-- CTA Selesai — muncul setelah verifikasi berhasil -->
+    <!-- CTA Selesai — selalu tersedia, tidak wajib menunggu verifikasi -->
     <div class="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
         <div id="cta-bar-bg" class="max-w-2xl mx-auto px-5 pb-5 pt-8 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-auto">
-            <button id="cta-done" onclick="finish()" class="hidden-cta w-full bg-accent text-white rounded-full py-3.5 text-[15px] font-bold hover:bg-accent-hover transition-all active:scale-[0.98] cursor-pointer shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                Selesai, Ke Daftar Domain<i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <p id="cta-hint" class="text-[12px] text-gray-500 text-center mb-2 leading-relaxed">Belum terverifikasi? Tidak masalah — domain akan ditandai <span class="font-semibold">Belum terverifikasi</span> dan bisa dilanjutkan nanti.</p>
+            <button id="cta-done" onclick="finish()" class="w-full bg-accent text-white rounded-full py-3 text-[15px] font-bold hover:bg-accent-hover transition-all active:scale-[0.98] cursor-pointer shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <span id="cta-label">Selesai Nanti</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
         </div>
     </div>
@@ -136,7 +156,7 @@ const params = new URLSearchParams(location.search);
 const domain = (params.get('domain') || '').toLowerCase();
 let attempts = 0, verified = false;
 
-function backToAdd() { location.href = '../tambah/'; }
+function goBack() { if (history.length > 1) history.back(); else location.href = '../'; }
 function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg; t.classList.remove('hidden');
@@ -146,8 +166,6 @@ function copyValue(txt) {
     navigator.clipboard.writeText(txt).then(() => showToast('Disalin: ' + txt)).catch(() => {});
 }
 function copyText(id) { copyValue(document.getElementById(id).textContent.trim()); }
-
-function esc(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function switchTab(t) {
     const dns = t === 'dns';
@@ -162,21 +180,30 @@ function switchTab(t) {
 }
 
 function setStatus(state) {
-    const iconWrap = document.getElementById('status-icon-wrap');
-    const title = document.getElementById('status-title');
+    const pill = document.getElementById('status-pill');
+    const dot = document.getElementById('status-dot');
+    const text = document.getElementById('status-text');
     const sub = document.getElementById('status-sub');
-    if (state === 'pending') {
-        iconWrap.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400"></i>';
-        title.textContent = 'Menunggu verifikasi';
-        sub.textContent = 'Record belum terdeteksi. Propagasi DNS bisa memakan waktu beberapa menit — coba periksa lagi.';
-    } else if (state === 'checking') {
-        iconWrap.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400" style="animation: spinSlow 1s linear infinite;"></i>';
-        title.textContent = 'Memeriksa record DNS…';
+    const hint = document.getElementById('cta-hint');
+    const label = document.getElementById('cta-label');
+    if (state === 'checking') {
+        pill.className = 'inline-flex items-center gap-1.5 text-[12px] font-semibold bg-gray-50 border border-gray-200 text-gray-600 rounded-full px-3 py-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-gray-400';
+        dot.style.animation = 'none';
+        text.textContent = 'Memeriksa…';
         sub.textContent = 'Menyambung ke resolver publik untuk mencari record domain-mu.';
+    } else if (state === 'verified') {
+        pill.className = 'pill-green inline-flex items-center gap-1.5 text-[12px] font-semibold bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-full px-3 py-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+        text.textContent = 'Terverifikasi';
+        sub.textContent = 'Kepemilikan domain terkonfirmasi.';
+        hint.classList.add('hidden');
+        label.textContent = 'Selesai, Ke Daftar Domain';
     } else {
-        iconWrap.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>';
-        title.textContent = 'Terverifikasi';
-        sub.textContent = 'Kepemilikan domain terkonfirmasi. Klik Selesai untuk menambahkannya ke daftar.';
+        pill.className = 'pill-amber inline-flex items-center gap-1.5 text-[12px] font-semibold bg-amber-50 border border-amber-100 text-amber-600 rounded-full px-3 py-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-500';
+        text.textContent = 'Belum terverifikasi';
+        sub.textContent = 'Pilih salah satu metode di atas, lalu periksa statusnya. Propagasi DNS biasanya 5 menit–24 jam.';
     }
     lucide.createIcons();
 }
@@ -193,7 +220,6 @@ function checkVerification() {
             verified = true;
             setStatus('verified');
             btn.classList.add('hidden');
-            document.getElementById('cta-done').classList.remove('hidden-cta');
             showToast('Domain ' + domain + ' terverifikasi');
         } else {
             setStatus('pending');
@@ -203,18 +229,20 @@ function checkVerification() {
 }
 
 function finish() {
-    if (!verified) return;
     let list = [];
     try { list = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
     if (!list.some(d => d.name === domain)) {
-        list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,7), name: domain, note: '', status: 'aktif', created: new Date().toISOString() });
+        list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,7), name: domain, note: '', status: verified ? 'aktif' : 'pending', created: new Date().toISOString() });
+        localStorage.setItem(KEY, JSON.stringify(list));
+    } else {
+        list.forEach(d => { if (d.name === domain && verified) d.status = 'aktif'; });
         localStorage.setItem(KEY, JSON.stringify(list));
     }
     location.href = '../';
 }
 
 /* Init */
-if (!domain) { location.replace('../tambah/'); }
+if (!domain) { location.replace('../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
     document.getElementById('txt-name').textContent = '_clincoo-challenge.' + domain;

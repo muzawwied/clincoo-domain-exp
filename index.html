@@ -167,13 +167,19 @@ function render() {
                     </div>
                 </td>
                 <td class="px-5 py-3.5">
+                    ${d.status === 'aktif' ? `
                     <span class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Aktif
-                    </span>
+                    </span>` : `
+                    <span class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-amber-600">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Belum terverifikasi
+                    </span>`}
                 </td>
                 <td class="px-5 py-3.5 text-[13px] text-gray-500">${fmtDate(d.created)}</td>
                 <td class="px-5 py-3.5 text-right">
                     <div class="flex items-center justify-end gap-1">
+                        ${d.status !== 'aktif' ? `
+                        <button onclick="location.href='verifikasi/?domain=' + encodeURIComponent('${d.name}')" class="h-8 rounded-full bg-accent text-white text-[12px] font-bold px-3 hover:bg-accent-hover transition-all active:scale-95 cursor-pointer">Verifikasi</button>` : ''}
                         <button onclick="openEdit('${d.id}')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer" title="Edit catatan">
                             <i data-lucide="pencil" class="w-4 h-4 text-gray-400 group-hover:text-gray-900 transition-colors"></i>
                         </button>
