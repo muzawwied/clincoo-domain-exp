@@ -50,14 +50,9 @@
     <button onclick="backToAdd()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </button>
-    <div class="flex items-center gap-3 px-7 pb-6 relative">
-        <div id="status-badge" class="w-11 h-11 rounded-full bg-accent flex items-center justify-center text-white shrink-0">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-        </div>
-        <div class="flex flex-col min-w-0">
-            <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Verifikasi Domain</h2>
-            <p id="v-domain" class="text-[14px] text-gray-500 font-medium mt-0.5">memuat…</p>
-        </div>
+    <div class="flex flex-col px-7 pb-6 relative">
+        <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Verifikasi Domain</h2>
+        <p id="v-domain" class="text-[14px] text-gray-500 font-medium mt-0.5">memuat…</p>
     </div>
 
     <!-- Konten -->
@@ -167,22 +162,18 @@ function switchTab(t) {
 
 function setStatus(state) {
     const iconWrap = document.getElementById('status-icon-wrap');
-    const badge = document.getElementById('status-badge');
     const title = document.getElementById('status-title');
     const sub = document.getElementById('status-sub');
     if (state === 'pending') {
         iconWrap.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400"></i>';
-        badge.innerHTML = '<i data-lucide="shield-check" class="w-5 h-5 text-white"></i>';
         title.textContent = 'Menunggu verifikasi';
         sub.textContent = 'Record belum terdeteksi. Propagasi DNS bisa memakan waktu beberapa menit — coba periksa lagi.';
     } else if (state === 'checking') {
         iconWrap.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400" style="animation: spinSlow 1s linear infinite;"></i>';
-        badge.innerHTML = '<i data-lucide="loader" class="w-5 h-5 text-white" style="animation: spinSlow 1s linear infinite;"></i>';
         title.textContent = 'Memeriksa record DNS…';
         sub.textContent = 'Menyambung ke resolver publik untuk mencari record domain-mu.';
     } else {
         iconWrap.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>';
-        badge.innerHTML = '<i data-lucide="check" class="w-5 h-5 text-white"></i>';
         title.textContent = 'Terverifikasi';
         sub.textContent = 'Kepemilikan domain terkonfirmasi. Klik Selesai untuk menambahkannya ke daftar.';
     }

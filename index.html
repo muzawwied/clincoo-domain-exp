@@ -15,7 +15,6 @@
 <script src="https://unpkg.com/lucide@1.41.0"></script>
 <style>
     @keyframes menuPop { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    #accent-dropdown-menu { animation: menuPop .18s cubic-bezier(.2,.7,.3,1); transform-origin: top right; }
     body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
     :root { --accent-color: #000000; --accent-hover: #1f2937; --accent-text: #ffffff; }
     .bg-accent { background-color: var(--accent-color) !important; }
@@ -34,9 +33,8 @@
     body.dark-mode .bg-accent.text-white { color: #000000 !important; }
     body.dark-mode .bg-accent.text-white svg { color: #000000 !important; stroke: #000000 !important; }
     body.dark-mode .text-accent { color: #ffffff !important; }
-    body.dark-mode button[onclick="goBack()"], body.dark-mode .accent-badge { background-color: #000000 !important; border: 1.5px solid rgba(255,255,255,0.4) !important; color: #ffffff !important; }
-    body.dark-mode button[onclick="goBack()"]:hover, body.dark-mode .accent-badge:hover { background-color: #1a1a1a !important; border-color: rgba(255,255,255,0.7) !important; }
-    body.dark-mode .accent-badge svg { color: #ffffff !important; stroke: #ffffff !important; }
+    body.dark-mode button[onclick="goBack()"] { background-color: #000000 !important; border: 1.5px solid rgba(255,255,255,0.4) !important; color: #ffffff !important; }
+    body.dark-mode button[onclick="goBack()"]:hover { background-color: #1a1a1a !important; border-color: rgba(255,255,255,0.7) !important; }
     textarea:focus { outline: none!important; box-shadow: none!important; }
 </style>
 </head>
@@ -48,17 +46,9 @@
     <button onclick="goBack()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </button>
-    <div class="flex items-center justify-between px-7 pb-6 gap-3 relative">
-        <div class="flex flex-col min-w-0">
-            <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Domain</h2>
-            <p id="domain-count" class="text-[14px] text-gray-500 font-medium mt-0.5">Belum ada domain</p>
-        </div>
-        <div class="relative shrink-0">
-            <button onclick="toggleAccentMenu(event)" class="accent-badge w-9 h-9 flex items-center justify-center rounded-full bg-white border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-500 hover:text-gray-900" aria-label="Ubah warna aksen">
-                <i data-lucide="palette" class="w-[18px] h-[18px]"></i>
-            </button>
-            <div id="accent-dropdown-menu" class="hidden absolute right-0 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-30 w-44"></div>
-        </div>
+    <div class="flex flex-col px-7 pb-6 relative">
+        <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Domain</h2>
+        <p id="domain-count" class="text-[14px] text-gray-500 font-medium mt-0.5">Belum ada domain</p>
     </div>
 
     <!-- Konten -->
@@ -233,31 +223,6 @@ function showToast(msg) {
     t.textContent = msg; t.classList.remove('hidden');
     clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add('hidden'), 2200);
 }
-
-/* Dropdown aksen — pola dropdown Clincoo */
-const ACCENTS = [['Hitam (Default)','#000000'],['Biru','#2563eb'],['Hijau','#059669'],['Ungu','#9333ea'],['Merah','#dc2626']];
-function toggleAccentMenu(e) {
-    e.stopPropagation();
-    const m = document.getElementById('accent-dropdown-menu');
-    if (!m.classList.contains('hidden')) { m.classList.add('hidden'); return; }
-    const cur = localStorage.getItem('clinqoo_accent') || 'Hitam (Default)';
-    m.innerHTML = ACCENTS.map(([name, hex]) => `
-        <button onclick="setAccent('${name}')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between cursor-pointer">
-            <span class="flex items-center gap-2.5"><span class="w-3.5 h-3.5 rounded-full border border-gray-200" style="background:${hex}"></span>${name.split(' (')[0]}</span>
-            ${cur === name ? '<i data-lucide="check" class="w-4 h-4 text-gray-900"></i>' : ''}
-        </button>`).join('');
-    m.classList.remove('hidden'); lucide.createIcons();
-}
-function setAccent(name) {
-    localStorage.setItem('clinqoo_accent', name);
-    const am = {'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};
-    const c = am[name] || am['Hitam (Default)'];
-    document.documentElement.style.setProperty('--accent-color', c.m);
-    document.documentElement.style.setProperty('--accent-hover', c.h);
-    document.getElementById('accent-dropdown-menu').classList.add('hidden');
-    showToast('Aksen: ' + name.split(' (')[0]);
-}
-document.addEventListener('click', () => document.getElementById('accent-dropdown-menu').classList.add('hidden'));
 
 render();
 </script>
