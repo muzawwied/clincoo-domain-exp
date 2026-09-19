@@ -40,7 +40,7 @@
     textarea:focus { outline: none!important; box-shadow: none!important; }
 </style>
 </head>
-<body class="min-h-screen flex flex-col text-gray-900">
+<body class="min-h-screen flex flex-col text-gray-900 pt-20">
 <script>(function(){try{var t=localStorage.getItem('clinqoo_theme')||'Sistem (Default)';var d=(t==='Gelap')||(t==='Sistem (Default)'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.body.classList.add('dark-mode');var a=localStorage.getItem('clinqoo_accent')||'Hitam (Default)';var am={'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};var c=am[a]||am['Hitam (Default)'];document.documentElement.style.setProperty('--accent-color',c.m);document.documentElement.style.setProperty('--accent-hover',c.h);}catch(e){}})();</script>
 
 <main class="flex-1 w-full max-w-2xl md:max-w-5xl mx-auto pb-12 flex-col justify-start relative">
@@ -48,19 +48,16 @@
     <button onclick="goBack()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </button>
-    <div class="flex items-center justify-between px-7 pb-8 gap-5 relative">
-        <div class="flex flex-col">
+    <div class="flex items-center justify-between px-7 pb-6 gap-3 relative">
+        <div class="flex flex-col min-w-0">
             <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Domain</h2>
             <p id="domain-count" class="text-[14px] text-gray-500 font-medium mt-0.5">Belum ada domain</p>
         </div>
-        <div class="relative z-10 shrink-0 group cursor-pointer">
-            <div class="w-24 h-24 bg-accent rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-105 overflow-hidden">
-                <i data-lucide="globe" class="w-10 h-10"></i>
-            </div>
-            <div class="absolute bottom-0 right-0 accent-badge bg-white p-2 rounded-full shadow-md border border-gray-100 transition-transform group-hover:scale-110" onclick="toggleAccentMenu(event)" aria-label="Ubah warna aksen">
-                <i data-lucide="pencil" class="w-4 h-4 text-gray-900"></i>
-            </div>
-            <div id="accent-dropdown-menu" class="hidden absolute right-6 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-30 w-44"></div>
+        <div class="relative shrink-0">
+            <button onclick="toggleAccentMenu(event)" class="accent-badge w-9 h-9 flex items-center justify-center rounded-full bg-white border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-500 hover:text-gray-900" aria-label="Ubah warna aksen">
+                <i data-lucide="palette" class="w-[18px] h-[18px]"></i>
+            </button>
+            <div id="accent-dropdown-menu" class="hidden absolute right-0 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-30 w-44"></div>
         </div>
     </div>
 
