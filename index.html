@@ -91,16 +91,10 @@
     </div>
 </main>
 
-<!-- Modal aksi (titik tiga) -->
-<div id="actions-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-end sm:items-center justify-center" onclick="if(event.target===this)closeModal('actions-modal')">
-    <div class="bg-white rounded-t-2xl sm:rounded-2xl border border-gray-100 shadow-xl w-full sm:max-w-sm p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-        <div class="px-4 pt-3 pb-2">
-            <p id="actions-domain-name" class="text-[15px] font-bold text-gray-900 truncate"></p>
-            <p id="actions-domain-status" class="text-[12px] text-gray-500 mt-0.5"></p>
-        </div>
-        <div id="actions-list" class="flex flex-col"></div>
-        <button onclick="closeModal('actions-modal')" class="w-full text-center text-[14px] font-semibold text-gray-500 hover:bg-gray-50 rounded-xl py-3 mt-1 cursor-pointer transition-colors">Batal</button>
-    </div>
+<!-- Popover aksi (titik tiga) — menu kecil menempel dekat tombol, tanpa ikon -->
+<div id="actions-backdrop" class="hidden fixed inset-0 z-[55]" onclick="closeActions()"></div>
+<div id="actions-menu" class="hidden fixed z-[60] bg-white border border-gray-100 rounded-xl shadow-xl py-1 w-48" style="top:0; left:0;">
+    <div id="actions-list" class="flex flex-col"></div>
 </div>
 
 <!-- Modal edit catatan -->
@@ -187,7 +181,7 @@ function render() {
                 </td>
                 <td class="px-5 py-3.5 text-[13px] text-gray-500">${fmtDate(d.created)}</td>
                 <td class="px-5 py-3.5 text-right">
-                    <button onclick="openActions('${d.id}')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer ml-auto" title="Aksi lainnya">
+                    <button onclick="openActions(event, '${d.id}')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer ml-auto" title="Aksi lainnya">
                         <i data-lucide="more-vertical" class="w-[18px] h-[18px] text-gray-400 group-hover:text-gray-900 transition-colors"></i>
                     </button>
                 </td>
@@ -200,24 +194,36 @@ function esc(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
 let actioningId = null;
-function openActions(id) {
+function openActions(evt, id) {
+    evt.stopPropagation();
     const d = load().find(x => x.id === id); if (!d) return;
     actioningId = id;
-    document.getElementById('actions-domain-name').textContent = d.name;
-    document.getElementById('actions-domain-status').textContent = d.status === 'aktif' ? 'Aktif' : 'Belum terverifikasi';
     const rows = [];
     if (d.status !== 'aktif') {
-        rows.push({ icon: 'shield-check', label: 'Verifikasi Domain', action: `location.href='verifikasi/?domain=' + encodeURIComponent('${esc(d.name)}')` });
+        rows.push({ label: 'Verifikasi Domain', action: `location.href='verifikasi/?domain=' + encodeURIComponent('${esc(d.name)}')` });
     }
-    rows.push({ icon: 'pencil', label: 'Edit Catatan', action: `openEdit('${d.id}')` });
-    rows.push({ icon: 'trash-2', label: 'Hapus Domain', action: `openDelete('${d.id}')`, danger: true });
-    document.getElementById('actions-list').innerHTML = rows.map(r => `
-        <button onclick="closeModal('actions-modal'); ${r.action}" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer text-left ${r.danger ? 'text-red-600' : 'text-gray-900'}">
-            <i data-lucide="${r.icon}" class="w-[18px] h-[18px] ${r.danger ? 'text-red-600' : 'text-gray-500'}"></i>
-            <span class="text-[14px] font-semibold">${r.label}</span>
-        </button>`).join('');
-    openModal('actions-modal');
-    lucide.createIcons();
+    rows.push({ label: 'Edit Catatan', action: `openEdit('${d.id}')` });
+    rows.push({ label: 'Hapus Domain', action: `openDelete('${d.id}')`, danger: true });
+    document.getElementById('actions-list').innerHTML = rows.map((r, i) => `
+        <button onclick="closeActions(); ${r.action}" class="w-full text-left px-4 py-2.5 text-[14px] font-medium cursor-pointer transition-colors hover:bg-gray-50 ${r.danger ? 'text-red-600' : 'text-gray-800'} ${i < rows.length - 1 ? 'border-b border-gray-100' : ''}">${r.label}</button>`).join('');
+
+    const menu = document.getElementById('actions-menu');
+    const backdrop = document.getElementById('actions-backdrop');
+    menu.classList.remove('hidden'); backdrop.classList.remove('hidden');
+    const btn = evt.currentTarget.getBoundingClientRect();
+    const menuW = menu.offsetWidth;
+    let left = btn.right - menuW;
+    if (left < 8) left = 8;
+    if (left + menuW > window.innerWidth - 8) left = window.innerWidth - 8 - menuW;
+    let top = btn.bottom + 6;
+    const menuH = menu.offsetHeight;
+    if (top + menuH > window.innerHeight - 8) top = btn.top - menuH - 6;
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
+}
+function closeActions() {
+    document.getElementById('actions-menu').classList.add('hidden');
+    document.getElementById('actions-backdrop').classList.add('hidden');
 }
 
 function openEdit(id) {
