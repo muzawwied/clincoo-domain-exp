@@ -53,20 +53,18 @@
     </div>
 
     <!-- Konten -->
-    <div class="px-5 md:px-7">
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5">
-            <label for="domain-input" class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Nama Domain</label>
-            <div class="relative mt-2">
-                <i data-lucide="globe" class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                <input id="domain-input" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="contoh.com"
-                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-4 py-3.5 text-[15px] font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors">
-            </div>
-            <p class="text-[12px] text-gray-500 mt-2.5 leading-relaxed">Tanpa <span class="font-semibold">https://</span> atau <span class="font-semibold">www</span> — cukup nama domain, mis. tokosaya.com</p>
-            <p id="domain-error" class="hidden text-[12px] text-red-600 font-medium mt-1.5">Format domain tidak valid. Periksa kembali penulisan domain-mu.</p>
-            <p id="domain-exists" class="hidden text-[12px] text-amber-600 font-medium mt-1.5">Domain ini sudah ada di daftarmu.</p>
+    <div class="px-7">
+        <label for="domain-input" class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Nama Domain</label>
+        <div class="relative mt-2.5">
+            <i data-lucide="globe" class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input id="domain-input" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="contoh.com"
+                class="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-12 pr-4 py-4 text-[16px] font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors">
         </div>
+        <p class="text-[12px] text-gray-500 mt-2.5 leading-relaxed">Tanpa <span class="font-semibold">https://</span> atau <span class="font-semibold">www</span> — cukup nama domain, mis. tokosaya.com</p>
+        <p id="domain-error" class="hidden text-[12px] text-red-600 font-medium mt-1.5">Format domain tidak valid. Periksa kembali penulisan domain-mu.</p>
+        <p id="domain-exists" class="hidden text-[12px] text-amber-600 font-medium mt-1.5">Domain ini sudah ada di daftarmu.</p>
 
-        <div class="mt-4 flex items-start gap-3 bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5">
+        <div class="mt-7 pt-5 border-t border-gray-100 flex items-start gap-2.5">
             <i data-lucide="info" class="w-4 h-4 text-gray-400 mt-0.5 shrink-0"></i>
             <p class="text-[12px] text-gray-500 leading-relaxed">Setelah lanjut, kamu akan diminta memverifikasi kepemilikan domain lewat record DNS atau nameserver.</p>
         </div>
