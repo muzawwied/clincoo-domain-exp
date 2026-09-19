@@ -35,6 +35,7 @@
     body.dark-mode button[onclick="history.back()"] svg { color: #ffffff !important; stroke: #ffffff !important; }
     #cta-next { transition: transform .3s cubic-bezier(.2,.7,.3,1), opacity .3s ease; }
     #cta-next.hidden-cta { transform: translateY(120%); opacity: 0; pointer-events: none; }
+    body.dark-mode #cta-bar-bg { background-image: linear-gradient(to top, #000000 0%, rgba(0,0,0,0.9) 60%, transparent 100%); }
     textarea:focus { outline: none!important; box-shadow: none!important; }
 </style>
 </head>
@@ -73,7 +74,7 @@
 
     <!-- CTA Lanjutkan — muncul saat input terisi domain valid -->
     <div class="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
-        <div class="max-w-2xl mx-auto px-5 pb-5 pt-8 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-auto">
+        <div id="cta-bar-bg" class="max-w-2xl mx-auto px-5 pb-5 pt-8 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-auto">
             <button id="cta-next" onclick="goNext()" class="hidden-cta w-full bg-accent text-white rounded-full py-3.5 text-[15px] font-bold hover:bg-accent-hover transition-all active:scale-[0.98] cursor-pointer shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                 Lanjutkan<i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
