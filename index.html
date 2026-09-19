@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Domain — Clincoo Experiment</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="https://app.clincoo.buzz/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { darkMode: ["class", ".dark-mode"] };</script>
+<script src="https://unpkg.com/lucide@1.41.0"></script>
+<style>
+    @keyframes menuPop { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    #accent-dropdown-menu { animation: menuPop .18s cubic-bezier(.2,.7,.3,1); transform-origin: top right; }
+    body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
+    :root { --accent-color: #000000; --accent-hover: #1f2937; --accent-text: #ffffff; }
+    .bg-accent { background-color: var(--accent-color) !important; }
+    .text-accent { color: var(--accent-color) !important; }
+    .border-accent { border-color: var(--accent-color) !important; }
+    .hover\:bg-accent-hover:hover { background-color: var(--accent-hover) !important; }
+    body.dark-mode { background-color: #000000; color: #ffffff; }
+    body.dark-mode .bg-white { background-color: #0a0a0a !important; }
+    body.dark-mode .bg-gray-50 { background-color: #141414 !important; }
+    body.dark-mode .bg-gray-100 { background-color: #222222 !important; }
+    body.dark-mode .border-gray-100, body.dark-mode .border-gray-200, body.dark-mode .border-gray-300 { border-color: #222222 !important; }
+    body.dark-mode .text-gray-900, body.dark-mode .text-gray-800, body.dark-mode .text-black { color: #ffffff !important; }
+    body.dark-mode .text-gray-700, body.dark-mode .text-gray-600, body.dark-mode .text-gray-500 { color: #888888 !important; }
+    body.dark-mode .text-gray-400 { color: #666666 !important; }
+    body.dark-mode .bg-accent { background-color: #ffffff !important; color: #000000 !important; }
+    body.dark-mode .bg-accent.text-white { color: #000000 !important; }
+    body.dark-mode .bg-accent.text-white svg { color: #000000 !important; stroke: #000000 !important; }
+    body.dark-mode .text-accent { color: #ffffff !important; }
+    body.dark-mode button[onclick="goBack()"], body.dark-mode .accent-badge { background-color: #000000 !important; border: 1.5px solid rgba(255,255,255,0.4) !important; color: #ffffff !important; }
+    body.dark-mode button[onclick="goBack()"]:hover, body.dark-mode .accent-badge:hover { background-color: #1a1a1a !important; border-color: rgba(255,255,255,0.7) !important; }
+    body.dark-mode .accent-badge svg { color: #ffffff !important; stroke: #ffffff !important; }
+    textarea:focus { outline: none!important; box-shadow: none!important; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col text-gray-900">
+<script>(function(){try{var t=localStorage.getItem('clinqoo_theme')||'Sistem (Default)';var d=(t==='Gelap')||(t==='Sistem (Default)'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.body.classList.add('dark-mode');var a=localStorage.getItem('clinqoo_accent')||'Hitam (Default)';var am={'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};var c=am[a]||am['Hitam (Default)'];document.documentElement.style.setProperty('--accent-color',c.m);document.documentElement.style.setProperty('--accent-hover',c.h);}catch(e){}})();</script>
+
+<main class="flex-1 w-full max-w-2xl md:max-w-5xl mx-auto pb-12 flex-col justify-start relative">
+    <!-- Header ala halaman Profil Clincoo -->
+    <button onclick="goBack()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </button>
+    <div class="flex items-center justify-between px-7 pb-8 gap-5 relative">
+        <div class="flex flex-col">
+            <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Domain</h2>
+            <p id="domain-count" class="text-[14px] text-gray-500 font-medium mt-0.5">Belum ada domain</p>
+        </div>
+        <div class="relative z-10 shrink-0 group cursor-pointer">
+            <div class="w-24 h-24 bg-accent rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-105 overflow-hidden">
+                <i data-lucide="globe" class="w-10 h-10"></i>
+            </div>
+            <div class="absolute bottom-0 right-0 accent-badge bg-white p-2 rounded-full shadow-md border border-gray-100 transition-transform group-hover:scale-110" onclick="toggleAccentMenu(event)" aria-label="Ubah warna aksen">
+                <i data-lucide="pencil" class="w-4 h-4 text-gray-900"></i>
+            </div>
+            <div id="accent-dropdown-menu" class="hidden absolute right-6 top-full mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-30 w-44"></div>
+        </div>
+    </div>
+
+    <!-- Konten -->
+    <div class="px-5 md:px-7">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Daftar Domain</h3>
+            <button onclick="location.href='tambah/'" class="bg-accent text-white text-sm font-semibold rounded-full px-4 py-2.5 hover:bg-accent-hover transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm hover:shadow-md">
+                <i data-lucide="plus" class="w-4 h-4"></i>Tambah Domain
+            </button>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center text-center border border-dashed border-gray-200 rounded-2xl py-16 px-6">
+            <div class="w-16 h-16 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-4">
+                <i data-lucide="globe" class="w-7 h-7 text-gray-400"></i>
+            </div>
+            <p class="text-[15px] font-semibold text-gray-900">Belum ada domain</p>
+            <p class="text-[13px] text-gray-500 mt-1 max-w-xs leading-relaxed">Tambahkan domain pertama-mu, verifikasi kepemilikan lewat record DNS, lalu kelola semuanya di sini.</p>
+            <button onclick="location.href='tambah/'" class="bg-accent text-white text-sm font-semibold rounded-full px-5 py-2.5 mt-5 hover:bg-accent-hover transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm hover:shadow-md">
+                <i data-lucide="plus" class="w-4 h-4"></i>Tambah Domain
+            </button>
+        </div>
+
+        <!-- Tabel domain -->
+        <div id="table-card" class="hidden bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left min-w-[560px]">
+                    <thead>
+                        <tr class="border-b border-gray-100">
+                            <th class="px-5 py-3 text-[12px] font-bold text-gray-400 uppercase tracking-wider">Domain</th>
+                            <th class="px-5 py-3 text-[12px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                            <th class="px-5 py-3 text-[12px] font-bold text-gray-400 uppercase tracking-wider">Ditambahkan</th>
+                            <th class="px-5 py-3 text-[12px] font-bold text-gray-400 uppercase tracking-wider text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="domain-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal edit catatan -->
+<div id="edit-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-5" onclick="if(event.target===this)closeModal('edit-modal')">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-xl w-full max-w-sm p-5">
+        <h3 class="text-[16px] font-bold text-gray-900 mb-1">Edit Catatan</h3>
+        <p id="edit-domain-name" class="text-[13px] text-gray-500 mb-4"></p>
+        <input id="edit-note-input" type="text" placeholder="Catatan untuk domain ini…" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors">
+        <div class="flex gap-2 mt-4">
+            <button onclick="closeModal('edit-modal')" class="flex-1 border border-gray-200 rounded-full py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">Batal</button>
+            <button onclick="saveNote()" class="flex-1 bg-accent text-white rounded-full py-2.5 text-sm font-semibold hover:bg-accent-hover transition-all active:scale-95 cursor-pointer">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal hapus -->
+<div id="delete-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-5" onclick="if(event.target===this)closeModal('delete-modal')">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-xl w-full max-w-sm p-5">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-red-50 border border-red-100 flex items-center justify-center shrink-0">
+                <i data-lucide="trash-2" class="w-5 h-5 text-red-600"></i>
+            </div>
+            <div>
+                <h3 class="text-[16px] font-bold text-gray-900">Hapus Domain?</h3>
+                <p id="delete-domain-name" class="text-[13px] text-gray-500 mt-1"></p>
+            </div>
+        </div>
+        <div class="flex gap-2 mt-5">
+            <button onclick="closeModal('delete-modal')" class="flex-1 border border-gray-200 rounded-full py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">Batal</button>
+            <button onclick="confirmDelete()" class="flex-1 bg-red-600 text-white rounded-full py-2.5 text-sm font-semibold hover:bg-red-700 transition-all active:scale-95 cursor-pointer">Hapus</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium rounded-full px-4 py-2 shadow-lg z-[70] transition-all"></div>
+
+<script>
+const KEY = 'clincoo_exp_domains';
+let editingId = null, deletingId = null;
+
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) { return []; } }
+function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
+
+function goBack() { if (history.length > 1) history.back(); }
+
+function fmtDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function render() {
+    const list = load();
+    const tbody = document.getElementById('domain-tbody');
+    const empty = document.getElementById('empty-state');
+    const card = document.getElementById('table-card');
+    const count = document.getElementById('domain-count');
+    if (!list.length) {
+        empty.classList.remove('hidden'); empty.classList.add('flex');
+        card.classList.add('hidden'); card.classList.remove('block');
+        count.textContent = 'Belum ada domain';
+    } else {
+        empty.classList.add('hidden'); empty.classList.remove('flex');
+        card.classList.remove('hidden'); card.classList.add('block');
+        count.textContent = list.length + ' domain terhubung';
+        tbody.innerHTML = list.map(d => `
+            <tr class="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors group">
+                <td class="px-5 py-3.5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="globe" class="w-4 h-4 text-gray-500"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[15px] font-semibold text-gray-900 truncate">${d.name}</p>
+                            ${d.note ? `<p class="text-[12px] text-gray-500 truncate mt-0.5">${esc(d.note)}</p>` : ''}
+                        </div>
+                    </div>
+                </td>
+                <td class="px-5 py-3.5">
+                    <span class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Aktif
+                    </span>
+                </td>
+                <td class="px-5 py-3.5 text-[13px] text-gray-500">${fmtDate(d.created)}</td>
+                <td class="px-5 py-3.5 text-right">
+                    <div class="flex items-center justify-end gap-1">
+                        <button onclick="openEdit('${d.id}')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer" title="Edit catatan">
+                            <i data-lucide="pencil" class="w-4 h-4 text-gray-400 group-hover:text-gray-900 transition-colors"></i>
+                        </button>
+                        <button onclick="openDelete('${d.id}')" class="w-8 h-8 rounded-full hover:bg-red-50 transition-colors flex items-center justify-center cursor-pointer" title="Hapus domain">
+                            <i data-lucide="trash-2" class="w-4 h-4 text-gray-400 hover:text-red-600 transition-colors"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+    lucide.createIcons();
+}
+
+function esc(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function openEdit(id) {
+    const d = load().find(x => x.id === id); if (!d) return;
+    editingId = id;
+    document.getElementById('edit-domain-name').textContent = d.name;
+    document.getElementById('edit-note-input').value = d.note || '';
+    openModal('edit-modal');
+    setTimeout(() => document.getElementById('edit-note-input').focus(), 60);
+}
+function saveNote() {
+    const list = load(); const d = list.find(x => x.id === editingId); if (!d) return;
+    d.note = document.getElementById('edit-note-input').value.trim();
+    d.updated = new Date().toISOString();
+    save(list); closeModal('edit-modal'); render(); showToast('Catatan disimpan');
+}
+function openDelete(id) {
+    const d = load().find(x => x.id === id); if (!d) return;
+    deletingId = id;
+    document.getElementById('delete-domain-name').textContent = '"' + d.name + '" akan dihapus dari daftar. Tindakan ini tidak dapat dibatalkan.';
+    openModal('delete-modal');
+}
+function confirmDelete() {
+    save(load().filter(x => x.id !== deletingId));
+    closeModal('delete-modal'); render(); showToast('Domain dihapus');
+}
+
+function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.remove('hidden');
+    clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add('hidden'), 2200);
+}
+
+/* Dropdown aksen — pola dropdown Clincoo */
+const ACCENTS = [['Hitam (Default)','#000000'],['Biru','#2563eb'],['Hijau','#059669'],['Ungu','#9333ea'],['Merah','#dc2626']];
+function toggleAccentMenu(e) {
+    e.stopPropagation();
+    const m = document.getElementById('accent-dropdown-menu');
+    if (!m.classList.contains('hidden')) { m.classList.add('hidden'); return; }
+    const cur = localStorage.getItem('clinqoo_accent') || 'Hitam (Default)';
+    m.innerHTML = ACCENTS.map(([name, hex]) => `
+        <button onclick="setAccent('${name}')" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-gray-700 font-medium flex items-center justify-between cursor-pointer">
+            <span class="flex items-center gap-2.5"><span class="w-3.5 h-3.5 rounded-full border border-gray-200" style="background:${hex}"></span>${name.split(' (')[0]}</span>
+            ${cur === name ? '<i data-lucide="check" class="w-4 h-4 text-gray-900"></i>' : ''}
+        </button>`).join('');
+    m.classList.remove('hidden'); lucide.createIcons();
+}
+function setAccent(name) {
+    localStorage.setItem('clinqoo_accent', name);
+    const am = {'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};
+    const c = am[name] || am['Hitam (Default)'];
+    document.documentElement.style.setProperty('--accent-color', c.m);
+    document.documentElement.style.setProperty('--accent-hover', c.h);
+    document.getElementById('accent-dropdown-menu').classList.add('hidden');
+    showToast('Aksen: ' + name.split(' (')[0]);
+}
+document.addEventListener('click', () => document.getElementById('accent-dropdown-menu').classList.add('hidden'));
+
+render();
+</script>
+</body>
+</html>

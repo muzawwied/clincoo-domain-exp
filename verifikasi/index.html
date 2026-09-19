@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verifikasi Domain — Clincoo Experiment</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="https://app.clincoo.buzz/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { darkMode: ["class", ".dark-mode"] };</script>
+<script src="https://unpkg.com/lucide@1.41.0"></script>
+<style>
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+    body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
+    :root { --accent-color: #000000; --accent-hover: #1f2937; --accent-text: #ffffff; }
+    .bg-accent { background-color: var(--accent-color) !important; }
+    .text-accent { color: var(--accent-color) !important; }
+    .border-accent { border-color: var(--accent-color) !important; }
+    .hover\:bg-accent-hover:hover { background-color: var(--accent-hover) !important; }
+    body.dark-mode { background-color: #000000; color: #ffffff; }
+    body.dark-mode .bg-white { background-color: #0a0a0a !important; }
+    body.dark-mode .bg-gray-50 { background-color: #141414 !important; }
+    body.dark-mode .bg-gray-100 { background-color: #222222 !important; }
+    body.dark-mode .border-gray-100, body.dark-mode .border-gray-200, body.dark-mode .border-gray-300 { border-color: #222222 !important; }
+    body.dark-mode .text-gray-900, body.dark-mode .text-gray-800, body.dark-mode .text-black { color: #ffffff !important; }
+    body.dark-mode .text-gray-700, body.dark-mode .text-gray-600, body.dark-mode .text-gray-500 { color: #888888 !important; }
+    body.dark-mode .text-gray-400 { color: #666666 !important; }
+    body.dark-mode .bg-accent { background-color: #ffffff !important; color: #000000 !important; }
+    body.dark-mode .bg-accent.text-white { color: #000000 !important; }
+    body.dark-mode .bg-accent.text-white svg { color: #000000 !important; stroke: #000000 !important; }
+    body.dark-mode button[onclick="backToAdd()"] { background-color: #000000 !important; border: 1.5px solid rgba(255,255,255,0.4) !important; color: #ffffff !important; }
+    body.dark-mode button[onclick="backToAdd()"]:hover { background-color: #1a1a1a !important; border-color: rgba(255,255,255,0.7) !important; }
+    body.dark-mode button[onclick="backToAdd()"] svg { color: #ffffff !important; stroke: #ffffff !important; }
+    #cta-done { transition: transform .3s cubic-bezier(.2,.7,.3,1), opacity .3s ease; }
+    #cta-done.hidden-cta { transform: translateY(120%); opacity: 0; pointer-events: none; }
+    .dns-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    textarea:focus { outline: none!important; box-shadow: none!important; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col text-gray-900">
+<script>(function(){try{var t=localStorage.getItem('clinqoo_theme')||'Sistem (Default)';var d=(t==='Gelap')||(t==='Sistem (Default)'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.body.classList.add('dark-mode');var a=localStorage.getItem('clinqoo_accent')||'Hitam (Default)';var am={'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};var c=am[a]||am['Hitam (Default)'];document.documentElement.style.setProperty('--accent-color',c.m);document.documentElement.style.setProperty('--accent-hover',c.h);}catch(e){}})();</script>
+
+<main class="flex-1 w-full max-w-2xl mx-auto pb-12 flex-col justify-start relative">
+    <!-- Header ala halaman Profil Clincoo -->
+    <button onclick="backToAdd()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+    </button>
+    <div class="flex items-center justify-between px-7 pb-8 gap-5 relative">
+        <div class="flex flex-col">
+            <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Verifikasi Domain</h2>
+            <p id="v-domain" class="text-[14px] text-gray-500 font-medium mt-0.5">memuat…</p>
+        </div>
+        <div class="relative z-10 shrink-0 group">
+            <div class="w-24 h-24 bg-accent rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-105 overflow-hidden">
+                <i data-lucide="shield-check" class="w-10 h-10"></i>
+            </div>
+            <div id="status-badge" class="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md border border-gray-100 transition-transform group-hover:scale-110">
+                <i data-lucide="loader" class="w-4 h-4 text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Konten -->
+    <div class="px-5 md:px-7" id="v-content">
+        <!-- Status -->
+        <div id="status-card" class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-2xl px-4 py-3.5 mb-5">
+            <div class="flex items-center gap-3">
+                <div id="status-icon-wrap" class="w-9 h-9 rounded-full bg-white border border-gray-100 flex items-center justify-center shrink-0">
+                    <i data-lucide="loader" class="w-4 h-4 text-gray-400"></i>
+                </div>
+                <div>
+                    <p class="text-[14px] font-semibold text-gray-900" id="status-title">Menunggu verifikasi</p>
+                    <p class="text-[12px] text-gray-500 mt-0.5" id="status-sub">Ikuti salah satu langkah di bawah, lalu periksa status.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs: Record DNS / Nameserver -->
+        <div class="flex gap-1 bg-gray-50 border border-gray-100 rounded-full p-1 mb-4 w-fit mx-auto">
+            <button id="tab-dns" onclick="switchTab('dns')" class="text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all bg-accent text-white">Record DNS</button>
+            <button id="tab-ns" onclick="switchTab('ns')" class="text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all text-gray-500 hover:text-gray-900">Nameserver</button>
+        </div>
+
+        <!-- Panel: Record DNS -->
+        <div id="panel-dns" class="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5">
+            <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-3">Tambahkan Record TXT</h3>
+            <p class="text-[13px] text-gray-500 leading-relaxed mb-4">Masuk ke pengaturan DNS penyedia domain-mu, lalu tambahkan record berikut:</p>
+            <div class="flex flex-col gap-2">
+                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+                    <div><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Tipe</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">TXT</p></div>
+                </div>
+                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+                    <div class="min-w-0"><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nama / Host</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-name">_clincoo-challenge</p></div>
+                    <button onclick="copyText('txt-name')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+                </div>
+                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+                    <div class="min-w-0"><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nilai</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-value">clincoo-verify=</p></div>
+                    <button onclick="copyText('txt-value')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel: Nameserver -->
+        <div id="panel-ns" class="hidden bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-5">
+            <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider mb-3">Arahkan Nameserver</h3>
+            <p class="text-[13px] text-gray-500 leading-relaxed mb-4">Ganti nameserver di registrar domain-mu (tempat kamu membeli domain) menjadi:</p>
+            <div class="flex flex-col gap-2">
+                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+                    <div><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nameserver 1</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">ns1.clincoo.buzz</p></div>
+                    <button onclick="copyValue('ns1.clincoo.buzz')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+                </div>
+                <div class="dns-row bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+                    <div><p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nameserver 2</p><p class="mono text-[13px] font-semibold text-gray-900 mt-0.5">ns2.clincoo.buzz</p></div>
+                    <button onclick="copyValue('ns2.clincoo.buzz')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol periksa -->
+        <button id="check-btn" onclick="checkVerification()" class="w-full mt-5 border border-gray-200 rounded-full py-3 text-[14px] font-bold text-gray-900 hover:bg-gray-50 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>Periksa Status Verifikasi
+        </button>
+    </div>
+
+    <!-- CTA Selesai — muncul setelah verifikasi berhasil -->
+    <div class="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
+        <div class="max-w-2xl mx-auto px-5 pb-5 pt-8 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-auto">
+            <button id="cta-done" onclick="finish()" class="hidden-cta w-full bg-accent text-white rounded-full py-3.5 text-[15px] font-bold hover:bg-accent-hover transition-all active:scale-[0.98] cursor-pointer shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                Selesai, Ke Daftar Domain<i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+</main>
+
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium rounded-full px-4 py-2 shadow-lg z-[70] transition-all"></div>
+
+<script>
+const KEY = 'clincoo_exp_domains';
+const params = new URLSearchParams(location.search);
+const domain = (params.get('domain') || '').toLowerCase();
+let attempts = 0, verified = false;
+
+function backToAdd() { location.href = '../tambah/'; }
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.remove('hidden');
+    clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add('hidden'), 2200);
+}
+function copyValue(txt) {
+    navigator.clipboard.writeText(txt).then(() => showToast('Disalin: ' + txt)).catch(() => {});
+}
+function copyText(id) { copyValue(document.getElementById(id).textContent.trim()); }
+
+function esc(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function switchTab(t) {
+    const dns = t === 'dns';
+    document.getElementById('panel-dns').classList.toggle('hidden', !dns);
+    document.getElementById('panel-ns').classList.toggle('hidden', dns);
+    const a = document.getElementById('tab-dns'), b = document.getElementById('tab-ns');
+    a.className = dns ? 'text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all bg-accent text-white'
+                     : 'text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all text-gray-500 hover:text-gray-900';
+    b.className = !dns ? 'text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all bg-accent text-white'
+                       : 'text-[13px] font-semibold rounded-full px-4 py-2 cursor-pointer transition-all text-gray-500 hover:text-gray-900';
+    lucide.createIcons();
+}
+
+function setStatus(state) {
+    const iconWrap = document.getElementById('status-icon-wrap');
+    const badge = document.getElementById('status-badge');
+    const title = document.getElementById('status-title');
+    const sub = document.getElementById('status-sub');
+    if (state === 'pending') {
+        iconWrap.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400"></i>';
+        badge.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400"></i>';
+        title.textContent = 'Menunggu verifikasi';
+        sub.textContent = 'Record belum terdeteksi. Propagasi DNS bisa memakan waktu beberapa menit — coba periksa lagi.';
+    } else if (state === 'checking') {
+        iconWrap.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400" style="animation: spinSlow 1s linear infinite;"></i>';
+        badge.innerHTML = '<i data-lucide="loader" class="w-4 h-4 text-gray-400" style="animation: spinSlow 1s linear infinite;"></i>';
+        title.textContent = 'Memeriksa record DNS…';
+        sub.textContent = 'Menyambung ke resolver publik untuk mencari record domain-mu.';
+    } else {
+        iconWrap.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>';
+        badge.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>';
+        title.textContent = 'Terverifikasi';
+        sub.textContent = 'Kepemilikan domain terkonfirmasi. Klik Selesai untuk menambahkannya ke daftar.';
+    }
+    lucide.createIcons();
+}
+
+function checkVerification() {
+    if (verified) return;
+    const btn = document.getElementById('check-btn');
+    setStatus('checking');
+    btn.disabled = true; btn.classList.add('opacity-60', 'cursor-not-allowed');
+    setTimeout(() => {
+        attempts++;
+        btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed');
+        if (attempts >= 2) {
+            verified = true;
+            setStatus('verified');
+            btn.classList.add('hidden');
+            document.getElementById('cta-done').classList.remove('hidden-cta');
+            showToast('Domain ' + domain + ' terverifikasi');
+        } else {
+            setStatus('pending');
+            showToast('Belum terdeteksi — coba periksa lagi');
+        }
+    }, 1800);
+}
+
+function finish() {
+    if (!verified) return;
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
+    if (!list.some(d => d.name === domain)) {
+        list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,7), name: domain, note: '', status: 'aktif', created: new Date().toISOString() });
+        localStorage.setItem(KEY, JSON.stringify(list));
+    }
+    location.href = '../';
+}
+
+/* Init */
+if (!domain) { location.replace('../tambah/'); }
+else {
+    document.getElementById('v-domain').textContent = domain;
+    document.getElementById('txt-name').textContent = '_clincoo-challenge.' + domain;
+    document.getElementById('txt-value').textContent = 'clincoo-verify=' + btoa(domain + Date.now()).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24).toLowerCase();
+}
+lucide.createIcons();
+</script>
+</body>
+</html>
