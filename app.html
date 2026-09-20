@@ -64,27 +64,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-
-        #new-chat-text {
-            transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.5s ease;
-            max-width: 150px;
-            opacity: 1;
-            transform: translateX(0);
-            display: inline-block;
-        }
-        #new-chat-text.collapsed {
-            max-width: 0px;
-            opacity: 0;
-            transform: translateX(20px);
-            margin: 0;
-        }
-
-        #new-chat-btn.collapsed-btn {
-            width: 48px;
-            padding-left: 0;
-            padding-right: 0;
-            gap: 0;
-        }
     </style>
     <script src="config.js"></script>
 </head>
@@ -97,7 +76,6 @@
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/20 opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-[260px] bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
-        
         <div class="h-16 border-b border-gray-100 flex items-center px-4 justify-between flex-shrink-0">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
@@ -106,49 +84,6 @@
                 <span class="font-bold font-montserrat text-lg text-gray-800">Clincoo</span>
             </div>
         </div>
-
-        <div class="px-3 pt-3 flex flex-col gap-1 flex-shrink-0">
-            <a href="index.html" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
-                <i class="ph ph-stack text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
-                <span class="font-medium text-[14px]">Beranda</span>
-            </a>
-            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
-                <i class="ph ph-robot text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
-                <span class="font-medium text-[14px]">Agent</span>
-            </a>
-            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
-                <i class="ph ph-cube text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
-                <span class="font-medium text-[14px]">Workspace</span>
-            </a>
-            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
-                <i class="ph ph-code text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
-                <span class="font-medium text-[14px]">Editor</span>
-            </a>
-            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
-                <i class="ph ph-puzzle-piece text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
-                <span class="font-medium text-[14px]">Plugin</span>
-            </a>
-            <a href="app.html" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 transition-colors group">
-                <i class="ph-fill ph-plugs-connected text-lg text-gray-900"></i>
-                <span class="font-bold text-[14px]">Integrasi</span>
-            </a>
-        </div>
-
-        <div class="flex-1 flex flex-col min-h-0 border-t border-gray-100 mt-1">
-            <div class="px-4 pt-3 pb-2 font-bold text-sm text-gray-800 flex-shrink-0">
-                Riwayat Chat
-            </div>
-            <div id="chat-history-list" class="flex-1 overflow-y-auto p-2 custom-scrollbar pb-24">
-            </div>
-        </div>
-
-        <a href="index.html" id="new-chat-btn" class="absolute bottom-6 right-6 h-12 px-5 bg-[#141822] rounded-full flex items-center justify-center gap-2.5 text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-[#1e2536] transition-all duration-500 active:scale-95 z-50 text-decoration-none">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-            <span id="new-chat-text" class="font-semibold text-[15.5px] whitespace-nowrap overflow-hidden">Obrolan Baru</span>
-        </a>
     </aside>
     
     <header class="fixed top-0 inset-x-0 z-30 p-4 sm:p-5 pointer-events-none flex items-start">
