@@ -90,34 +90,52 @@
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden selection:bg-gray-200">
     
-    <div id="session-options-popup" class="hidden fixed bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.1)] z-[100] w-36 py-1.5 text-[13px] text-gray-700 pointer-events-auto">
+    <div id="session-options-popup" class="hidden fixed bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.1)] z-[100] w-40 p-1.5 text-[13px] text-gray-700 pointer-events-auto">
         <button id="btn-edit-session" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2.5 font-medium transition-none"><i class="ph-bold ph-pencil-simple text-gray-500 text-base"></i> Edit</button>
         <button id="btn-delete-session" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2.5 font-medium transition-none text-red-600"><i class="ph-bold ph-trash text-red-500 text-base"></i> Hapus</button>
     </div>
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/20 opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-[260px] bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
         
-        <div class="h-1/2 flex flex-col border-b border-gray-100 bg-gray-50/30">
-            <div class="px-4 py-4 font-bold text-lg text-gray-800">Menu Utama</div>
-            <div class="px-2 space-y-1">
-                <a href="index.html" class="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-gray-100 transition-colors text-left text-gray-700 hover:text-black group">
-                    <div class="flex items-center gap-2.5">
-                        <i class="ph ph-chats text-lg text-gray-500 group-hover:text-black"></i>
-                        <span class="text-sm font-medium">Obrolan</span>
-                    </div>
-                </a>
-                <div class="w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-100 transition-colors text-left text-black group">
-                    <div class="flex items-center gap-2.5">
-                        <i class="ph-fill ph-plugs-connected text-lg text-black"></i>
-                        <span class="text-sm font-bold">Integrasi</span>
-                    </div>
+        <div class="h-16 border-b border-gray-100 flex items-center px-4 justify-between flex-shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
+                    <img src="https://app.clincoo.buzz/assets/logo-clinqoo.png" alt="Logo" class="w-full h-full object-cover">
                 </div>
+                <span class="font-bold font-montserrat text-lg text-gray-800">Clincoo</span>
             </div>
         </div>
 
-        <div class="h-1/2 flex flex-col bg-white">
-            <div class="px-4 py-3 font-bold text-sm text-gray-800 border-b border-gray-100">
+        <div class="px-3 pt-3 flex flex-col gap-1 flex-shrink-0">
+            <a href="index.html" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
+                <i class="ph ph-stack text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
+                <span class="font-medium text-[14px]">Beranda</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
+                <i class="ph ph-robot text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
+                <span class="font-medium text-[14px]">Agent</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
+                <i class="ph ph-cube text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
+                <span class="font-medium text-[14px]">Workspace</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
+                <i class="ph ph-code text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
+                <span class="font-medium text-[14px]">Editor</span>
+            </a>
+            <a href="javascript:void(0)" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors group">
+                <i class="ph ph-puzzle-piece text-lg text-gray-500 group-hover:text-gray-900 transition-colors"></i>
+                <span class="font-medium text-[14px]">Plugin</span>
+            </a>
+            <a href="app.html" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 transition-colors group">
+                <i class="ph-fill ph-plugs-connected text-lg text-gray-900"></i>
+                <span class="font-bold text-[14px]">Integrasi</span>
+            </a>
+        </div>
+
+        <div class="flex-1 flex flex-col min-h-0 border-t border-gray-100 mt-1">
+            <div class="px-4 pt-3 pb-2 font-bold text-sm text-gray-800 flex-shrink-0">
                 Riwayat Chat
             </div>
             <div id="chat-history-list" class="flex-1 overflow-y-auto p-2 custom-scrollbar pb-24">
