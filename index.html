@@ -58,9 +58,7 @@
     <div class="px-5 md:px-7">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Daftar Domain</h3>
-            <button onclick="location.href='tambah/'" class="bg-accent text-white text-sm font-semibold rounded-full px-4 py-2.5 hover:bg-accent-hover transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm hover:shadow-md">
-                <i data-lucide="plus" class="w-4 h-4"></i>Tambah Domain
-            </button>
+            <button onclick="location.href='tambah/'" class="bg-accent text-white text-sm font-semibold rounded-full px-4 py-2.5 hover:bg-accent-hover transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md">Hubungkan Domain</button>
         </div>
 
         <!-- Pencarian domain (flat, capsule) -->
@@ -76,10 +74,8 @@
                 <i data-lucide="globe" class="w-7 h-7 text-gray-400"></i>
             </div>
             <p class="text-[15px] font-semibold text-gray-900">Belum ada domain</p>
-            <p class="text-[13px] text-gray-500 mt-1 max-w-xs leading-relaxed">Tambahkan domain pertama-mu, verifikasi kepemilikan lewat record DNS, lalu kelola semuanya di sini.</p>
-            <button onclick="location.href='tambah/'" class="bg-accent text-white text-sm font-semibold rounded-full px-5 py-2.5 mt-5 hover:bg-accent-hover transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm hover:shadow-md">
-                <i data-lucide="plus" class="w-4 h-4"></i>Tambah Domain
-            </button>
+            <p class="text-[13px] text-gray-500 mt-1 max-w-xs leading-relaxed">Hubungkan domain pertama-mu, verifikasi kepemilikan lewat record TXT, lalu kelola semuanya di sini.</p>
+            <button onclick="location.href='tambah/'" class="bg-accent text-white text-sm font-semibold rounded-full px-5 py-2.5 mt-5 hover:bg-accent-hover transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md">Hubungkan Domain</button>
         </div>
 
         <!-- Tabel domain -->
@@ -210,9 +206,14 @@ function openActions(evt, id) {
     const d = load().find(x => x.id === id); if (!d) return;
     actioningId = id;
     const rows = [];
+    const dloc = `location.href='kelola/?domain=' + encodeURIComponent('${esc(d.name)}') + '&tab=`;
     if (d.status !== 'aktif') {
         rows.push({ label: 'Verifikasi Domain', action: `location.href='verifikasi/?domain=' + encodeURIComponent('${esc(d.name)}')` });
     }
+    rows.push({ label: 'Kelola DNS', action: dloc + 'dns' });
+    rows.push({ label: 'SSL/TLS', action: dloc + 'ssl' });
+    rows.push({ label: 'Cache', action: dloc + 'cache' });
+    rows.push({ label: 'Pengaturan Zone', action: dloc + 'zone' });
     rows.push({ label: 'Hapus Domain', action: `openDelete('${d.id}')`, danger: true });
     document.getElementById('actions-list').innerHTML = rows.map((r, i) => `
         <button onclick="closeActions(); ${r.action}" class="w-full text-left px-4 py-2.5 text-[14px] font-medium cursor-pointer transition-colors hover:bg-gray-50 ${r.danger ? 'text-red-600' : 'text-gray-800'}">${r.label}</button>`).join('');
