@@ -37,6 +37,8 @@
     body.dark-mode button[onclick="goBack()"] { background-color: #000000 !important; border: 1.5px solid rgba(255,255,255,0.4) !important; color: #ffffff !important; }
     body.dark-mode button[onclick="goBack()"]:hover { background-color: #1a1a1a !important; border-color: rgba(255,255,255,0.7) !important; }
     textarea:focus { outline: none!important; box-shadow: none!important; }
+    * { -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; }
+    body.dark-mode .hover\:bg-gray-100:hover { background-color: #222222 !important; }
 </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-900 pt-20">
@@ -205,7 +207,7 @@ function render() {
                 </td>
                 <td class="px-5 py-3.5 text-[13px] text-gray-500">${fmtDate(d.created)}</td>
                 <td class="px-5 py-3.5 text-right">
-                    <button onclick="openActions(event, '${d.id}')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer ml-auto" title="Aksi lainnya">
+                    <button onclick="openActions(event, '${d.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer ml-auto active:opacity-60 transition-opacity" title="Aksi lainnya">
                         <i data-lucide="more-vertical" class="w-[18px] h-[18px] text-gray-400 group-hover:text-gray-900 transition-colors"></i>
                     </button>
                 </td>
