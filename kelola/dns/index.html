@@ -53,27 +53,31 @@
     <div class="px-7">
         <div class="flex items-center justify-between mt-6">
             <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Record DNS</h3>
-            <button onclick="toggleDnsForm()" class="text-[13px] font-semibold text-accent cursor-pointer hover:underline decoration-2 underline-offset-4">Tambah Record</button>
-        </div>
-
-        <div id="dns-form" class="hidden mt-3 bg-gray-50 rounded-xl border border-gray-100 p-4">
-            <div class="grid grid-cols-3 gap-2">
-                <select id="dns-type" class="col-span-1 bg-white border border-gray-200 rounded-lg px-2.5 py-2 text-[13px] font-medium text-gray-900 cursor-pointer">
-                    <option>A</option><option>AAAA</option><option>CNAME</option><option>TXT</option><option>MX</option>
-                </select>
-                <input id="dns-name" type="text" placeholder="nama (mis. @ / www)" class="col-span-2 bg-white border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-900 placeholder-gray-400">
-            </div>
-            <input id="dns-content" type="text" placeholder="isi / nilai record (mis. 192.0.2.1)" class="mt-2 w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-900 placeholder-gray-400">
-            <div class="flex justify-end gap-1 mt-3">
-                <button onclick="toggleDnsForm(true)" class="rounded-md px-3 py-1.5 text-[13px] font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors cursor-pointer">Batal</button>
-                <button onclick="addRecord()" class="rounded-md px-3 py-1.5 text-[13px] font-semibold text-accent hover:bg-gray-100 transition-colors cursor-pointer">Simpan</button>
-            </div>
+            <button onclick="openAddRecord()" class="bg-accent text-white text-[13px] font-semibold rounded-full px-3.5 py-1.5 cursor-pointer active:scale-95 transition-all">Tambah Record</button>
         </div>
 
         <div id="dns-list" class="mt-2 divide-y divide-gray-100 border-t border-gray-100"></div>
         <p class="text-[12px] text-gray-400 mt-3 leading-relaxed">Prototipe: perubahan disimpan lokal. Versi final akan menulis ke Cloudflare lewat API token (secret CF) di backend.</p>
     </div>
 </main>
+
+<!-- Modal tambah record -->
+<div id="add-record-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-5" onclick="if(event.target===this)closeAddRecord()">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-5">
+        <h3 class="text-[15px] font-bold text-gray-900">Tambah Record DNS</h3>
+        <div class="grid grid-cols-3 gap-2 mt-4">
+            <select id="dns-type" class="col-span-1 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-2 text-[13px] font-medium text-gray-900 cursor-pointer">
+                <option>A</option><option>AAAA</option><option>CNAME</option><option>TXT</option><option>MX</option>
+            </select>
+            <input id="dns-name" type="text" placeholder="nama (mis. @ / www)" class="col-span-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-900 placeholder-gray-400">
+        </div>
+        <input id="dns-content" type="text" placeholder="isi / nilai record (mis. 192.0.2.1)" class="mt-2 w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-900 placeholder-gray-400">
+        <div class="flex justify-end gap-1 mt-5">
+            <button onclick="closeAddRecord()" class="rounded-md px-3 py-1.5 text-[13px] font-semibold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors cursor-pointer">Batal</button>
+            <button onclick="addRecord()" class="rounded-md px-3 py-1.5 text-[13px] font-semibold text-accent hover:bg-gray-50 transition-colors cursor-pointer">Simpan</button>
+        </div>
+    </div>
+</div>
 
 <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium rounded-full px-4 py-2 shadow-lg z-[70] transition-all"></div>
 
@@ -127,11 +131,17 @@ function renderDns() {
             <button onclick="deleteRecord('${r.id}')" class="shrink-0 text-[13px] font-semibold text-red-600 cursor-pointer hover:underline decoration-2 underline-offset-4">Hapus</button>
         </div>`).join('') : '<p class="text-[13px] text-gray-500 py-3">Belum ada record DNS.</p>';
 }
-function toggleDnsForm(closeOnly) {
-    const f = document.getElementById('dns-form');
-    if (closeOnly) { f.classList.add('hidden'); return; }
-    f.classList.toggle('hidden');
-    if (!f.classList.contains('hidden')) document.getElementById('dns-type').focus();
+function openAddRecord() {
+    document.getElementById('dns-type').value = 'A';
+    document.getElementById('dns-name').value = '';
+    document.getElementById('dns-content').value = '';
+    const m = document.getElementById('add-record-modal');
+    m.classList.remove('hidden'); m.classList.add('flex');
+    document.getElementById('dns-name').focus();
+}
+function closeAddRecord() {
+    const m = document.getElementById('add-record-modal');
+    m.classList.add('hidden'); m.classList.remove('flex');
 }
 function addRecord() {
     const type = document.getElementById('dns-type').value;
@@ -141,9 +151,7 @@ function addRecord() {
     const list = loadJSON('dns', []);
     list.push({ id: 'r' + Date.now().toString(36), type, name, content });
     saveJSON('dns', list);
-    document.getElementById('dns-name').value = '';
-    document.getElementById('dns-content').value = '';
-    toggleDnsForm(true); renderDns(); showToast('Record DNS ditambahkan');
+    closeAddRecord(); renderDns(); showToast('Record DNS ditambahkan');
 }
 function deleteRecord(id) {
     saveJSON('dns', loadJSON('dns', []).filter(r => r.id !== id));
