@@ -64,6 +64,16 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        .cta-capsule {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        body.dark-mode .cta-capsule {
+            background: #ffffff;
+            color: #000000;
+        }
     </style>
     <script src="config.js"></script>
 </head>
@@ -445,14 +455,8 @@
                     <i class="ph-bold ph-x text-lg"></i>
                 </button>
             </div>
-            <p class="text-sm text-gray-500 mb-5 leading-relaxed">Hubungkan akun GitHub Anda dengan OAuth untuk akses penuh. AI dapat membuat repo, file, update, dan hapus repositori.</p>
-            <div class="flex gap-3">
-                <button onclick="closeGitHubModal()" class="flex-1 py-3 bg-gray-50 text-gray-600 border border-gray-200 rounded-xl font-semibold text-sm hover:bg-gray-100 transition-all cursor-pointer">Batal</button>
-                <button onclick="startOAuth()" class="flex-1 py-3 bg-gray-900 text-white rounded-xl font-semibold text-sm hover:bg-black shadow-md active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2">
-                    <i class="ph-fill ph-github-logo text-base"></i> Hubungkan
-                </button>
-            </div>
-            <p class="text-[11px] text-gray-400 mt-4 text-center">Akan diarahkan ke GitHub untuk otorisasi</p>
+            <p class="text-sm text-gray-500 mb-6 leading-relaxed">Sekali hubungkan, AI bisa langsung kerja di GitHub-mu: bikin repo, update file, sampai hapus proyek yang gak kepake.</p>
+            <button onclick="startOAuth()" class="cta-capsule w-full py-3.5 rounded-full font-semibold text-sm shadow-md active:scale-95 transition-all cursor-pointer">Hubungkan</button>
         </div>
     </div>
 
