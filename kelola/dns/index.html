@@ -57,11 +57,11 @@
             <button onclick="openAddRecord()" class="bg-accent text-white text-[13px] font-semibold rounded-full px-3.5 py-1.5 cursor-pointer active:scale-95 transition-all">Tambah Record</button>
         </div>
 
-        <div class="flex items-center gap-10 mt-3 mb-0.5">
-            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest shrink-0">Tipe</span>
-            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest shrink-0">Nama</span>
+        <div class="grid grid-cols-[72px_120px_1fr_32px] gap-6 mt-4 mb-1">
+            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Tipe</span>
+            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nama</span>
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nilai</span>
-            <span class="w-8 shrink-0"></span>
+            <span></span>
         </div>
         <div id="dns-list" class="divide-y divide-gray-100 border-t border-gray-100"></div>
     </div>
@@ -143,11 +143,11 @@ function renderDns() {
     let list = loadJSON('dns', null);
     if (!list) { list = defaultRecords(); saveJSON('dns', list); }
     document.getElementById('dns-list').innerHTML = list.length ? list.map(r => `
-        <div class="flex items-center gap-10 py-3.5">
-            <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 shrink-0">${r.type}</span>
-            <span class="mono text-[13px] font-semibold text-gray-900 truncate shrink-0">${esc(r.name)}</span>
-            <span class="mono text-[12px] text-gray-500 truncate flex-1 min-w-0">${esc(r.content)}</span>
-            <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer shrink-0 rounded-full hover:bg-gray-100 transition-colors" title="Aksi lainnya">
+        <div class="grid grid-cols-[72px_120px_1fr_32px] gap-6 items-center py-4">
+            <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 justify-self-start">${r.type}</span>
+            <span class="mono text-[13px] font-semibold text-gray-900 truncate">${esc(r.name)}</span>
+            <span class="mono text-[12px] text-gray-500 truncate min-w-0">${esc(r.content)}</span>
+            <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer rounded-full hover:bg-gray-100 transition-colors" title="Aksi lainnya">
                 <i data-lucide="more-horizontal" class="w-[18px] h-[18px] text-gray-400"></i>
             </button>
         </div>`).join('') : '<p class="text-[13px] text-gray-500 py-3">Belum ada record DNS.</p>';
