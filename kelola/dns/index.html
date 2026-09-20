@@ -66,13 +66,28 @@
 <div id="add-record-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-5" onclick="if(event.target===this)closeAddRecord()">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-5">
         <h3 class="text-[15px] font-bold text-gray-900">Tambah Record DNS</h3>
-        <div class="grid grid-cols-3 gap-2 mt-4">
-            <select id="dns-type" class="col-span-1 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-2 text-[13px] font-medium text-gray-900 cursor-pointer">
-                <option>A</option><option>AAAA</option><option>CNAME</option><option>TXT</option><option>MX</option>
-            </select>
-            <input id="dns-name" type="text" placeholder="nama (mis. @ / www)" class="col-span-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-900 placeholder-gray-400">
+
+        <div class="mt-4">
+            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Tipe Record</label>
+            <div class="relative">
+                <button id="dns-type-trigger" type="button" onclick="toggleTypePopover()" class="w-full flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] font-semibold text-gray-900 cursor-pointer">
+                    <span id="dns-type-label">A</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                </button>
+                <div id="dns-type-popover" class="hidden absolute left-0 right-0 mt-1.5 bg-white border border-gray-200 rounded-lg shadow-lg z-[80] py-1 max-h-44 overflow-auto"></div>
+            </div>
         </div>
-        <input id="dns-content" type="text" placeholder="isi / nilai record (mis. 192.0.2.1)" class="mt-2 w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-900 placeholder-gray-400">
+
+        <div class="mt-4">
+            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Nama</label>
+            <input id="dns-name" type="text" placeholder="mis. @ / www" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] font-medium text-gray-900 placeholder-gray-400">
+        </div>
+
+        <div class="mt-4">
+            <label class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Nilai / Konten</label>
+            <input id="dns-content" type="text" placeholder="mis. 192.0.2.1" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] font-medium text-gray-900 placeholder-gray-400">
+        </div>
+
         <div class="flex justify-end gap-1 mt-5">
             <button onclick="closeAddRecord()" class="rounded-md px-3 py-1.5 text-[13px] font-semibold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors cursor-pointer">Batal</button>
             <button onclick="addRecord()" class="rounded-md px-3 py-1.5 text-[13px] font-semibold text-accent hover:bg-gray-50 transition-colors cursor-pointer">Simpan</button>
@@ -132,20 +147,43 @@ function renderDns() {
             <button onclick="deleteRecord('${r.id}')" class="shrink-0 text-[13px] font-semibold text-red-600 cursor-pointer hover:underline decoration-2 underline-offset-4">Hapus</button>
         </div>`).join('') : '<p class="text-[13px] text-gray-500 py-3">Belum ada record DNS.</p>';
 }
+const DNS_TYPES = ['A', 'AAAA', 'CNAME', 'TXT', 'MX'];
+function renderTypePopover() {
+    const current = document.getElementById('dns-type-label').textContent;
+    document.getElementById('dns-type-popover').innerHTML = DNS_TYPES.map(t => `
+        <button type="button" onclick="selectDnsType('${t}')" class="w-full text-left px-3 py-2 text-[13px] font-semibold cursor-pointer transition-colors hover:bg-gray-50 ${t === current ? 'text-accent' : 'text-gray-800'}">${t}</button>`).join('');
+}
+function toggleTypePopover() {
+    renderTypePopover();
+    document.getElementById('dns-type-popover').classList.toggle('hidden');
+}
+function selectDnsType(t) {
+    document.getElementById('dns-type-label').textContent = t;
+    document.getElementById('dns-type-popover').classList.add('hidden');
+}
+document.addEventListener('click', (e) => {
+    const pop = document.getElementById('dns-type-popover');
+    const trigger = document.getElementById('dns-type-trigger');
+    if (!pop || pop.classList.contains('hidden')) return;
+    if (!pop.contains(e.target) && !trigger.contains(e.target)) pop.classList.add('hidden');
+});
 function openAddRecord() {
-    document.getElementById('dns-type').value = 'A';
+    document.getElementById('dns-type-label').textContent = 'A';
+    document.getElementById('dns-type-popover').classList.add('hidden');
     document.getElementById('dns-name').value = '';
     document.getElementById('dns-content').value = '';
     const m = document.getElementById('add-record-modal');
     m.classList.remove('hidden'); m.classList.add('flex');
+    lucide.createIcons();
     document.getElementById('dns-name').focus();
 }
 function closeAddRecord() {
+    document.getElementById('dns-type-popover').classList.add('hidden');
     const m = document.getElementById('add-record-modal');
     m.classList.add('hidden'); m.classList.remove('flex');
 }
 function addRecord() {
-    const type = document.getElementById('dns-type').value;
+    const type = document.getElementById('dns-type-label').textContent;
     const name = document.getElementById('dns-name').value.trim();
     const content = document.getElementById('dns-content').value.trim();
     if (!name || !content) { showToast('Nama dan isi record wajib diisi'); return; }
