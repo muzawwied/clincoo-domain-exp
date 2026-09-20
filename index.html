@@ -188,12 +188,12 @@ function render() {
     if (!shown.length) { lucide.createIcons(); return; }
     {
         tbody.innerHTML = shown.map(d => `
-            <tr class="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors group">
+            <tr class="border-b border-gray-100 last:border-b-0 group cursor-pointer" onclick="goDomain(this)">
                 <td class="px-5 py-3.5">
                     <div class="flex items-center gap-3">
                         <i data-lucide="globe" class="w-[18px] h-[18px] text-gray-400 shrink-0"></i>
                         <div class="min-w-0">
-                            <p class="text-[15px] font-semibold text-gray-900 truncate">${d.name}</p>
+                            <p class="text-[15px] font-semibold text-gray-900 truncate"><a data-domain href="https://${d.name}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="hover:underline decoration-2 underline-offset-4">${d.name}</a></p>
                             ${d.note ? `<p class="text-[12px] text-gray-500 truncate mt-0.5">${esc(d.note)}</p>` : ''}
                         </div>
                     </div>
@@ -214,6 +214,13 @@ function render() {
             </tr>`).join('');
     }
     lucide.createIcons();
+}
+
+function goDomain(row) {
+    const a = row.querySelector('a[data-domain]');
+    if (!a) return;
+    a.classList.add('underline');
+    a.click();
 }
 
 function esc(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
