@@ -8,10 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
-    
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-        
+
         html, body {
             height: 100dvh;
             height: -webkit-fill-available;
@@ -22,82 +22,26 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #ffffff; 
+            background: #ffffff;
             color: #000000;
             -webkit-tap-highlight-color: transparent;
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #e5e7eb;
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
 
-        .font-montserrat {
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar {
-            height: 6px;
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 10px;
-        }
-        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-            background: #9ca3af;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        #new-chat-text {
-            transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.5s ease;
-            max-width: 150px;
-            opacity: 1;
-            transform: translateX(0);
-            display: inline-block;
-        }
-        #new-chat-text.collapsed {
-            max-width: 0px;
-            opacity: 0;
-            transform: translateX(20px);
-            margin: 0;
-        }
-
-        #new-chat-btn.collapsed-btn {
-            width: 48px;
-            padding-left: 0;
-            padding-right: 0;
-            gap: 0;
-        }
+        .font-montserrat { font-family: 'Montserrat', sans-serif; }
     </style>
-    <script src="config.js"></script>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden selection:bg-gray-200">
-    
-    <div id="session-options-popup" class="hidden fixed bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.1)] z-[100] w-40 p-1.5 text-[13px] text-gray-700 pointer-events-auto">
-        <button id="btn-edit-session" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2.5 font-medium transition-none"><i class="ph-bold ph-pencil-simple text-gray-500 text-base"></i> Edit</button>
-        <button id="btn-delete-session" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2.5 font-medium transition-none text-red-600"><i class="ph-bold ph-trash text-red-500 text-base"></i> Hapus</button>
-    </div>
 
+    <!-- Overlay sidebar -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/20 opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
+
+    <!-- Sidebar ala Clincoo -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-[260px] bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
-        
+
         <div class="h-16 border-b border-gray-100 flex items-center px-4 justify-between flex-shrink-0">
             <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
@@ -133,760 +77,52 @@
                 <span class="font-bold text-[14px]">Integrasi</span>
             </a>
         </div>
-
-        <div class="flex-1 flex flex-col min-h-0 border-t border-gray-100 mt-1">
-            <div class="px-4 pt-3 pb-2 font-bold text-sm text-gray-800 flex-shrink-0">
-                Riwayat Chat
-            </div>
-            <div id="chat-history-list" class="flex-1 overflow-y-auto p-2 custom-scrollbar pb-24">
-            </div>
-        </div>
-
-        <a href="index.html" id="new-chat-btn" class="absolute bottom-6 right-6 h-12 px-5 bg-[#141822] rounded-full flex items-center justify-center gap-2.5 text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-[#1e2536] transition-all duration-500 active:scale-95 z-50 text-decoration-none">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-            <span id="new-chat-text" class="font-semibold text-[15.5px] whitespace-nowrap overflow-hidden">Obrolan Baru</span>
-        </a>
     </aside>
-    
-    <header class="fixed top-0 inset-x-0 z-30 p-4 sm:p-5 pointer-events-none flex items-start">
-        <button id="sidebar-toggle" class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex justify-center items-center shadow-[0_2px_12px_rgba(0,0,0,0.1)] border border-gray-200/50 pointer-events-auto transition-transform active:scale-95">
-            <div id="hamburger-icon" class="flex flex-col items-start gap-[4px] w-full pl-3">
-                <span class="w-[14px] h-[2px] bg-gray-800 rounded-full"></span>
-                <span class="w-[8px] h-[2px] bg-gray-800 rounded-full"></span>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-30 p-3 flex justify-between items-start">
+        <button id="sidebar-toggle" class="w-10 h-10 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.1)] border border-gray-200/50 rounded-full flex justify-center items-center transition-transform active:scale-95" aria-label="Buka Menu" onclick="toggleSidebar()">
+            <div class="flex flex-col items-start gap-[4px] w-full pl-3">
+                <span class="w-4 h-[2px] bg-gray-800 rounded-full"></span>
+                <span class="w-3 h-[2px] bg-gray-800 rounded-full"></span>
+                <span class="w-4 h-[2px] bg-gray-800 rounded-full"></span>
             </div>
-            <i id="header-back-icon" class="ph-bold ph-arrow-left text-lg text-gray-800 hidden"></i>
         </button>
     </header>
 
-    <main class="flex-1 overflow-y-auto px-4 sm:px-8 lg:px-12 pt-24 pb-12 w-full max-w-[1600px] mx-auto hide-scrollbar">
-        
-        <div id="main-view">
-            <div class="mb-6 md:mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 font-montserrat tracking-tight mb-2">Integrasi</h1>
-                <p class="text-base text-gray-500 max-w-2xl">Hubungkan Clincoo dengan alat dan platform favorit Anda untuk memperluas kemampuan AI Agent dalam alur kerja Anda.</p>
-            </div>
-
-            <div class="mb-4">
-                <div class="relative w-full">
-                    <i class="ph ph-magnifying-glass absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
-                    <input type="text" id="search-integrations" placeholder="Cari integrasi..." class="w-full pl-12 pr-5 py-2.5 bg-white border border-gray rounded-full text-[14px] focus:outline-none  transition-all placeholder-gray-400 font-medium shadow-sm">
-                </div>
-            </div>
-
-            <div class="w-full border-t border-gray-100 mb-10"></div>
-
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 sm:gap-6" id="integrations-grid">
-                
-                <div class="integration-card w-full aspect-[1.58/1] bg-white border border-gray-100 rounded-2xl p-4 sm:p-5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 ease-out flex flex-col group relative overflow-hidden" data-title="github" data-category="developer">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-50 to-transparent rounded-bl-full -z-10 opacity-60 group-hover:scale-110 transition-transform duration-700 ease-out"></div>
-                    
-                    <div class="flex items-start justify-between mb-2 sm:mb-3 relative z-10">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="w-9 h-9 sm:w-10 sm:h-10 text-[#181717] transition-transform duration-300 group-hover:scale-110"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path></svg>
-                        <span class="hidden"></span>
-                    </div>
-                    
-                    <h3 class="text-[16px] sm:text-[17px] font-bold text-gray-900 mb-0.5 sm:mb-1 font-montserrat tracking-tight relative z-10">GitHub</h3>
-                    <p class="text-[11.5px] sm:text-[12.5px] text-gray-500 mb-3 sm:mb-4 flex-1 leading-snug sm:leading-relaxed relative z-10 overflow-hidden">
-                        Hubungkan repositori Anda untuk melakukan analisis kode, mereview Pull Request, dan berkolaborasi dalam pengembangan software langsung dari chat.
-                    </p>
-                    
-                    <button onclick="openGitHubModal()" id="github-connect-btn" class="w-full py-2 bg-[#0f1115] text-white rounded-xl text-[13px] font-semibold hover:bg-[#1a1d24] transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] active:scale-[0.98] flex items-center justify-center gap-2 relative z-10 mt-auto">
-                        Hubungkan
-                    </button>
-                </div>
-
-               
-                <div id="empty-state" class="hidden col-span-full flex-col items-center justify-center py-16 px-4 text-center w-full">
-                    <i class="ph ph-magnifying-glass text-5xl text-gray-300 mb-4"></i>
-                    <h3 class="text-xl font-bold text-gray-900 font-montserrat mb-2">Tidak ada integrasi</h3>
-                    <p class="text-[14.5px] text-gray-500 max-w-sm mx-auto">Kami tidak dapat menemukan integrasi yang cocok dengan pencarian Anda.</p>
-                </div>
-
-            </div>
+    <!-- Konten utama: kosong -->
+    <main class="flex-1 overflow-y-auto px-6 pt-24 pb-10">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 font-montserrat tracking-tight mb-2">Integrasi</h1>
+            <p class="text-base text-gray-500">Hubungkan Clincoo dengan alat dan platform favorit Anda.</p>
         </div>
-
-        <div id="whatsapp-connect-view" class="hidden max-w-3xl mx-auto pt-4 md:pt-6">
-            <div class="w-full">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="w-7 h-7 text-[#25D366]"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900 font-montserrat">Hubungkan WhatsApp</h2>
-                        <p class="text-xs text-gray-500">Pilih metode koneksi perangkat WhatsApp Anda</p>
-                    </div>
-                </div>
-
-                <div class="flex border-b border-gray-100 mb-6">
-                    <button onclick="switchWaTab('qr')" id="tab-qr-btn" class="flex-1 pb-3 text-sm font-semibold text-black border-b-2 border-black transition-colors">QR Code</button>
-                    <button onclick="switchWaTab('pairing')" id="tab-pairing-btn" class="flex-1 pb-3 text-sm font-semibold text-gray-400 border-b-2 border-transparent transition-colors">Kode Tautan</button>
-                </div>
-
-                <div id="content-qr" class="flex flex-col items-center justify-center py-6">
-                    <div class="w-56 h-56 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center p-4 mb-4 relative group">
-                        <div class="absolute inset-2 bg-white flex items-center justify-center rounded-xl shadow-inner">
-                            <div class="grid grid-cols-5 gap-2 p-4">
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-white rounded border border-gray-200"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-white rounded border border-gray-200"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-white rounded border border-gray-200"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-white rounded border border-gray-200"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-white rounded border border-gray-200"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-white rounded border border-gray-200"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                                <div class="w-8 h-8 bg-black rounded"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-500 text-center max-w-xs">Buka WhatsApp di ponsel Anda, ketuk Menu atau Pengaturan dan pilih Perangkat Tertaut, lalu ketuk Tautkan Perangkat.</p>
-                </div>
-
-                <div id="content-pairing" class="hidden flex flex-col items-center justify-center py-8">
-                    <p class="text-xs text-gray-500 mb-4 text-center">Masukkan nomor WhatsApp Anda untuk mendapatkan kode tautan.</p>
-                    <div class="w-full max-w-sm space-y-4">
-                        <div class="flex gap-2 relative">
-                            <input type="text" id="wa-country-code" value="🇮🇩 +62" onclick="openCountryModal()" readonly class="w-[5.8rem] px-2 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-semibold text-gray-700 text-center focus:outline-none focus:border-gray-200 focus:ring-0 transition cursor-pointer hover:bg-gray-50">
-                            <input type="tel" id="wa-phone-input" placeholder="81234567890" class="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-gray-200 focus:ring-0 transition">
-                        </div>
-                        <p id="wa-phone-error" class="hidden text-xs text-red-500 font-medium text-left pl-1"></p>
-                        <button onclick="generatePairingCode()" class="w-full py-3 bg-black text-white rounded-2xl text-sm font-semibold hover:bg-gray-800 transition">Dapatkan Kode Tautan</button>
-                        <div id="pairing-code-display" class="hidden mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center relative group">
-                            <p class="text-xs text-gray-500 mb-1">Kode Tautan Anda:</p>
-                            <p id="code-text" class="text-2xl font-bold tracking-widest text-black font-montserrat">X7K9-M2L4</p>
-                            <button id="copy-pairing-btn" onclick="copyPairingCode()" class="absolute top-2 right-2 text-[10px] bg-white border border-gray-200 px-2 py-1 rounded text-gray-600 hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">Salin</button>
-                        </div>
-                    </div>
-                </div>
+        <div class="flex flex-col items-center justify-center text-center py-24">
+            <div class="w-16 h-16 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-4">
+                <i class="ph ph-plugs-connected text-3xl text-gray-300"></i>
             </div>
+            <p class="text-[15px] font-semibold text-gray-900">Belum ada apa pun di sini</p>
+            <p class="text-[13px] text-gray-500 mt-1 max-w-xs leading-relaxed">Semuanya masih kosong — siap diisi dari awal.</p>
         </div>
     </main>
 
-    <div id="country-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 w-[90%] max-w-sm shadow-2xl flex flex-col max-h-[80vh]">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-gray-900 font-montserrat">Pilih Negara</h3>
-                <button onclick="closeCountryModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition">
-                    <i class="ph-bold ph-x text-lg"></i>
-                </button>
-            </div>
-            <div class="overflow-y-auto custom-scrollbar flex-1 space-y-1">
-                <button onclick="selectCountry('🇮🇩 +62')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇮🇩</span> <span class="font-medium text-sm text-gray-700">+62 Indonesia</span></button>
-                <button onclick="selectCountry('🇺🇸 +1')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇺🇸</span> <span class="font-medium text-sm text-gray-700">+1 Amerika Serikat</span></button>
-                <button onclick="selectCountry('🇬🇧 +44')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇬🇧</span> <span class="font-medium text-sm text-gray-700">+44 Inggris</span></button>
-                <button onclick="selectCountry('🇸🇬 +65')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇸🇬</span> <span class="font-medium text-sm text-gray-700">+65 Singapura</span></button>
-                <button onclick="selectCountry('🇲🇾 +60')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇲🇾</span> <span class="font-medium text-sm text-gray-700">+60 Malaysia</span></button>
-                <button onclick="selectCountry('🇦🇺 +61')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇦🇺</span> <span class="font-medium text-sm text-gray-700">+61 Australia</span></button>
-                <button onclick="selectCountry('🇯🇵 +81')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇯🇵</span> <span class="font-medium text-sm text-gray-700">+81 Jepang</span></button>
-                <button onclick="selectCountry('🇸🇦 +966')" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-xl transition flex items-center gap-3"><span class="text-xl">🇸🇦</span> <span class="font-medium text-sm text-gray-700">+966 Arab Saudi</span></button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        const escapeHTML = (str) => {
-            if (typeof str !== 'string') return str;
-            return str.replace(/[&<>'"]/g, tag => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                "'": '&#39;',
-                '"': '&quot;'
-            }[tag] || tag));
-        };
-
-        const STORAGE_KEY = 'clincoo_chats_v1';
-        let chatSessions = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        
         const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        let newChatBtnTimer = null;
+        const overlay = document.getElementById('sidebar-overlay');
 
         function toggleSidebar() {
             const isOpen = sidebar.classList.contains('translate-x-0');
             if (isOpen) {
                 sidebar.classList.remove('translate-x-0');
-                sidebar.classList.add('-translate-x-full');
-                sidebarOverlay.classList.remove('opacity-100', 'pointer-events-auto');
-                sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
-                
-                if (newChatBtnTimer) {
-                    clearTimeout(newChatBtnTimer);
-                    newChatBtnTimer = null;
-                }
+                overlay.classList.add('opacity-0');
+                overlay.classList.add('pointer-events-none');
             } else {
-                sidebar.classList.remove('-translate-x-full');
                 sidebar.classList.add('translate-x-0');
-                sidebarOverlay.classList.remove('opacity-0', 'pointer-events-none');
-                sidebarOverlay.classList.add('opacity-100', 'pointer-events-auto');
-
-                const textEl = document.getElementById('new-chat-text');
-                const btnEl = document.getElementById('new-chat-btn');
-                
-                if (textEl) textEl.classList.remove('collapsed');
-                if (btnEl) btnEl.classList.remove('collapsed-btn');
-                
-                if (newChatBtnTimer) clearTimeout(newChatBtnTimer);
-                newChatBtnTimer = setTimeout(() => {
-                    if (textEl) textEl.classList.add('collapsed');
-                    if (btnEl) btnEl.classList.add('collapsed-btn');
-                }, 3000);
+                overlay.classList.remove('opacity-0');
+                overlay.classList.remove('pointer-events-none');
             }
         }
 
-        if(sidebarToggle) sidebarToggle.onclick = toggleSidebar;
-        if(sidebarOverlay) sidebarOverlay.onclick = toggleSidebar;
-
-        let activeSessionIdForOptions = null;
-        
-        window.openSessionOptions = function(e, sessionId, btnElement) {
-            e.stopPropagation();
-            activeSessionIdForOptions = sessionId;
-            const popup = document.getElementById('session-options-popup');
-            
-            popup.classList.remove('hidden');
-            
-            const rect = btnElement.getBoundingClientRect();
-            const popupHeight = popup.offsetHeight;
-            const windowHeight = window.innerHeight;
-            
-            if (rect.bottom + popupHeight + 10 > windowHeight) {
-                popup.style.top = `${rect.top - popupHeight - 4}px`;
-            } else {
-                popup.style.top = `${rect.bottom + 4}px`;
-            }
-            
-            popup.style.left = `${Math.max(10, rect.left - 110)}px`;
-        };
-
-        document.addEventListener('click', (e) => {
-            const sessionPopup = document.getElementById('session-options-popup');
-            if (sessionPopup && !sessionPopup.classList.contains('hidden') && !e.target.closest('#session-options-popup') && !e.target.closest('.session-actions')) {
-                sessionPopup.classList.add('hidden');
-            }
-        });
-
-        function renderChatHistory() {
-            const container = document.getElementById('chat-history-list');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            if (chatSessions.length === 0) {
-                container.innerHTML = '<p class="text-[13px] text-gray-400 text-center mt-4">Belum ada riwayat</p>';
-                return;
-            }
-
-            const orderedSessions = [...chatSessions].sort((a, b) => b.updatedAt - a.updatedAt);
-
-            orderedSessions.forEach(session => {
-                const div = document.createElement('div');
-                div.className = `group flex items-center justify-between p-2 mb-1 rounded-xl cursor-pointer transition-colors bg-transparent hover:bg-gray-50`;
-                
-                div.onclick = (e) => {
-                    if(!e.target.closest('.session-actions')) {
-                         window.location.href = 'index.html';
-                    }
-                };
-                
-                const dotHtml = `<span class="w-2 h-2 rounded-full bg-transparent flex-shrink-0"></span>`;
-
-                div.innerHTML = `
-                    <div class="flex items-center gap-2.5 overflow-hidden flex-1 pl-1.5">
-                        ${dotHtml}
-                        <i class="ph ph-chat-teardrop-text text-gray-500 text-lg flex-shrink-0"></i>
-                        <span id="session-title-${session.id}" class="text-[13px] font-medium text-gray-700 truncate flex-1 min-w-0">${escapeHTML(session.title || 'Percakapan Baru')}</span>
-                    </div>
-                    <div class="session-actions opacity-0 group-hover:opacity-100 flex-shrink-0 relative ml-1">
-                        <button onclick="openSessionOptions(event, '${session.id}', this)" class="p-1.5 text-gray-400 hover:text-black rounded-lg transition-none" title="Opsi">
-                            <i class="ph-bold ph-dots-three-vertical text-base"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        window.addEventListener('load', () => {
-            renderChatHistory();
-
-            const popup = document.getElementById('session-options-popup');
-            if(!popup) return;
-            
-            document.getElementById('btn-edit-session').addEventListener('click', (e) => {
-                e.stopPropagation();
-                popup.classList.add('hidden');
-                if(activeSessionIdForOptions) {
-                    const titleSpan = document.getElementById(`session-title-${activeSessionIdForOptions}`);
-                    if(titleSpan) {
-                        const currentTitle = titleSpan.innerText;
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.value = currentTitle;
-                        input.className = 'text-[13px] font-semibold text-black bg-white border border-gray-300 rounded px-1.5 py-0.5 w-full outline-none focus:border-gray-500 flex-1 min-w-0';
-                        
-                        input.onblur = () => {
-                            const newTitle = input.value.trim() || 'Percakapan Baru';
-                            const session = chatSessions.find(s => s.id === activeSessionIdForOptions);
-                            if(session) {
-                                session.title = newTitle;
-                                localStorage.setItem(STORAGE_KEY, JSON.stringify(chatSessions));
-                                renderChatHistory(); 
-                            }
-                        };
-                        input.onkeydown = (ev) => {
-                            if(ev.key === 'Enter') {
-                                ev.preventDefault();
-                                input.blur();
-                            }
-                        };
-                        
-                        titleSpan.replaceWith(input);
-                        input.focus();
-                        input.select();
-                    }
-                }
-            });
-
-            document.getElementById('btn-delete-session').addEventListener('click', (e) => {
-                e.stopPropagation();
-                popup.classList.add('hidden');
-                if(activeSessionIdForOptions) {
-                    chatSessions = chatSessions.filter(s => s.id !== activeSessionIdForOptions);
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(chatSessions));
-                    activeSessionIdForOptions = null;
-                    renderChatHistory();
-                }
-            });
-        });
-
+        overlay.addEventListener('click', toggleSidebar);
     </script>
-
-    <div id="github-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 w-[90%] max-w-md shadow-2xl">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="w-6 h-6 text-[#181717]"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path></svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-900 font-montserrat">Hubungkan GitHub</h3>
-                </div>
-                <button onclick="closeGitHubModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition">
-                    <i class="ph-bold ph-x text-lg"></i>
-                </button>
-            </div>
-            <p class="text-sm text-gray-500 mb-4">Hubungkan akun GitHub Anda dengan OAuth untuk akses penuh. AI dapat membuat repo, file, update, dan hapus repositori.</p>
-            <div class="flex gap-2">
-                <button onclick="closeGitHubModal()" class="flex-1 py-3 bg-gray-100 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-200 transition">Batal</button>
-                <button onclick="startOAuth()" class="flex-1 py-3 bg-black text-white rounded-2xl text-sm font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-2">
-                    <i class="ph-fill ph-github-logo text-lg"></i> Hubungkan
-                </button>
-            </div>
-            <p class="text-[11px] text-gray-400 mt-3 text-center">Akan diarahkan ke GitHub untuk otorisasi</p>
-        </div>
-    </div>
-
-    <div id="github-loading" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-8 w-[90%] max-w-sm shadow-2xl text-center">
-            <div class="w-12 h-12 mx-auto mb-4 rounded-full border-4 border-gray-100 border-t-black animate-spin"></div>
-            <p class="text-sm font-medium text-gray-700">Menghubungkan ke GitHub...</p>
-        </div>
-    </div>
-
-    <div id="github-connected-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 w-[90%] max-w-md shadow-2xl">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2">
-                    <i class="ph-fill ph-check-circle text-2xl text-green-500"></i>
-                    <h3 class="text-lg font-bold text-gray-900 font-montserrat">GitHub Terhubung</h3>
-                </div>
-                <button onclick="closeConnectedModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition">
-                    <i class="ph-bold ph-x text-lg"></i>
-                </button>
-            </div>
-            <div id="gh-user-info" class="space-y-2 mb-4"></div>
-            <button onclick="disconnectGitHub()" class="w-full py-3 bg-black text-white rounded-2xl text-sm font-semibold hover:bg-gray-800 transition">Putuskan</button>
-        </div>
-    </div>
-
-    <script>
-        const WORKER_URL = window.CLINCOO_CONFIG?.WORKER_URL || "";
-        const GITHUB_CLIENT_ID = "Ov23lixbNqUYCvC9K8lV";
-
-        async function syncGitHubFromDB() {
-            if (!WORKER_URL) return;
-            try {
-                const res = await fetch(WORKER_URL + '/db/gh-token');
-                if (!res.ok) return;
-                const data = await res.json();
-                if (data.token) {
-                    localStorage.setItem('clincoo_gh_token', data.token);
-                    if (data.user_data) updateConnectedUI(data.user_data);
-                }
-            } catch(e) {}
-        }
-
-        function getRedirectUri() {
-            return window.location.origin + window.location.pathname;
-        }
-
-        function startOAuth() {
-            const scope = "repo user delete_repo";
-            const redirectUri = getRedirectUri();
-            const exchangeUrl = "https://solas-f0d9a3e9.base44.app/functions/githubOAuthExchange?redirect_uri=" + encodeURIComponent(redirectUri);
-            const authUrl = "https://github.com/login/oauth/authorize?client_id=" + GITHUB_CLIENT_ID + "&scope=" + encodeURIComponent(scope) + "&redirect_uri=" + encodeURIComponent(exchangeUrl);
-            window.location.href = authUrl;
-        }
-
-        function openGitHubModal() {
-            const saved = localStorage.getItem('clincoo_gh_token');
-            if (saved) {
-                showConnectedState(saved);
-            } else {
-                document.getElementById('github-modal').classList.remove('hidden');
-            }
-        }
-
-        function closeGitHubModal() {
-            document.getElementById('github-modal').classList.add('hidden');
-        }
-
-        function closeConnectedModal() {
-            document.getElementById('github-connected-modal').classList.add('hidden');
-        }
-
-        function handleOAuthCallback() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const ghToken = urlParams.get('gh_token');
-            const ghUser = urlParams.get('gh_user');
-            const errParam = urlParams.get('error');
-
-            if (errParam) {
-                window.history.replaceState({}, document.title, getRedirectUri());
-                const modal = document.getElementById('github-modal');
-                modal.classList.remove('hidden');
-                const statusP = modal.querySelector('p.text-sm');
-                if (statusP) statusP.textContent = 'Error: ' + (urlParams.get('description') || errParam);
-                return;
-            }
-
-            if (!ghToken) return;
-
-            window.history.replaceState({}, document.title, getRedirectUri());
-            document.getElementById('github-loading').classList.remove('hidden');
-
-            localStorage.setItem('clincoo_gh_token', ghToken);
-            const userData = ghUser ? JSON.parse(ghUser) : null;
-            if (userData) localStorage.setItem('clincoo_gh_user', JSON.stringify(userData));
-
-            if (WORKER_URL && userData) {
-                fetch(WORKER_URL + '/db/gh-token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: ghToken, user_data: userData })
-                }).catch(() => {});
-            }
-
-            if (userData) updateConnectedUI(userData);
-            document.getElementById('github-loading').classList.add('hidden');
-        }
-
-        function updateConnectedUI(user) {
-            document.getElementById('github-loading').classList.add('hidden');
-            const btn = document.getElementById('github-connect-btn');
-            if (btn) {
-                btn.className = 'w-full py-2 bg-white text-gray-800 border border-gray-200 rounded-xl text-[13px] font-semibold hover:bg-gray-50 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 relative z-10 mt-auto shadow-sm';
-                btn.innerHTML = 'Terhubung';
-            }
-            showConnectedState(null, user);
-        }
-
-        async function showConnectedState(token, cachedUser) {
-            let user = cachedUser;
-            if (!user) {
-                token = token || localStorage.getItem('clincoo_gh_token');
-                try {
-                    const res = await fetch('https://api.github.com/user', {
-                        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
-                    });
-                    user = await res.json();
-                } catch(e) {
-                    user = { login: 'Unknown', public_repos: 0 };
-                }
-            }
-
-            let repoCount = user.public_repos || 0;
-            const infoDiv = document.getElementById('gh-user-info');
-            infoDiv.innerHTML = 
-                '<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">' +
-                    '<img src="' + (user.avatar_url || '') + '" alt="" class="w-12 h-12 rounded-full">' +
-                    '<div>' +
-                        '<p class="font-semibold text-gray-900">' + (user.name || user.login) + '</p>' +
-                        '<p class="text-xs text-gray-500">@' + user.login + ' - ' + repoCount + ' repos</p>' +
-                    '</div>' +
-                '</div>' +
-                '<p class="text-xs text-gray-400">Token aktif dengan akses penuh ke repositori publik dan private.</p>';
-
-            document.getElementById('github-connected-modal').classList.remove('hidden');
-        }
-
-        function disconnectGitHub() {
-            localStorage.removeItem('clincoo_gh_token');
-            localStorage.removeItem('clincoo_gh_user');
-            if (WORKER_URL) {
-                fetch(WORKER_URL + '/db/gh-token', { method: 'DELETE' }).catch(() => {});
-            }
-            closeConnectedModal();
-            const btn = document.getElementById('github-connect-btn');
-            if (btn) {
-                btn.className = 'w-full py-2 bg-[#0f1115] text-white rounded-xl text-[13px] font-semibold hover:bg-[#1a1d24] transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] active:scale-[0.98] flex items-center justify-center gap-2 relative z-10 mt-auto';
-                btn.innerHTML = 'Hubungkan';
-            }
-        }
-
-        function openWhatsAppConnect() {
-            const mainView = document.getElementById('main-view');
-            const waView = document.getElementById('whatsapp-connect-view');
-            if (mainView && waView) {
-                mainView.classList.add('hidden');
-                waView.classList.remove('hidden');
-            }
-            
-            const toggleBtn = document.getElementById('sidebar-toggle');
-            const hamburger = document.getElementById('hamburger-icon');
-            const backIcon = document.getElementById('header-back-icon');
-            
-            if (toggleBtn) {
-                if (hamburger) hamburger.classList.add('hidden');
-                if (backIcon) backIcon.classList.remove('hidden');
-                toggleBtn.onclick = closeWhatsAppConnect;
-            }
-        }
-
-        function closeWhatsAppConnect() {
-            const mainView = document.getElementById('main-view');
-            const waView = document.getElementById('whatsapp-connect-view');
-            if (mainView && waView) {
-                waView.classList.add('hidden');
-                mainView.classList.remove('hidden');
-            }
-            
-            const toggleBtn = document.getElementById('sidebar-toggle');
-            const hamburger = document.getElementById('hamburger-icon');
-            const backIcon = document.getElementById('header-back-icon');
-            
-            if (toggleBtn) {
-                if (hamburger) hamburger.classList.remove('hidden');
-                if (backIcon) backIcon.classList.add('hidden');
-                toggleBtn.onclick = toggleSidebar;
-            }
-        }
-
-        function switchWaTab(tab) {
-            const qrBtn = document.getElementById('tab-qr-btn');
-            const pairingBtn = document.getElementById('tab-pairing-btn');
-            const qrContent = document.getElementById('content-qr');
-            const pairingContent = document.getElementById('content-pairing');
-
-            if (tab === 'qr') {
-                qrBtn.className = 'flex-1 pb-3 text-sm font-semibold text-black border-b-2 border-black transition-colors';
-                pairingBtn.className = 'flex-1 pb-3 text-sm font-semibold text-gray-400 border-b-2 border-transparent transition-colors';
-                qrContent.classList.remove('hidden');
-                pairingContent.classList.add('hidden');
-            } else {
-                pairingBtn.className = 'flex-1 pb-3 text-sm font-semibold text-black border-b-2 border-black transition-colors';
-                qrBtn.className = 'flex-1 pb-3 text-sm font-semibold text-gray-400 border-b-2 border-transparent transition-colors';
-                pairingContent.classList.remove('hidden');
-                qrContent.classList.add('hidden');
-            }
-        }
-
-        function openCountryModal() {
-            document.getElementById('country-modal').classList.remove('hidden');
-        }
-
-        function closeCountryModal() {
-            document.getElementById('country-modal').classList.add('hidden');
-        }
-
-        function selectCountry(code) {
-            document.getElementById('wa-country-code').value = code;
-            closeCountryModal();
-        }
-
-        function generatePairingCode() {
-            const input = document.getElementById('wa-phone-input')?.value.trim() || '';
-            const display = document.getElementById('pairing-code-display');
-            const errorEl = document.getElementById('wa-phone-error');
-
-            if (input.length < 8) {
-                if (errorEl) {
-                    errorEl.textContent = 'Nomor WhatsApp tidak valid (minimal 8 digit).';
-                    errorEl.classList.remove('hidden');
-                }
-                if (display) display.classList.add('hidden');
-                return;
-            }
-
-            if (errorEl) errorEl.classList.add('hidden');
-
-            if (display) {
-                display.classList.remove('hidden');
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                let code = '';
-                for (let i = 0; i < 8; i++) {
-                    code += chars.charAt(Math.floor(Math.random() * chars.length));
-                    if (i === 3) code += '-';
-                }
-                const codeEl = document.getElementById('code-text');
-                if (codeEl) codeEl.textContent = code;
-            }
-        }
-
-        function copyPairingCode() {
-            const codeText = document.getElementById('code-text')?.textContent;
-            if (!codeText) return;
-
-            const textarea = document.createElement('textarea');
-            textarea.value = codeText;
-            textarea.style.position = 'fixed';
-            textarea.style.opacity = '0';
-            document.body.appendChild(textarea);
-            textarea.select();
-
-            try {
-                document.execCommand('copy');
-                const copyBtn = document.getElementById('copy-pairing-btn');
-                if (copyBtn) {
-                    const originalText = copyBtn.textContent;
-                    copyBtn.textContent = 'Tersalin!';
-                    setTimeout(() => { copyBtn.textContent = originalText; }, 2000);
-                }
-            } catch (err) {
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        }
-
-        window.addEventListener('load', () => {
-            handleOAuthCallback();
-            syncGitHubFromDB();
-            const token = localStorage.getItem('clincoo_gh_token');
-            if (token) {
-                const btn = document.getElementById('github-connect-btn');
-                if (btn) {
-                    btn.className = 'w-full py-2 bg-white text-gray-800 border border-gray-200 rounded-xl text-[13px] font-semibold hover:bg-gray-50 transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 relative z-10 mt-auto shadow-sm';
-                    btn.innerHTML = 'Terhubung';
-                }
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('search-integrations');
-            const filterDropdownBtn = document.getElementById('filter-modal-toggle');
-            const filterDropdown = document.getElementById('filter-dropdown');
-            const dropdownBtns = document.querySelectorAll('.filter-dropdown-btn');
-            const inlineBtns = document.querySelectorAll('.filter-inline-btn');
-            const integrationCards = document.querySelectorAll('.integration-card');
-            const emptyState = document.getElementById('empty-state');
-            let currentFilter = 'all';
-
-            if (filterDropdownBtn && filterDropdown) {
-                filterDropdownBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    filterDropdown.classList.toggle('hidden');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!filterDropdown.contains(e.target) && !filterDropdownBtn.contains(e.target)) {
-                        filterDropdown.classList.add('hidden');
-                    }
-                });
-            }
-
-            function applyFilters() {
-                if (!searchInput) return;
-                const searchTerm = searchInput.value.toLowerCase();
-                let visibleCount = 0;
-                
-                integrationCards.forEach(card => {
-                    const title = card.getAttribute('data-title').toLowerCase();
-                    const category = card.getAttribute('data-category');
-                    const matchesSearch = title.includes(searchTerm);
-                    const matchesFilter = currentFilter === 'all' || category === currentFilter;
-
-                    if (matchesSearch && matchesFilter) {
-                        card.style.display = 'flex';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                if (emptyState) {
-                    if (visibleCount === 0) {
-                        emptyState.classList.remove('hidden');
-                        emptyState.classList.add('flex');
-                    } else {
-                        emptyState.classList.add('hidden');
-                        emptyState.classList.remove('flex');
-                    }
-                }
-            }
-
-            function setActiveFilterUI(filterValue) {
-                currentFilter = filterValue;
-                
-                dropdownBtns.forEach(btn => {
-                    if (btn.getAttribute('data-filter') === filterValue) {
-                        btn.className = 'filter-dropdown-btn active py-2 px-3 rounded-xl bg-[#0f1115] text-white text-[12px] font-semibold text-center transition-colors';
-                    } else {
-                        btn.className = 'filter-dropdown-btn py-2 px-3 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 text-[12px] font-semibold text-center border border-gray-100 transition-colors';
-                    }
-                });
-
-                inlineBtns.forEach(btn => {
-                    if (btn.getAttribute('data-filter') === filterValue) {
-                        btn.className = 'filter-inline-btn active px-4 py-2 rounded-xl bg-[#0f1115] text-white text-[13px] font-semibold whitespace-nowrap transition-colors';
-                    } else {
-                        btn.className = 'filter-inline-btn px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-[13px] font-semibold whitespace-nowrap transition-colors';
-                    }
-                });
-
-                applyFilters();
-            }
-
-            dropdownBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    setActiveFilterUI(btn.getAttribute('data-filter'));
-                    if (filterDropdown) filterDropdown.classList.add('hidden');
-                });
-            });
-
-            inlineBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    setActiveFilterUI(btn.getAttribute('data-filter'));
-                });
-            });
-
-            if (searchInput) {
-                searchInput.addEventListener('input', applyFilters);
-            }
-        });
-    </script>
-
 </body>
 </html>
