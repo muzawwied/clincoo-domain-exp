@@ -73,9 +73,13 @@
                     <p class="text-[14px] font-semibold text-gray-900">Tingkat Cache</p>
                     <p class="text-[12px] text-gray-500 mt-0.5">Seberapa agresif Cloudflare meng-cache konten</p>
                 </div>
-                <select onchange="saveSetting('cache_level', this.value)" class="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-gray-900 cursor-pointer">
-                    <option value="basic" selected>Standard</option><option value="simplified">Sederhana</option><option value="aggressive">Agresif</option>
-                </select>
+                <div class="relative shrink-0">
+                    <button id="cache-trigger" type="button" onclick="toggleCachePopover()" class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-gray-900 cursor-pointer">
+                        <span id="cache-label">Standard</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
+                    </button>
+                    <div id="cache-popover" class="hidden absolute right-0 mt-1.5 bg-white border border-gray-200 rounded-lg shadow-lg z-[70] py-1 w-32"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -83,6 +87,28 @@
 
 <script>
 const domain = (new URLSearchParams(location.search).get('domain') || '').toLowerCase();
+const CACHE_OPTIONS = [{v:'basic',l:'Standard'},{v:'simplified',l:'Sederhana'},{v:'aggressive',l:'Agresif'}];
+function renderCachePopover() {
+    const current = getSetting('cache_level', 'basic');
+    document.getElementById('cache-popover').innerHTML = CACHE_OPTIONS.map(o => `
+        <button type="button" onclick="selectCacheLevel('${o.v}')" class="w-full text-left px-3 py-2 text-[13px] font-medium cursor-pointer transition-colors hover:bg-gray-50 ${o.v === current ? 'text-accent' : 'text-gray-800'}">${o.l}</button>`).join('');
+}
+function toggleCachePopover() {
+    renderCachePopover();
+    document.getElementById('cache-popover').classList.toggle('hidden');
+}
+function selectCacheLevel(v) {
+    const opt = CACHE_OPTIONS.find(o => o.v === v);
+    document.getElementById('cache-label').textContent = opt.l;
+    saveSetting('cache_level', v);
+    document.getElementById('cache-popover').classList.add('hidden');
+}
+document.addEventListener('click', (e) => {
+    const p = document.getElementById('cache-popover');
+    const t = document.getElementById('cache-trigger');
+    if (!p || p.classList.contains('hidden')) return;
+    if (!p.contains(e.target) && !t.contains(e.target)) p.classList.add('hidden');
+});
 
 function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -113,7 +139,7 @@ if (!domain) { location.replace('../../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
     initToggles();
-    document.querySelector('select').value = getSetting('cache_level', 'basic');
+    document.getElementById('cache-label').textContent = CACHE_OPTIONS.find(o => o.v === getSetting('cache_level', 'basic')).l;
     lucide.createIcons();
 }
 </script>

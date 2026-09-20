@@ -133,7 +133,7 @@ function renderDns() {
     if (!list) { list = defaultRecords(); saveJSON('dns', list); }
     document.getElementById('dns-list').innerHTML = list.length ? list.map(r => `
         <div class="flex items-center justify-between py-3">
-            <div class="min-w-0 mr-3">
+            <div class="flex-1 min-w-0 mr-3">
                 <p class="text-[13px] font-semibold text-gray-900 truncate"><span class="mono text-[11px] font-bold text-gray-400 mr-2">${r.type}</span><span class="mono">${esc(r.name)}</span></p>
                 <p class="mono text-[12px] text-gray-500 truncate mt-0.5">${esc(r.content)}</p>
             </div>
