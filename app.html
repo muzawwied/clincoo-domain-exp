@@ -65,25 +65,14 @@
             scrollbar-width: none;
         }
 
-        #new-chat-text {
-            transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, transform 0.5s ease;
-            max-width: 150px;
-            opacity: 1;
-            transform: translateX(0);
-            display: inline-block;
-        }
-        #new-chat-text.collapsed {
-            max-width: 0px;
-            opacity: 0;
-            transform: translateX(20px);
-            margin: 0;
+        .cta-capsule {
+            background: #000000;
+            color: #ffffff;
         }
 
-        #new-chat-btn.collapsed-btn {
-            width: 48px;
-            padding-left: 0;
-            padding-right: 0;
-            gap: 0;
+        body.dark-mode .cta-capsule {
+            background: #ffffff;
+            color: #000000;
         }
     </style>
     <script src="config.js"></script>
@@ -97,47 +86,45 @@
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden selection:bg-gray-200">
     
-    <div id="session-options-popup" class="hidden fixed bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.1)] z-[100] w-36 py-1.5 text-[13px] text-gray-700 pointer-events-auto">
+    <div id="session-options-popup" class="hidden fixed bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.1)] z-[100] w-40 p-1.5 text-[13px] text-gray-700 pointer-events-auto">
         <button id="btn-edit-session" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2.5 font-medium transition-none"><i class="ph-bold ph-pencil-simple text-gray-500 text-base"></i> Edit</button>
         <button id="btn-delete-session" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2.5 font-medium transition-none text-red-600"><i class="ph-bold ph-trash text-red-500 text-base"></i> Hapus</button>
     </div>
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/20 opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
-        
-        <div class="h-1/2 flex flex-col border-b border-gray-100 bg-gray-50/30">
-            <div class="px-4 py-4 font-bold text-lg text-gray-800">Menu Utama</div>
-            <div class="px-2 space-y-1">
-                <a href="index.html" class="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-gray-100 transition-colors text-left text-gray-700 hover:text-black group">
-                    <div class="flex items-center gap-2.5">
-                        <i class="ph ph-chats text-lg text-gray-500 group-hover:text-black"></i>
-                        <span class="text-sm font-medium">Obrolan</span>
-                    </div>
-                </a>
-                <div class="w-full flex items-center justify-between p-2.5 rounded-xl bg-gray-100 transition-colors text-left text-black group">
-                    <div class="flex items-center gap-2.5">
-                        <i class="ph-fill ph-plugs-connected text-lg text-black"></i>
-                        <span class="text-sm font-bold">Integrasi</span>
-                    </div>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-[260px] bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col pointer-events-auto">
+        <div class="h-16 border-b border-gray-100 flex items-center px-4 justify-between flex-shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
+                    <img src="https://app.clincoo.buzz/assets/logo-clinqoo.png" alt="Logo" class="w-full h-full object-cover">
                 </div>
+                <span class="font-bold font-montserrat text-lg text-gray-800">Clincoo</span>
             </div>
         </div>
-
-        <div class="h-1/2 flex flex-col bg-white">
-            <div class="px-4 py-3 font-bold text-sm text-gray-800 border-b border-gray-100">
-                Riwayat Chat
-            </div>
-            <div id="chat-history-list" class="flex-1 overflow-y-auto p-2 custom-scrollbar pb-24">
-            </div>
+        
+        <div class="px-3 py-4 flex flex-col gap-1" id="sidebar-nav">
+            <a href="index.html" data-page="app" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+                <span class="font-medium text-[14px]">Beranda</span>
+            </a>
+            <a href="javascript:void(0)" data-page="chat" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="8" rx="2"/><path d="M12 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="M12 5v3"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M10 18h4"/></svg>
+                <span class="font-medium text-[14px]">Agent</span>
+            </a>
+            <a href="javascript:void(0)" data-page="workspace" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>
+                <span class="font-medium text-[14px]">Workspace</span>
+            </a>
+            <a href="javascript:void(0)" data-page="editor" id="sidebar-editor-link" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
+                <span class="font-medium text-[14px]">Editor</span>
+                <span class="clinqoo-editor-crown text-amber-500 shrink-0 cursor-pointer hover:text-amber-600 transition-colors ml-auto" style="display:none" title="Lihat daftar paket" onclick="event.preventDefault(); event.stopPropagation(); clinqooOpenPlansPopup();"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.019a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/></svg></span>
+            </a>
+            <a href="javascript:void(0)" data-page="plugin" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 transition-colors">
+                <svg class="w-5 h-5 text-gray-900 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M15 8V2"/><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M9 8V2"/></svg>
+                <span class="font-medium text-[14px] text-gray-900">Plugin</span>
+            </a>
         </div>
-
-        <a href="index.html" id="new-chat-btn" class="absolute bottom-6 right-6 h-12 px-5 bg-[#141822] rounded-full flex items-center justify-center gap-2.5 text-white shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-[#1e2536] transition-all duration-500 active:scale-95 z-50 text-decoration-none">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-            <span id="new-chat-text" class="font-semibold text-[15.5px] whitespace-nowrap overflow-hidden">Obrolan Baru</span>
-        </a>
     </aside>
     
     <header class="fixed top-0 inset-x-0 z-30 p-4 sm:p-5 pointer-events-none flex items-start">
@@ -464,27 +451,19 @@
 
     </script>
 
-    <div id="github-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 w-[90%] max-w-md shadow-2xl">
+    <div id="github-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl border border-gray-100">
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="w-6 h-6 text-[#181717]"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path></svg>
-                    </div>
+                <div class="flex items-center gap-2.5">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="w-5 h-5 text-gray-900 flex-shrink-0"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path></svg>
                     <h3 class="text-lg font-bold text-gray-900 font-montserrat">Hubungkan GitHub</h3>
                 </div>
-                <button onclick="closeGitHubModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition">
+                <button onclick="closeGitHubModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors">
                     <i class="ph-bold ph-x text-lg"></i>
                 </button>
             </div>
-            <p class="text-sm text-gray-500 mb-4">Hubungkan akun GitHub Anda dengan OAuth untuk akses penuh. AI dapat membuat repo, file, update, dan hapus repositori.</p>
-            <div class="flex gap-2">
-                <button onclick="closeGitHubModal()" class="flex-1 py-3 bg-gray-100 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-gray-200 transition">Batal</button>
-                <button onclick="startOAuth()" class="flex-1 py-3 bg-black text-white rounded-2xl text-sm font-semibold hover:bg-gray-800 transition flex items-center justify-center gap-2">
-                    <i class="ph-fill ph-github-logo text-lg"></i> Hubungkan
-                </button>
-            </div>
-            <p class="text-[11px] text-gray-400 mt-3 text-center">Akan diarahkan ke GitHub untuk otorisasi</p>
+            <p class="text-sm text-gray-500 mb-6 leading-relaxed">Dengan menghubungkan GitHub, AI akan memiliki akses untuk membantu mengelola repositorimu secara langsung. Mulai dari membuat repository baru, memperbarui dan mengorganisir file, hingga membersihkan proyek yang sudah tidak digunakan lagi.</p>
+            <button onclick="startOAuth()" class="cta-capsule w-full py-3.5 rounded-full font-semibold text-sm shadow-md active:scale-95 transition-all cursor-pointer">Hubungkan</button>
         </div>
     </div>
 
