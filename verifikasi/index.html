@@ -121,10 +121,7 @@ function finish() {
     try { list = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
     const now = new Date().toISOString();
     if (!list.some(d => d.name === domain)) {
-        list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,7), name: domain, note: '', status: 'aktif', created: now });
-        localStorage.setItem(KEY, JSON.stringify(list));
-    } else {
-        list.forEach(d => { if (d.name === domain) d.status = 'aktif'; });
+        list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,7), name: domain, note: '', status: 'pending', created: now });
         localStorage.setItem(KEY, JSON.stringify(list));
     }
     location.href = '../';

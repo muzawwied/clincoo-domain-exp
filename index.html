@@ -110,19 +110,6 @@
     <div id="actions-list" class="flex flex-col"></div>
 </div>
 
-<!-- Modal edit catatan -->
-<div id="edit-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-5" onclick="if(event.target===this)closeModal('edit-modal')">
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-xl w-full max-w-sm p-5">
-        <h3 class="text-[16px] font-bold text-gray-900 mb-1">Edit Catatan</h3>
-        <p id="edit-domain-name" class="text-[13px] text-gray-500 mb-4"></p>
-        <input id="edit-note-input" type="text" placeholder="Catatan untuk domain ini…" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors">
-        <div class="flex gap-2 mt-4">
-            <button onclick="closeModal('edit-modal')" class="flex-1 border border-gray-200 rounded-full py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">Batal</button>
-            <button onclick="saveNote()" class="flex-1 bg-accent text-white rounded-full py-2.5 text-sm font-semibold hover:bg-accent-hover transition-all active:scale-95 cursor-pointer">Simpan</button>
-        </div>
-    </div>
-</div>
-
 <!-- Modal hapus -->
 <div id="delete-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-5" onclick="if(event.target===this)closeModal('delete-modal')">
     <div class="bg-white rounded-2xl border border-gray-100 shadow-xl w-full max-w-sm p-5">
@@ -146,7 +133,7 @@
 
 <script>
 const KEY = 'clincoo_exp_domains';
-let editingId = null, deletingId = null;
+let deletingId = null;
 
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) { return []; } }
 function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
@@ -200,9 +187,7 @@ function render() {
                 </td>
                 <td class="px-5 py-3.5">
                     ${d.status === 'aktif' ? `
-                    <span class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600 whitespace-nowrap">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Aktif
-                    </span>` : `
+                    <span class="text-[12px] font-semibold text-emerald-600 whitespace-nowrap">Aktif</span>` : `
                     <span class="text-[12px] font-semibold text-red-600 whitespace-nowrap">Belum terverifikasi</span>`}
                 </td>
                 <td class="px-5 py-3.5 text-[13px] text-gray-500">${fmtDate(d.created)}</td>
@@ -235,7 +220,6 @@ function openActions(evt, id) {
     if (d.status !== 'aktif') {
         rows.push({ label: 'Verifikasi Domain', action: `location.href='verifikasi/?domain=' + encodeURIComponent('${esc(d.name)}')` });
     }
-    rows.push({ label: 'Edit Catatan', action: `openEdit('${d.id}')` });
     rows.push({ label: 'Hapus Domain', action: `openDelete('${d.id}')`, danger: true });
     document.getElementById('actions-list').innerHTML = rows.map((r, i) => `
         <button onclick="closeActions(); ${r.action}" class="w-full text-left px-4 py-2.5 text-[14px] font-medium cursor-pointer transition-colors hover:bg-gray-50 ${r.danger ? 'text-red-600' : 'text-gray-800'}">${r.label}</button>`).join('');
@@ -259,20 +243,6 @@ function closeActions() {
     document.getElementById('actions-backdrop').classList.add('hidden');
 }
 
-function openEdit(id) {
-    const d = load().find(x => x.id === id); if (!d) return;
-    editingId = id;
-    document.getElementById('edit-domain-name').textContent = d.name;
-    document.getElementById('edit-note-input').value = d.note || '';
-    openModal('edit-modal');
-    setTimeout(() => document.getElementById('edit-note-input').focus(), 60);
-}
-function saveNote() {
-    const list = load(); const d = list.find(x => x.id === editingId); if (!d) return;
-    d.note = document.getElementById('edit-note-input').value.trim();
-    d.updated = new Date().toISOString();
-    save(list); closeModal('edit-modal'); render(); showToast('Catatan disimpan');
-}
 function openDelete(id) {
     const d = load().find(x => x.id === id); if (!d) return;
     deletingId = id;
