@@ -95,6 +95,12 @@
     </div>
 </div>
 
+<!-- Popover aksi record (titik tiga tiduran) -->
+<div id="row-backdrop" class="hidden fixed inset-0 z-[55]" onclick="closeRowMenu()"></div>
+<div id="row-menu" class="hidden fixed z-[60] bg-white rounded-xl shadow-xl py-1 w-40" style="top:0; left:0;">
+    <div id="row-menu-list" class="flex flex-col"></div>
+</div>
+
 <script>
 const domain = (new URLSearchParams(location.search).get('domain') || '').toLowerCase();
 
@@ -132,13 +138,15 @@ function renderDns() {
     let list = loadJSON('dns', null);
     if (!list) { list = defaultRecords(); saveJSON('dns', list); }
     document.getElementById('dns-list').innerHTML = list.length ? list.map(r => `
-        <div class="flex items-center justify-between py-3">
-            <div class="flex-1 min-w-0 mr-3">
-                <p class="text-[13px] font-semibold text-gray-900 truncate"><span class="mono text-[11px] font-bold text-gray-400 mr-2">${r.type}</span><span class="mono">${esc(r.name)}</span></p>
-                <p class="mono text-[12px] text-gray-500 truncate mt-0.5">${esc(r.content)}</p>
-            </div>
-            <button onclick="deleteRecord('${r.id}')" class="shrink-0 text-[13px] font-semibold text-red-600 cursor-pointer hover:underline decoration-2 underline-offset-4">Hapus</button>
+        <div class="flex items-center gap-2.5 py-3.5">
+            <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 shrink-0">${r.type}</span>
+            <span class="mono text-[13px] font-semibold text-gray-900 truncate flex-1 min-w-0">${esc(r.name)}</span>
+            <span class="mono text-[12px] text-gray-500 truncate flex-1 min-w-0">${esc(r.content)}</span>
+            <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer shrink-0 rounded-full hover:bg-gray-100 transition-colors" title="Aksi lainnya">
+                <i data-lucide="more-horizontal" class="w-[18px] h-[18px] text-gray-400"></i>
+            </button>
         </div>`).join('') : '<p class="text-[13px] text-gray-500 py-3">Belum ada record DNS.</p>';
+    lucide.createIcons();
 }
 const DNS_TYPES = ['A', 'AAAA', 'CNAME', 'TXT', 'MX'];
 function renderTypePopover() {
@@ -184,6 +192,33 @@ function addRecord() {
     list.push({ id: 'r' + Date.now().toString(36), type, name, content });
     saveJSON('dns', list);
     closeAddRecord(); renderDns();
+}
+function openRowMenu(evt, id) {
+    const r = loadJSON('dns', []).find(x => x.id === id); if (!r) return;
+    document.getElementById('row-menu-list').innerHTML = `
+        <button onclick="closeRowMenu(); copyRecordValue('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-800 cursor-pointer transition-colors hover:bg-gray-50">Salin Nilai</button>
+        <button onclick="closeRowMenu(); deleteRecord('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 cursor-pointer transition-colors hover:bg-gray-50">Hapus</button>`;
+    const menu = document.getElementById('row-menu');
+    const backdrop = document.getElementById('row-backdrop');
+    menu.classList.remove('hidden'); backdrop.classList.remove('hidden');
+    const btn = evt.currentTarget.getBoundingClientRect();
+    const menuW = menu.offsetWidth;
+    let left = btn.right - menuW;
+    if (left < 8) left = 8;
+    if (left + menuW > window.innerWidth - 8) left = window.innerWidth - 8 - menuW;
+    let top = btn.bottom + 6;
+    const menuH = menu.offsetHeight;
+    if (top + menuH > window.innerHeight - 8) top = btn.top - menuH - 6;
+    menu.style.left = left + 'px';
+    menu.style.top = top + 'px';
+}
+function closeRowMenu() {
+    document.getElementById('row-menu').classList.add('hidden');
+    document.getElementById('row-backdrop').classList.add('hidden');
+}
+function copyRecordValue(id) {
+    const r = loadJSON('dns', []).find(x => x.id === id);
+    if (r) navigator.clipboard.writeText(r.content).catch(() => {});
 }
 function deleteRecord(id) {
     saveJSON('dns', loadJSON('dns', []).filter(r => r.id !== id));
