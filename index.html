@@ -117,8 +117,6 @@
     </div>
 </div>
 
-<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium rounded-full px-4 py-2 shadow-lg z-[70] transition-all"></div>
-
 <script>
 const KEY = 'clincoo_exp_domains';
 let deletingId = null;
@@ -243,17 +241,11 @@ function openDelete(id) {
 }
 function confirmDelete() {
     save(load().filter(x => x.id !== deletingId));
-    closeModal('delete-modal'); render(); showToast('Domain dihapus');
+    closeModal('delete-modal'); render();
 }
 
 function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
 function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
-
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.remove('hidden');
-    clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add('hidden'), 2200);
-}
 
 render();
 </script>

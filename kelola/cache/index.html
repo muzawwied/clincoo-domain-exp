@@ -81,23 +81,16 @@
     </div>
 </main>
 
-<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium rounded-full px-4 py-2 shadow-lg z-[70] transition-all"></div>
-
 <script>
 const domain = (new URLSearchParams(location.search).get('domain') || '').toLowerCase();
 
 function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.remove('hidden');
-    clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add('hidden'), 2200);
-}
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function storeKey(k) { return 'clincoo_exp_' + k + '_' + domain; }
 function loadJSON(key, def) { try { return JSON.parse(localStorage.getItem(storeKey(key))) ?? def; } catch(e) { return def; } }
 function saveJSON(key, val) { localStorage.setItem(storeKey(key), JSON.stringify(val)); }
 function getSetting(k, def) { return localStorage.getItem(storeKey('set_' + k)) ?? def; }
-function saveSetting(k, v) { localStorage.setItem(storeKey('set_' + k), v); showToast('Pengaturan disimpan'); }
+function saveSetting(k, v) { localStorage.setItem(storeKey('set_' + k), v);  }
 function paintToggle(btn, on) {
     btn.classList.toggle('bg-gray-200', !on);
     btn.classList.toggle('bg-accent', on);
@@ -115,7 +108,7 @@ function initToggles() {
     });
 }
 
-function purgeCache() { showToast('Cache domain dihapus'); }
+function purgeCache() {  }
 if (!domain) { location.replace('../../'); }
 else {
     document.getElementById('v-domain').textContent = domain;

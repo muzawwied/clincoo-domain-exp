@@ -99,21 +99,14 @@
     </div>
 </main>
 
-<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium rounded-full px-4 py-2 shadow-lg z-[70] transition-all"></div>
-
 <script>
 const KEY = 'clincoo_exp_domains';
 const params = new URLSearchParams(location.search);
 const domain = (params.get('domain') || '').toLowerCase();
 
 function goBack() { if (history.length > 1) history.back(); else location.href = '../'; }
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.remove('hidden');
-    clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add('hidden'), 2200);
-}
 function copyValue(txt) {
-    navigator.clipboard.writeText(txt).then(() => showToast('Disalin: ' + txt)).catch(() => {});
+    navigator.clipboard.writeText(txt).then(() => {}).catch(() => {});
 }
 function copyText(id) { copyValue(document.getElementById(id).textContent.trim()); }
 

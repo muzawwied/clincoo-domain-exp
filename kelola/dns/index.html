@@ -42,16 +42,16 @@
 <body class="min-h-screen flex flex-col text-gray-900 pt-20">
 <script>(function(){try{var t=localStorage.getItem('clinqoo_theme')||'Sistem (Default)';var d=(t==='Gelap')||(t==='Sistem (Default)'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.body.classList.add('dark-mode');var a=localStorage.getItem('clinqoo_accent')||'Hitam (Default)';var am={'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};var c=am[a]||am['Hitam (Default)'];document.documentElement.style.setProperty('--accent-color',c.m);document.documentElement.style.setProperty('--accent-hover',c.h);}catch(e){}})();</script>
 
-<main class="flex-1 w-full max-w-2xl mx-auto pb-16 flex-col justify-start relative">
+<main class="flex-1 w-full max-w-3xl mx-auto pb-16 flex-col justify-start relative">
     <button onclick="goBack()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </button>
-    <div class="flex flex-col px-7 pb-2 relative">
+    <div class="flex flex-col px-5 pb-2 relative">
         <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Kelola DNS</h2>
         <p id="v-domain" class="text-[14px] text-gray-500 font-medium mt-0.5">memuat…</p>
     </div>
 
-    <div class="px-7">
+    <div class="px-5">
         <div class="flex items-center justify-between mt-6">
             <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Record DNS</h3>
             <button onclick="openAddRecord()" class="bg-accent text-white text-[13px] font-semibold rounded-full px-3.5 py-1.5 cursor-pointer active:scale-95 transition-all">Tambah Record</button>
@@ -95,23 +95,16 @@
     </div>
 </div>
 
-<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-medium rounded-full px-4 py-2 shadow-lg z-[70] transition-all"></div>
-
 <script>
 const domain = (new URLSearchParams(location.search).get('domain') || '').toLowerCase();
 
 function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.remove('hidden');
-    clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.add('hidden'), 2200);
-}
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function storeKey(k) { return 'clincoo_exp_' + k + '_' + domain; }
 function loadJSON(key, def) { try { return JSON.parse(localStorage.getItem(storeKey(key))) ?? def; } catch(e) { return def; } }
 function saveJSON(key, val) { localStorage.setItem(storeKey(key), JSON.stringify(val)); }
 function getSetting(k, def) { return localStorage.getItem(storeKey('set_' + k)) ?? def; }
-function saveSetting(k, v) { localStorage.setItem(storeKey('set_' + k), v); showToast('Pengaturan disimpan'); }
+function saveSetting(k, v) { localStorage.setItem(storeKey('set_' + k), v);  }
 function paintToggle(btn, on) {
     btn.classList.toggle('bg-gray-200', !on);
     btn.classList.toggle('bg-accent', on);
@@ -186,15 +179,15 @@ function addRecord() {
     const type = document.getElementById('dns-type-label').textContent;
     const name = document.getElementById('dns-name').value.trim();
     const content = document.getElementById('dns-content').value.trim();
-    if (!name || !content) { showToast('Nama dan isi record wajib diisi'); return; }
+    if (!name || !content) {  return; }
     const list = loadJSON('dns', []);
     list.push({ id: 'r' + Date.now().toString(36), type, name, content });
     saveJSON('dns', list);
-    closeAddRecord(); renderDns(); showToast('Record DNS ditambahkan');
+    closeAddRecord(); renderDns();
 }
 function deleteRecord(id) {
     saveJSON('dns', loadJSON('dns', []).filter(r => r.id !== id));
-    renderDns(); showToast('Record DNS dihapus');
+    renderDns();
 }
 if (!domain) { location.replace('../../'); }
 else {
