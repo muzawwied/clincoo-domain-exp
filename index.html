@@ -205,14 +205,14 @@ function openActions(evt, id) {
     const d = load().find(x => x.id === id); if (!d) return;
     actioningId = id;
     const rows = [];
-    const dloc = `location.href='kelola/?domain=' + encodeURIComponent('${esc(d.name)}')`;
     if (d.status !== 'aktif') {
         rows.push({ label: 'Verifikasi Domain', action: `location.href='verifikasi/?domain=' + encodeURIComponent('${esc(d.name)}')` });
     }
-    rows.push({ label: 'Kelola DNS', action: dloc + ` + '&tab=dns'` });
-    rows.push({ label: 'SSL/TLS', action: dloc + ` + '&tab=ssl'` });
-    rows.push({ label: 'Cache', action: dloc + ` + '&tab=cache'` });
-    rows.push({ label: 'Pengaturan Zone', action: dloc + ` + '&tab=zone'` });
+    const dloc = s => `location.href='kelola/' + s + '/?domain=' + encodeURIComponent('${esc(d.name)}')`;
+    rows.push({ label: 'Kelola DNS', action: dloc('dns') });
+    rows.push({ label: 'SSL/TLS', action: dloc('ssl') });
+    rows.push({ label: 'Cache', action: dloc('cache') });
+    rows.push({ label: 'Pengaturan Zone', action: dloc('zone') });
     rows.push({ label: 'Hapus Domain', action: `openDelete('${d.id}')`, danger: true });
     document.getElementById('actions-list').innerHTML = rows.map((r, i) => `
         <button onclick="closeActions(); ${r.action}" class="w-full text-left px-4 py-2.5 text-[14px] font-medium cursor-pointer transition-colors hover:bg-gray-50 ${r.danger ? 'text-red-600' : 'text-gray-800'}">${r.label}</button>`).join('');
