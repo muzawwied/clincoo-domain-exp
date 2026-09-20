@@ -100,6 +100,18 @@
     </div>
 </div>
 
+<!-- Modal konfirmasi hapus record -->
+<div id="confirm-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[70] flex items-center justify-center p-5" onclick="if(event.target===this)closeConfirm()">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-[320px] px-5 pt-4 pb-3.5 text-center">
+        <h3 class="text-[14px] font-bold text-gray-900">Hapus record DNS ini?</h3>
+        <p id="confirm-detail" class="mono mt-1.5 text-[12px] text-gray-500 leading-relaxed break-all"></p>
+        <div class="flex justify-center gap-1 mt-4">
+            <button onclick="closeConfirm()" class="rounded-md px-4 py-1.5 text-[13px] font-semibold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors cursor-pointer">Batal</button>
+            <button onclick="doDeleteRecord()" class="rounded-md px-4 py-1.5 text-[13px] font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer">Hapus</button>
+        </div>
+    </div>
+</div>
+
 <!-- Popover aksi record (titik tiga tiduran) -->
 <div id="row-backdrop" class="hidden fixed inset-0 z-[55]" onclick="closeRowMenu()"></div>
 <div id="row-menu" class="hidden fixed z-[60] bg-white rounded-xl shadow-xl py-1 w-40" style="top:0; left:0;">
@@ -142,10 +154,11 @@ function defaultRecords() {
 function renderDns() {
     let list = loadJSON('dns', null);
     if (!list) { list = defaultRecords(); saveJSON('dns', list); }
-    document.getElementById('dns-list').innerHTML = list.length ? list.map(r => `
+    const sorted = list.length ? [...list].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)) : [];
+    document.getElementById('dns-list').innerHTML = sorted.length ? sorted.map(r => `
         <div class="grid grid-cols-[72px_120px_1fr_32px] gap-6 items-center py-4">
             <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 justify-self-start">${r.type}</span>
-            <span class="mono text-[13px] font-semibold text-gray-900 truncate">${esc(r.name)}</span>
+            <span class="mono text-[13px] font-semibold text-gray-900 truncate">${esc(r.name)}${r.pinned ? ' <span class="text-[10px] font-semibold text-gray-400">disematkan</span>' : ''}</span>
             <span class="mono text-[12px] text-gray-500 truncate min-w-0">${esc(r.content)}</span>
             <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer bg-transparent" title="Aksi lainnya">
                 <i data-lucide="more-horizontal" class="w-[18px] h-[18px] text-gray-400"></i>
@@ -202,7 +215,8 @@ function openRowMenu(evt, id) {
     const r = loadJSON('dns', []).find(x => x.id === id); if (!r) return;
     document.getElementById('row-menu-list').innerHTML = `
         <button onclick="closeRowMenu(); copyRecordValue('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-800 cursor-pointer transition-colors hover:bg-gray-50">Salin Nilai</button>
-        <button onclick="closeRowMenu(); deleteRecord('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 cursor-pointer transition-colors hover:bg-gray-50">Hapus</button>`;
+        <button onclick="closeRowMenu(); togglePinRecord('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-800 cursor-pointer transition-colors hover:bg-gray-50">${r.pinned ? 'Lepas Sematan' : 'Sematkan'}</button>
+        <button onclick="closeRowMenu(); askDeleteRecord('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 cursor-pointer transition-colors hover:bg-gray-50">Hapus</button>`;
     const menu = document.getElementById('row-menu');
     const backdrop = document.getElementById('row-backdrop');
     menu.classList.remove('hidden'); backdrop.classList.remove('hidden');
@@ -225,10 +239,30 @@ function copyRecordValue(id) {
     const r = loadJSON('dns', []).find(x => x.id === id);
     if (r) navigator.clipboard.writeText(r.content).catch(() => {});
 }
-function deleteRecord(id) {
-    saveJSON('dns', loadJSON('dns', []).filter(r => r.id !== id));
+let confirmDeleteId = null;
+function askDeleteRecord(id) {
+    const r = loadJSON('dns', []).find(x => x.id === id); if (!r) return;
+    confirmDeleteId = id;
+    document.getElementById('confirm-detail').textContent = r.type + ' · ' + r.name + ' · ' + r.content;
+    document.getElementById('confirm-modal').classList.remove('hidden');
+}
+function closeConfirm() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+    confirmDeleteId = null;
+}
+function doDeleteRecord() {
+    if (confirmDeleteId) saveJSON('dns', loadJSON('dns', []).filter(r => r.id !== confirmDeleteId));
+    closeConfirm();
     renderDns();
 }
+function togglePinRecord(id) {
+    const list = loadJSON('dns', []);
+    const r = list.find(x => x.id === id); if (!r) return;
+    r.pinned = !r.pinned;
+    saveJSON('dns', list);
+    renderDns();
+}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfirm(); });
 if (!domain) { location.replace('../../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
