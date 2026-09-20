@@ -61,6 +61,13 @@
             </button>
         </div>
 
+        <!-- Pencarian domain (flat, capsule) -->
+        <div id="search-wrap" class="hidden relative mb-3">
+            <i data-lucide="search" class="w-[18px] h-[18px] text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input id="search-input" type="text" placeholder="Cari domain atau catatan…" oninput="render()" class="w-full bg-gray-50 border border-gray-100 rounded-full pl-11 pr-4 py-2.5 text-[14px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-300 transition-colors">
+        </div>
+        <p id="no-match" class="hidden text-center py-10 text-[13px] text-gray-500">Tidak ada domain yang cocok dengan pencarian.</p>
+
         <!-- Empty state -->
         <div id="empty-state" class="hidden flex-col items-center justify-center text-center border border-dashed border-gray-200 rounded-2xl py-16 px-6">
             <div class="w-16 h-16 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-4">
@@ -74,7 +81,7 @@
         </div>
 
         <!-- Tabel domain -->
-        <div id="table-card" class="hidden bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden">
+        <div id="table-card" class="hidden bg-white rounded-xl border border-gray-100 shadow-[0_2px_12px_rgb(0,0,0,0.05)] overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left min-w-[560px]">
                     <thead>
@@ -94,7 +101,7 @@
 
 <!-- Popover aksi (titik tiga) — menu kecil menempel dekat tombol, tanpa ikon -->
 <div id="actions-backdrop" class="hidden fixed inset-0 z-[55]" onclick="closeActions()"></div>
-<div id="actions-menu" class="hidden fixed z-[60] bg-white rounded-2xl shadow-xl py-1.5 w-48" style="top:0; left:0;">
+<div id="actions-menu" class="hidden fixed z-[60] bg-white rounded-xl shadow-xl py-1 w-44" style="top:0; left:0;">
     <div id="actions-list" class="flex flex-col"></div>
 </div>
 
@@ -147,20 +154,35 @@ function fmtDate(iso) {
 }
 
 function render() {
-    const list = load();
+    const list = load().sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0));
+    const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+    const shown = q ? list.filter(d => d.name.toLowerCase().includes(q) || (d.note || '').toLowerCase().includes(q)) : list;
     const tbody = document.getElementById('domain-tbody');
     const empty = document.getElementById('empty-state');
     const card = document.getElementById('table-card');
+    const searchWrap = document.getElementById('search-wrap');
+    const noMatch = document.getElementById('no-match');
     const count = document.getElementById('domain-count');
+    const aktif = list.filter(d => d.status === 'aktif').length;
+    const pending = list.length - aktif;
     if (!list.length) {
         empty.classList.remove('hidden'); empty.classList.add('flex');
         card.classList.add('hidden'); card.classList.remove('block');
+        searchWrap.classList.add('hidden');
+        noMatch.classList.add('hidden');
         count.textContent = 'Belum ada domain';
-    } else {
-        empty.classList.add('hidden'); empty.classList.remove('flex');
-        card.classList.remove('hidden'); card.classList.add('block');
-        count.textContent = list.length + ' domain terhubung';
-        tbody.innerHTML = list.map(d => `
+        lucide.createIcons();
+        return;
+    }
+    empty.classList.add('hidden'); empty.classList.remove('flex');
+    searchWrap.classList.remove('hidden');
+    card.classList.remove('hidden'); card.classList.add('block');
+    noMatch.classList.toggle('hidden', shown.length > 0);
+    card.classList.toggle('hidden', shown.length === 0);
+    count.textContent = pending ? (list.length + ' domain · ' + aktif + ' aktif · ' + pending + ' belum terverifikasi') : (list.length + ' domain · semua aktif');
+    if (!shown.length) { lucide.createIcons(); return; }
+    {
+        tbody.innerHTML = shown.map(d => `
             <tr class="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors group">
                 <td class="px-5 py-3.5">
                     <div class="flex items-center gap-3">
@@ -176,7 +198,7 @@ function render() {
                     <span class="inline-flex items-center gap-1.5 text-[12px] font-semibold text-emerald-600 whitespace-nowrap">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Aktif
                     </span>` : `
-                    <span class="text-[12px] font-semibold text-amber-600 whitespace-nowrap">Belum terverifikasi</span>`}
+                    <span class="text-[12px] font-semibold text-red-600 whitespace-nowrap">Belum terverifikasi</span>`}
                 </td>
                 <td class="px-5 py-3.5 text-[13px] text-gray-500">${fmtDate(d.created)}</td>
                 <td class="px-5 py-3.5 text-right">
