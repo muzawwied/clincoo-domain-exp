@@ -42,7 +42,7 @@
 <body class="min-h-screen flex flex-col text-gray-900 pt-20">
 <script>(function(){try{var t=localStorage.getItem('clinqoo_theme')||'Sistem (Default)';var d=(t==='Gelap')||(t==='Sistem (Default)'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.body.classList.add('dark-mode');var a=localStorage.getItem('clinqoo_accent')||'Hitam (Default)';var am={'Hitam (Default)':{m:'#000000',h:'#1f2937'},'Biru':{m:'#2563eb',h:'#1d4ed8'},'Hijau':{m:'#059669',h:'#047857'},'Ungu':{m:'#9333ea',h:'#7e22ce'},'Merah':{m:'#dc2626',h:'#b91c1c'}};var c=am[a]||am['Hitam (Default)'];document.documentElement.style.setProperty('--accent-color',c.m);document.documentElement.style.setProperty('--accent-hover',c.h);}catch(e){}})();</script>
 
-<main class="flex-1 w-full max-w-md mx-auto pb-16 flex-col justify-start relative">
+<main class="flex-1 w-full max-w-3xl mx-auto pb-16 flex-col justify-start relative">
     <button onclick="goBack()" class="fixed top-3 left-3 w-10 h-10 flex items-center justify-center rounded-full bg-white backdrop-blur border border-gray-100 shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-700 hover:text-black z-50" aria-label="Kembali">
         <i data-lucide="arrow-left" class="w-5 h-5"></i>
     </button>
@@ -57,7 +57,7 @@
             <button onclick="openAddRecord()" class="bg-accent text-white text-[13px] font-semibold rounded-full px-3.5 py-1.5 cursor-pointer active:scale-95 transition-all">Tambah Record</button>
         </div>
 
-        <div class="flex items-center gap-6 mt-3 mb-0.5">
+        <div class="flex items-center gap-10 mt-3 mb-0.5">
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest shrink-0">Tipe</span>
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest shrink-0">Nama</span>
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nilai</span>
@@ -143,7 +143,7 @@ function renderDns() {
     let list = loadJSON('dns', null);
     if (!list) { list = defaultRecords(); saveJSON('dns', list); }
     document.getElementById('dns-list').innerHTML = list.length ? list.map(r => `
-        <div class="flex items-center gap-6 py-3.5">
+        <div class="flex items-center gap-10 py-3.5">
             <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 shrink-0">${r.type}</span>
             <span class="mono text-[13px] font-semibold text-gray-900 truncate shrink-0">${esc(r.name)}</span>
             <span class="mono text-[12px] text-gray-500 truncate flex-1 min-w-0">${esc(r.content)}</span>
