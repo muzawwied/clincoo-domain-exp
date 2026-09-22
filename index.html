@@ -82,6 +82,7 @@
             </div>
             <p class="text-[15px] font-semibold text-gray-900">Belum ada domain</p>
             <p class="text-[13px] text-gray-500 mt-1 max-w-xs leading-relaxed">Hubungkan domain pertama-mu, verifikasi kepemilikan lewat record TXT, lalu kelola semuanya di sini.</p>
+            <button onclick="location.href='tambah/'" class="mt-5 bg-accent text-white text-sm font-semibold rounded-full px-5 py-2.5 hover:bg-accent-hover transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md">Hubungkan Domain Pertama</button>
         </div>
 
         <!-- Tabel domain -->
@@ -173,7 +174,7 @@ function render() {
                     <div class="flex items-center gap-3">
                         <i data-lucide="globe" class="w-[18px] h-[18px] text-gray-400 shrink-0"></i>
                         <div class="min-w-0">
-                            <p class="text-[15px] font-semibold text-gray-900 truncate"><a data-domain href="https://${d.name}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="hover:underline decoration-2 underline-offset-4">${d.name}</a></p>
+                            <p class="text-[15px] font-semibold text-gray-900 truncate"><a data-domain data-name="${esc(d.name)}" href="https://${d.name}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="hover:underline decoration-2 underline-offset-4">${d.name}</a></p>
                             ${d.note ? `<p class="text-[12px] text-gray-500 truncate mt-0.5">${esc(d.note)}</p>` : ''}
                         </div>
                     </div>
@@ -197,8 +198,7 @@ function render() {
 function goDomain(row) {
     const a = row.querySelector('a[data-domain]');
     if (!a) return;
-    a.classList.add('underline');
-    a.click();
+    location.href = 'kelola/dns/?domain=' + encodeURIComponent(a.dataset.name);
 }
 
 function esc(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
