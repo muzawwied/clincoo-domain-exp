@@ -61,12 +61,12 @@
 
     <div class="px-5">
         <div class="flex items-center justify-between mt-6">
-            <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Record DNS</h3>
+            <h3 class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Record DNS <span id="dns-count" class="text-gray-300 font-semibold"></span></h3>
             <button onclick="openAddRecord()" class="bg-accent text-white text-[13px] font-semibold rounded-full px-3.5 py-1.5 cursor-pointer active:scale-95 transition-all">Tambah Record</button>
         </div>
 
         <div id="zone-banner" class="hidden"></div>
-        <div class="grid grid-cols-[72px_120px_1fr_64px] gap-6 mt-4 mb-1">
+        <div class="grid grid-cols-[72px_160px_1fr_64px] gap-6 mt-4 mb-1">
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Tipe</span>
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nama</span>
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nilai</span>
@@ -149,20 +149,49 @@ async function renderDns() {
         listEl.innerHTML = '';
         banner('<div class="flex items-start gap-3 mt-4 rounded-xl border border-amber-100 bg-amber-50 p-4"><i data-lucide="info" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-amber-700 font-medium leading-relaxed"></p></div>');
         document.querySelector('#zone-banner p').textContent = msg;
+        document.getElementById('dns-count').textContent = '';
         lucide.createIcons();
         return;
     }
     simMode = !!res.simulated;
     document.getElementById('zone-banner').classList.add('hidden');
     records = res.records || [];
-    const sorted = records.length ? [...records].sort((a, b) => a.type.localeCompare(b.type) || a.name.localeCompare(b.name)) : [];
+
+    const TYPE_STYLE = {
+        A:     'bg-slate-100 text-slate-600 border-slate-200',
+        AAAA:  'bg-slate-100 text-slate-600 border-slate-200',
+        CNAME: 'bg-violet-50 text-violet-600 border-violet-100',
+        TXT:   'bg-amber-50 text-amber-600 border-amber-100',
+        MX:    'bg-emerald-50 text-emerald-600 border-emerald-100'
+    };
+    const suffix = '.' + domain;
+    const shortName = n => n === domain ? '@' : (n.endsWith(suffix) ? n.slice(0, -suffix.length) : n);
+    const meta = r => r.proxied === true
+        ? 'Tersambung ke Cloudflare'
+        : 'TTL ' + (r.ttl === 1 ? 'otomatis' : r.ttl + ' detik');
+
+    const sorted = records.length
+        ? [...records].sort((a, b) => {
+            const ka = (a.name === domain ? '' : a.name) + '|' + a.type;
+            const kb = (b.name === domain ? '' : b.name) + '|' + b.type;
+            return ka.localeCompare(kb);
+          })
+        : [];
+
+    document.getElementById('dns-count').textContent = records.length ? records.length + ' record' : '';
     listEl.innerHTML = sorted.length ? sorted.map(r => `
-        <div class="grid grid-cols-[72px_120px_1fr_64px] gap-6 items-center py-4">
-            <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 justify-self-start">${esc(r.type)}</span>
-            <span class="mono text-[13px] font-semibold text-gray-900 truncate">${esc(r.name)}</span>
-            <span class="mono text-[12px] text-gray-500 truncate min-w-0">${esc(r.content)}</span>
+        <div class="grid grid-cols-[72px_160px_1fr_64px] gap-6 items-center py-4 group hover:bg-gray-50/60 transition-colors">
+            <span class="mono text-[10px] font-bold uppercase tracking-wide justify-self-start border rounded px-1.5 py-1 ${TYPE_STYLE[r.type] || 'bg-gray-100 text-gray-500 border-gray-200'}">${esc(r.type)}</span>
+            <div class="min-w-0">
+                <p class="mono text-[13px] font-semibold text-gray-900 truncate leading-tight">${esc(shortName(r.name))}</p>
+                <p class="text-[10px] text-gray-300 font-medium truncate leading-tight mt-0.5">${esc(domain)}</p>
+            </div>
+            <div class="min-w-0">
+                <p class="mono text-[12px] text-gray-700 truncate leading-tight">${esc(r.content)}</p>
+                <p class="text-[10px] text-gray-300 font-medium leading-tight mt-0.5">${esc(meta(r))}</p>
+            </div>
             <div class="flex items-center justify-end gap-1">
-                <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer bg-transparent" title="Aksi lainnya">
+                <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer bg-transparent opacity-0 group-hover:opacity-100 transition-opacity" title="Aksi lainnya">
                     <i data-lucide="more-horizontal" class="w-[18px] h-[18px] text-gray-400"></i>
                 </button>
             </div>
