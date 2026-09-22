@@ -13,6 +13,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { darkMode: ["class", ".dark-mode"] };</script>
 <script src="https://unpkg.com/lucide@1.41.0"></script>
+<script src="../js/store.js"></script>
 <style>
     body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
     :root { --accent-color: #000000; --accent-hover: #1f2937; --accent-text: #ffffff; }
@@ -85,11 +86,12 @@
 </main>
 
 <script>
-const KEY = 'clincoo_exp_domains';
 const input = document.getElementById('domain-input');
 const cta = document.getElementById('cta-next');
 const errEl = document.getElementById('domain-error');
 const existsEl = document.getElementById('domain-exists');
+let existingNames = [];
+store.list().then(l => { existingNames = l.map(d => d.name); }).catch(() => {});
 
 function isValidDomain(v) {
     const s = v.trim().toLowerCase();
@@ -103,7 +105,7 @@ function isValidDomain(v) {
     return parts.every(p => p && p.length <= 63 && /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(p));
 }
 function domainExists(name) {
-    try { return (JSON.parse(localStorage.getItem(KEY)) || []).some(d => d.name === name); } catch(e) { return false; }
+    return existingNames.includes(name);
 }
 function check() {
     const v = input.value.trim().toLowerCase();

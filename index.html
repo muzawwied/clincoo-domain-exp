@@ -13,6 +13,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { darkMode: ["class", ".dark-mode"] };</script>
 <script src="https://unpkg.com/lucide@1.41.0"></script>
+<script src="js/store.js"></script>
 <style>
     @keyframes menuPop { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
     body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
@@ -125,11 +126,7 @@
 </div>
 
 <script>
-const KEY = 'clincoo_exp_domains';
 let deletingId = null;
-
-function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) { return []; } }
-function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
 
 function goBack() { if (history.length > 1) history.back(); }
 
@@ -138,8 +135,9 @@ function fmtDate(iso) {
     return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-function render() {
-    const list = load().sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0));
+async function render() {
+    const raw = await store.list();
+    const list = raw.map(d => ({ id: d.id, name: d.name, note: d.note || '', status: d.status, created: d.created_at || d.created })).sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0));
     const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
     const shown = q ? list.filter(d => d.name.toLowerCase().includes(q) || (d.note || '').toLowerCase().includes(q)) : list;
     const tbody = document.getElementById('domain-tbody');
@@ -162,6 +160,7 @@ function render() {
     card.classList.remove('hidden'); card.classList.add('block');
     noMatch.classList.toggle('hidden', shown.length > 0);
     card.classList.toggle('hidden', shown.length === 0);
+    lastList = list;
     if (!shown.length) { lucide.createIcons(); return; }
     {
         tbody.innerHTML = shown.map(d => `
@@ -201,9 +200,11 @@ function esc(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
 let actioningId = null;
+let lastList = [];
+let deleteName = null;
 function openActions(evt, id) {
     evt.stopPropagation();
-    const d = load().find(x => x.id === id); if (!d) return;
+    const d = lastList.find(x => x.id === id); if (!d) return;
     actioningId = id;
     const rows = [];
     if (d.status !== 'aktif') {
@@ -237,20 +238,21 @@ function closeActions() {
 }
 
 function openDelete(id) {
-    const d = load().find(x => x.id === id); if (!d) return;
+    const d = lastList.find(x => x.id === id); if (!d) return;
     deletingId = id;
+    deleteName = d.name;
     document.getElementById('delete-domain-name').textContent = '"' + d.name + '" akan dihapus dari daftar. Tindakan ini tidak dapat dibatalkan.';
     openModal('delete-modal');
 }
 function confirmDelete() {
-    save(load().filter(x => x.id !== deletingId));
-    closeModal('delete-modal'); render();
+    const name = deleteName || '';
+    store.remove(name).then(() => { closeModal('delete-modal'); render(); });
 }
 
 function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
 function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
 
-render();
+store.ready.then(render);
 </script>
 </body>
 </html>

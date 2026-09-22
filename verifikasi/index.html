@@ -13,6 +13,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { darkMode: ["class", ".dark-mode"] };</script>
 <script src="https://unpkg.com/lucide@1.41.0"></script>
+<script src="../js/store.js"></script>
 <style>
     @keyframes spinSlow { to { transform: rotate(360deg); } }
     body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
@@ -143,24 +144,14 @@
 </main>
 
 <script>
-const KEY = 'clincoo_exp_domains';
 const params = new URLSearchParams(location.search);
 const domain = (params.get('domain') || '').toLowerCase();
-let attempts = 0;
 let verified = false;
+let checking = false;
 
 function goBack() { if (history.length > 1) history.back(); else location.href = '../'; }
 function copyValue(txt) { navigator.clipboard.writeText(txt).then(() => {}).catch(() => {}); }
 function copyText(id) { copyValue(document.getElementById(id).textContent.trim()); }
-
-/* Token verifikasi stabil per domain — tidak berubah saat reload */
-function stableToken(d) {
-    let h = 5381;
-    for (let i = 0; i < d.length; i++) h = ((h << 5) + h + d.charCodeAt(i)) >>> 0;
-    let hex = h.toString(16) + ((h * 2654435761) >>> 0).toString(16);
-    while (hex.length < 24) hex += hex;
-    return 'clincoo-verify=' + hex.slice(0, 24);
-}
 
 function switchTab(t) {
     const isTxt = t === 'txt';
@@ -183,58 +174,46 @@ function setResult(kind, html) {
 
 function checkVerification() {
     if (verified) { location.href = '../'; return; }
+    if (checking) return;
+    checking = true;
     const cta = document.getElementById('cta-check');
     const label = document.getElementById('cta-label');
     label.textContent = 'Memeriksa…';
     cta.insertAdjacentHTML('afterbegin', '<i data-lucide="loader-2" class="w-4 h-4 spin"></i>');
     lucide.createIcons();
     cta.style.pointerEvents = 'none';
-    setTimeout(() => {
+    store.verify(domain).then(res => {
         cta.style.pointerEvents = '';
         const spin = cta.querySelector('i');
         if (spin) spin.remove();
-        attempts++;
-        if (attempts < 2) {
-            setResult('fail', '<i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-red-700 font-medium leading-relaxed">Record belum terdeteksi. Propagasi DNS butuh beberapa menit — pastikan record sudah tersimpan di penyedia domain-mu, lalu periksa lagi.</p>');
-            label.textContent = 'Periksa Lagi';
-        } else {
+        if (res && res.ok) {
             verified = true;
-            saveStatus('aktif');
             setResult('ok', '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-emerald-700 font-medium leading-relaxed">Kepemilikan domain terverifikasi. Domain-mu sekarang aktif.</p>');
             label.textContent = 'Selesai';
             document.getElementById('cta-skip').classList.add('hidden');
+        } else {
+            const msg = (res && res.message) || 'Record TXT belum terdeteksi di DNS publik. Pastikan record sudah tersimpan di penyedia domain-mu, lalu periksa lagi.';
+            setResult('fail', '<i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-red-700 font-medium leading-relaxed"></p>');
+            document.querySelector('#check-result p').textContent = msg;
+            label.textContent = 'Periksa Lagi';
         }
+        checking = false;
         lucide.createIcons();
-    }, 1200);
+    });
 }
 
-function saveStatus(status) {
-    let list = [];
-    try { list = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
-    const now = new Date().toISOString();
-    const found = list.find(d => d.name === domain);
-    if (found) { found.status = status; if (status === 'aktif') found.verified_at = now; }
-    else list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,7), name: domain, note: '', status: status, created: now });
-    localStorage.setItem(KEY, JSON.stringify(list));
-}
+function skipVerification() { location.href = '../'; }
 
-function skipVerification() {
-    let list = [];
-    try { list = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e) {}
-    const now = new Date().toISOString();
-    if (!list.some(d => d.name === domain)) {
-        list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2,7), name: domain, note: '', status: 'pending', created: now });
-        localStorage.setItem(KEY, JSON.stringify(list));
-    }
-    location.href = '../';
-}
-
-/* Init */
-if (!domain) { location.replace('../'); }
+/* Init: buat/ambil domain, pasang token TXT */
+if (!domain || !store.validDomain(domain)) { location.replace('../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
     document.getElementById('txt-name').textContent = '_clincoo-challenge.' + domain;
-    document.getElementById('txt-value').textContent = stableToken(domain);
+    store.create(domain).then(row => {
+        document.getElementById('txt-value').textContent = (row && row.token) || store.stableToken(domain);
+    }).catch(() => {
+        document.getElementById('txt-value').textContent = store.stableToken(domain);
+    });
     lucide.createIcons();
 }
 </script>

@@ -26,3 +26,18 @@ Deploy statis: buka `index.html` langsung, GitHub Pages, atau Cloudflare Pages.
 
 - `app.html` dihapus: file halaman "Integrasi" dari aplikasi utama yang tidak sengaja masuk ke repo eksperimen ini (sidebar & API-nya tidak ada di repo ini).
 - Verifikasi domain kini benar-benar mengubah status menjadi aktif (sebelumnya tidak ada alur yang mengeset `aktif`, semua domain selamanya "belum terverifikasi").
+
+
+## Backend (22 Sep 2026)
+
+Fitur domain kini punya backend sungguhan, berdiri sendiri sebagai project Pages `clincoo-domain` di https://clincoo-domain.pages.dev — tidak digabung ke web produksi Clincoo.
+
+- **D1**: `clincoo-domain-db` (tabel `domains`, `domain_settings`)
+- **API**: `functions/api/`
+  - `GET/POST /api/domains` — daftar & tambah domain (validasi + token TXT unik per domain)
+  - `DELETE /api/domains/{name}` — hapus domain
+  - `POST /api/domains/{name}/verify` — verifikasi TXT nyata via DNS-over-HTTPS (cloudflare-dns.com), sukses = status `aktif`
+  - `GET/POST /api/domains/{name}/settings` — pengaturan per domain (SSL, cache, zone) tersimpan di D1
+  - `GET/POST /api/domains/{name}/dns`, `DELETE .../dns/{recordId}` — CRUD record DNS nyata via Cloudflare API (secret `CF_API_TOKEN`)
+- **Frontend**: `js/store.js` otomatis deteksi backend — kalau API hidup pakai D1, kalau di-hosting statis (GitHub Pages) fallback ke simulasi localStorage
+- Deploy: `npx wrangler pages deploy . --project-name clincoo-domain --branch main`

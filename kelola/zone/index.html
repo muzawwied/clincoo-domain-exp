@@ -13,6 +13,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { darkMode: ["class", ".dark-mode"] };</script>
 <script src="https://unpkg.com/lucide@1.41.0"></script>
+<script src="../../js/store.js"></script>
 <style>
     body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
     :root { --accent-color: #000000; --accent-hover: #1f2937; --accent-text: #ffffff; }
@@ -86,11 +87,9 @@ const domain = (new URLSearchParams(location.search).get('domain') || '').toLowe
 
 function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function storeKey(k) { return 'clincoo_exp_' + k + '_' + domain; }
-function loadJSON(key, def) { try { return JSON.parse(localStorage.getItem(storeKey(key))) ?? def; } catch(e) { return def; } }
-function saveJSON(key, val) { localStorage.setItem(storeKey(key), JSON.stringify(val)); }
-function getSetting(k, def) { return localStorage.getItem(storeKey('set_' + k)) ?? def; }
-function saveSetting(k, v) { localStorage.setItem(storeKey('set_' + k), v);  }
+let settings = {};
+function getSetting(k, def) { return (k in settings) ? settings[k] : def; }
+function saveSetting(k, v) { settings[k] = String(v); store.setSetting(domain, k, v); }
 function paintToggle(btn, on) {
     btn.classList.toggle('bg-gray-200', !on);
     btn.classList.toggle('bg-accent', on);
@@ -118,10 +117,13 @@ function toggleZone() {
 if (!domain) { location.replace('../../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
-    const st = getSetting('zone', 'active');
-    document.getElementById('zone-status').textContent = st === 'paused' ? 'Dijeda (paused)' : 'Aktif';
-    if (st === 'paused') document.getElementById('zone-toggle-btn').textContent = 'Aktifkan';
-    lucide.createIcons();
+    store.getSettings(domain, { zone: 'active' }).then(s => {
+        settings = s;
+        const st = getSetting('zone', 'active');
+        document.getElementById('zone-status').textContent = st === 'paused' ? 'Dijeda (paused)' : 'Aktif';
+        if (st === 'paused') document.getElementById('zone-toggle-btn').textContent = 'Aktifkan';
+        lucide.createIcons();
+    });
 }
 </script>
 </body>

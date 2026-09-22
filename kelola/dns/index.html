@@ -13,6 +13,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { darkMode: ["class", ".dark-mode"] };</script>
 <script src="https://unpkg.com/lucide@1.41.0"></script>
+<script src="../../js/store.js"></script>
 <style>
     body { font-family: 'Inter', sans-serif; background-color: #ffffff; transition: background-color 0.3s ease, color 0.3s ease; }
     :root { --accent-color: #000000; --accent-hover: #1f2937; --accent-text: #ffffff; }
@@ -64,6 +65,7 @@
             <button onclick="openAddRecord()" class="bg-accent text-white text-[13px] font-semibold rounded-full px-3.5 py-1.5 cursor-pointer active:scale-95 transition-all">Tambah Record</button>
         </div>
 
+        <div id="zone-banner" class="hidden"></div>
         <div class="grid grid-cols-[72px_120px_1fr_64px] gap-6 mt-4 mb-1">
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Tipe</span>
             <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nama</span>
@@ -127,48 +129,39 @@
 
 <script>
 const domain = (new URLSearchParams(location.search).get('domain') || '').toLowerCase();
+let records = [];
+let simMode = false;
 
 function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function storeKey(k) { return 'clincoo_exp_' + k + '_' + domain; }
-function loadJSON(key, def) { try { return JSON.parse(localStorage.getItem(storeKey(key))) ?? def; } catch(e) { return def; } }
-function saveJSON(key, val) { localStorage.setItem(storeKey(key), JSON.stringify(val)); }
-function getSetting(k, def) { return localStorage.getItem(storeKey('set_' + k)) ?? def; }
-function saveSetting(k, v) { localStorage.setItem(storeKey('set_' + k), v);  }
-function paintToggle(btn, on) {
-    btn.classList.toggle('bg-gray-200', !on);
-    btn.classList.toggle('bg-accent', on);
-    btn.innerHTML = '<span class="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ' + (on ? 'left-[22px]' : 'left-0.5') + '"></span>';
-}
-function toggleSetting(key, btn) {
-    const on = getSetting(key, 'off') === 'on';
-    saveSetting(key, on ? 'off' : 'on');
-    paintToggle(btn, !on);
-}
-function initToggles() {
-    document.querySelectorAll('.setting-toggle').forEach(btn => {
-        const key = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
-        paintToggle(btn, getSetting(key, 'off') === 'on');
-    });
+
+function banner(text) {
+    document.getElementById('zone-banner').innerHTML = text;
+    document.getElementById('zone-banner').classList.remove('hidden');
 }
 
-function defaultRecords() {
-    return [
-        { id: 'r1', type: 'A', name: '@', content: '192.0.2.10' },
-        { id: 'r2', type: 'CNAME', name: 'www', content: domain }
-    ];
-}
-function renderDns() {
-    let list = loadJSON('dns', null);
-    if (!list) { list = defaultRecords(); saveJSON('dns', list); }
-    const sorted = list.length ? [...list].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)) : [];
-    document.getElementById('dns-list').innerHTML = sorted.length ? sorted.map(r => `
+async function renderDns() {
+    const res = await store.listDns(domain);
+    const listEl = document.getElementById('dns-list');
+    if (!res || !res.ok) {
+        simMode = false;
+        const msg = (res && res.message) || 'Record DNS tidak dapat dimuat.';
+        listEl.innerHTML = '';
+        banner('<div class="flex items-start gap-3 mt-4 rounded-xl border border-amber-100 bg-amber-50 p-4"><i data-lucide="info" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-amber-700 font-medium leading-relaxed"></p></div>');
+        document.querySelector('#zone-banner p').textContent = msg;
+        lucide.createIcons();
+        return;
+    }
+    simMode = !!res.simulated;
+    document.getElementById('zone-banner').classList.add('hidden');
+    records = res.records || [];
+    const sorted = records.length ? [...records].sort((a, b) => a.type.localeCompare(b.type) || a.name.localeCompare(b.name)) : [];
+    listEl.innerHTML = sorted.length ? sorted.map(r => `
         <div class="grid grid-cols-[72px_120px_1fr_64px] gap-6 items-center py-4">
-            <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 justify-self-start">${r.type}</span>
+            <span class="mono text-[11px] font-bold text-gray-400 border border-gray-200 rounded px-1.5 py-1 justify-self-start">${esc(r.type)}</span>
             <span class="mono text-[13px] font-semibold text-gray-900 truncate">${esc(r.name)}</span>
             <span class="mono text-[12px] text-gray-500 truncate min-w-0">${esc(r.content)}</span>
             <div class="flex items-center justify-end gap-1">
-                ${r.pinned ? '<i data-lucide="pin" class="w-[15px] h-[15px] text-gray-400 shrink-0"></i>' : ''}
                 <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer bg-transparent" title="Aksi lainnya">
                     <i data-lucide="more-horizontal" class="w-[18px] h-[18px] text-gray-400"></i>
                 </button>
@@ -176,6 +169,7 @@ function renderDns() {
         </div>`).join('') : '<p class="text-[13px] text-gray-500 py-3">Belum ada record DNS.</p>';
     lucide.createIcons();
 }
+
 const DNS_TYPES = ['A', 'AAAA', 'CNAME', 'TXT', 'MX'];
 function renderTypePopover() {
     const current = document.getElementById('dns-type-label').textContent;
@@ -211,21 +205,27 @@ function closeAddRecord() {
     const m = document.getElementById('add-record-modal');
     m.classList.add('hidden'); m.classList.remove('flex');
 }
-function addRecord() {
+let adding = false;
+async function addRecord() {
+    if (adding) return;
     const type = document.getElementById('dns-type-label').textContent;
     const name = document.getElementById('dns-name').value.trim();
     const content = document.getElementById('dns-content').value.trim();
-    if (!name || !content) {  return; }
-    const list = loadJSON('dns', []);
-    list.push({ id: 'r' + Date.now().toString(36), type, name, content });
-    saveJSON('dns', list);
+    if (!name || !content) return;
+    adding = true;
+    const res = await store.addDns(domain, { type, name, content });
+    adding = false;
+    if (!res || !res.ok) {
+        const msg = (res && res.message) || 'Record gagal ditambahkan.';
+        alert(msg);
+        return;
+    }
     closeAddRecord(); renderDns();
 }
 function openRowMenu(evt, id) {
-    const r = loadJSON('dns', []).find(x => x.id === id); if (!r) return;
+    const r = records.find(x => x.id === id); if (!r) return;
     document.getElementById('row-menu-list').innerHTML = `
         <button onclick="closeRowMenu(); copyRecordValue('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-800 cursor-pointer transition-colors hover:bg-gray-50">Salin Nilai</button>
-        <button onclick="closeRowMenu(); togglePinRecord('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-800 cursor-pointer transition-colors hover:bg-gray-50">${r.pinned ? 'Lepas Sematan' : 'Sematkan'}</button>
         <button onclick="closeRowMenu(); askDeleteRecord('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 cursor-pointer transition-colors hover:bg-gray-50">Hapus</button>`;
     const menu = document.getElementById('row-menu');
     const backdrop = document.getElementById('row-backdrop');
@@ -246,12 +246,12 @@ function closeRowMenu() {
     document.getElementById('row-backdrop').classList.add('hidden');
 }
 function copyRecordValue(id) {
-    const r = loadJSON('dns', []).find(x => x.id === id);
+    const r = records.find(x => x.id === id);
     if (r) navigator.clipboard.writeText(r.content).catch(() => {});
 }
 let confirmDeleteId = null;
 function askDeleteRecord(id) {
-    const r = loadJSON('dns', []).find(x => x.id === id); if (!r) return;
+    const r = records.find(x => x.id === id); if (!r) return;
     confirmDeleteId = id;
     document.getElementById('confirm-detail').textContent = r.type + ' · ' + r.name + ' · ' + r.content;
     document.getElementById('confirm-modal').classList.remove('hidden');
@@ -260,23 +260,16 @@ function closeConfirm() {
     document.getElementById('confirm-modal').classList.add('hidden');
     confirmDeleteId = null;
 }
-function doDeleteRecord() {
-    if (confirmDeleteId) saveJSON('dns', loadJSON('dns', []).filter(r => r.id !== confirmDeleteId));
+async function doDeleteRecord() {
+    if (confirmDeleteId) await store.deleteDns(domain, confirmDeleteId);
     closeConfirm();
-    renderDns();
-}
-function togglePinRecord(id) {
-    const list = loadJSON('dns', []);
-    const r = list.find(x => x.id === id); if (!r) return;
-    r.pinned = !r.pinned;
-    saveJSON('dns', list);
     renderDns();
 }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfirm(); });
 if (!domain) { location.replace('../../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
-    renderDns();
+    store.ready.then(renderDns);
     lucide.createIcons();
 }
 </script>
