@@ -45,11 +45,12 @@
     body.dark-mode .tab-btn.active { color: #ffffff; border-color: #ffffff; }
 
 /* Shimmer skeleton */
-.shim{position:relative;overflow:hidden;background:#e9e9ec;border-radius:5px;display:inline-block;vertical-align:middle}
-.shim::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.65) 50%,transparent 80%);animation:shim 1.3s infinite}
-@keyframes shim{to{transform:translateX(100%)}}
-body.dark-mode .shim{background:#262626}
-body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.07) 50%,transparent 80%)}
+.shim{position:relative;overflow:hidden;background:#ececef;border-radius:999px;display:inline-block;vertical-align:middle;opacity:.78}
+.shim::after{content:"";position:absolute;inset:0;transform:translateX(-110%);background:linear-gradient(90deg,transparent 25%,rgba(255,255,255,.72) 50%,transparent 75%);animation:shim 1.55s ease-in-out infinite}
+@keyframes shim{to{transform:translateX(110%)}}
+body.dark-mode .shim{background:#202020;opacity:.9}
+body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 25%,rgba(255,255,255,.075) 50%,transparent 75%)}
+@media (prefers-reduced-motion:reduce){.shim::after{animation:none}}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMQ8WBZF6E"></script>
 <script>
@@ -99,7 +100,7 @@ body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgb
                 <div class="flex items-center justify-between gap-3 py-3 border-b border-gray-100">
                     <div class="min-w-0">
                         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Nilai</p>
-                        <p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-value"><span class="shim h-3 w-40"></span></p>
+                        <p class="mono text-[13px] font-semibold text-gray-900 mt-0.5 truncate" id="txt-value"><span class="shim h-2 w-3.50"></span></p>
                     </div>
                     <button onclick="copyText('txt-value')" class="w-8 h-8 rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer shrink-0" title="Salin"><i data-lucide="copy" class="w-4 h-4 text-gray-400"></i></button>
                 </div>

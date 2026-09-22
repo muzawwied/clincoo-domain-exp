@@ -40,11 +40,12 @@
     input:focus, select:focus, textarea:focus { outline: none!important; box-shadow: none!important; }
 
 /* Shimmer skeleton */
-.shim{position:relative;overflow:hidden;background:#e9e9ec;border-radius:5px;display:inline-block;vertical-align:middle}
-.shim::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.65) 50%,transparent 80%);animation:shim 1.3s infinite}
-@keyframes shim{to{transform:translateX(100%)}}
-body.dark-mode .shim{background:#262626}
-body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.07) 50%,transparent 80%)}
+.shim{position:relative;overflow:hidden;background:#ececef;border-radius:999px;display:inline-block;vertical-align:middle;opacity:.78}
+.shim::after{content:"";position:absolute;inset:0;transform:translateX(-110%);background:linear-gradient(90deg,transparent 25%,rgba(255,255,255,.72) 50%,transparent 75%);animation:shim 1.55s ease-in-out infinite}
+@keyframes shim{to{transform:translateX(110%)}}
+body.dark-mode .shim{background:#202020;opacity:.9}
+body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 25%,rgba(255,255,255,.075) 50%,transparent 75%)}
+@media (prefers-reduced-motion:reduce){.shim::after{animation:none}}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMQ8WBZF6E"></script>
 <script>
@@ -83,7 +84,12 @@ body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgb
                         <th class="w-[52px]"></th>
                     </tr>
                 </thead>
-                <tbody id="dns-list" class="divide-y divide-gray-100 border-t border-gray-100"></tbody>
+                <tbody id="dns-list" class="divide-y divide-gray-100 border-t border-gray-100">
+                    <tr class="dns-shimmer"><td class="py-3.5 pr-4"><span class="shim h-2.5 w-9"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-24"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-36 max-w-full"></span><span class="shim block h-1.5 w-20 mt-1.5"></span></td><td class="py-3.5 text-right"><span class="shim h-2 w-5"></span></td></tr>
+                    <tr class="dns-shimmer"><td class="py-3.5 pr-4"><span class="shim h-2.5 w-9"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-24"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-36 max-w-full"></span><span class="shim block h-1.5 w-20 mt-1.5"></span></td><td class="py-3.5 text-right"><span class="shim h-2 w-5"></span></td></tr>
+                    <tr class="dns-shimmer"><td class="py-3.5 pr-4"><span class="shim h-2.5 w-9"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-24"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-36 max-w-full"></span><span class="shim block h-1.5 w-20 mt-1.5"></span></td><td class="py-3.5 text-right"><span class="shim h-2 w-5"></span></td></tr>
+                    <tr class="dns-shimmer"><td class="py-3.5 pr-4"><span class="shim h-2.5 w-9"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-24"></span></td><td class="py-3.5 pr-4"><span class="shim h-2.5 w-36 max-w-full"></span><span class="shim block h-1.5 w-20 mt-1.5"></span></td><td class="py-3.5 text-right"><span class="shim h-2 w-5"></span></td></tr>
+                </tbody>
             </table>
         </div>
 
