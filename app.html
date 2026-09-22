@@ -94,7 +94,10 @@
         body.dark-mode .border-gray-300 { border-color: #333333 !important; }
         body.dark-mode .hover\:bg-gray-50:hover { background-color: #222222 !important; }
         body.dark-mode .hover\:bg-gray-100:hover { background-color: #333333 !important; }
-        body.dark-mode #sidebar { background-color: #0a0a0a !important; }
+        body.dark-mode #sidebar { background-color: #0a0a0a !important; opacity: 1 !important; }
+        body.dark-mode .plugin-new-badge { background-color: #171717 !important; border-color: #333333 !important; color: #a3a3a3 !important; }
+        body.dark-mode .text-\[\#181717\], body.dark-mode .text-\[\#222222\] { color: #f5f5f5 !important; }
+        body.dark-mode .bg-gray-50\/50, body.dark-mode .bg-gray-50\/60, body.dark-mode .bg-gray-50\/80 { background-color: #111111 !important; }
         body.dark-mode #sidebar-toggle { background-color: rgba(10,10,10,.9) !important; border-color: #222222 !important; color: #e0e0e0 !important; }
         body.dark-mode .integration-card { background-color: #0a0a0a !important; border-color: #222222 !important; }
         body.dark-mode .integration-card:hover { border-color: #333333 !important; box-shadow: 0 10px 30px rgba(0,0,0,.5) !important; }
@@ -154,6 +157,7 @@
             <a href="/integrasi/" data-page="plugin" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors">
                 <svg class="w-5 h-5 text-gray-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M15 8V2"/><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M9 8V2"/></svg>
                 <span class="font-medium text-[14px]">Plugin</span>
+                <span class="plugin-new-badge ml-auto rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[9px] font-bold tracking-[0.08em] text-gray-500">NEW</span>
             </a>
         </div>
     </aside>
