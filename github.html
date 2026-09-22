@@ -12,6 +12,6 @@
 </main>
 <script>
 const token=localStorage.getItem('clincoo_gh_token'), connected=document.getElementById('connected-view'), empty=document.getElementById('empty-view');
-if(!token){empty.classList.remove('hidden')}else{connected.classList.remove('hidden');let u={};try{u=JSON.parse(localStorage.getItem('clincoo_gh_user')||'{}')}catch(e){};document.getElementById('avatar').src=u.avatar_url||'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';document.getElementById('name').textContent=u.name||u.login||'GitHub';document.getElementById('meta').textContent='@'+(u.login||'github')+' · '+(u.public_repos||0)+' repositori publik'}
+if(!token){location.replace('app.html')}else{connected.classList.remove('hidden');let u={};try{u=JSON.parse(localStorage.getItem('clincoo_gh_user')||'{}')}catch(e){};document.getElementById('avatar').src=u.avatar_url||'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';document.getElementById('name').textContent=u.name||u.login||'GitHub';document.getElementById('meta').textContent='@'+(u.login||'github')+' · '+(u.public_repos||0)+' repositori publik'}
 document.getElementById('disconnect').addEventListener('click',async()=>{if(!confirm('Putuskan koneksi GitHub?'))return;localStorage.removeItem('clincoo_gh_token');localStorage.removeItem('clincoo_gh_user');try{await fetch('https://clinqoo-agent.vylonium.workers.dev/db/gh-token',{method:'DELETE'})}catch(e){};location.href='app.html'});
 </script></body></html>
