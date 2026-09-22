@@ -145,21 +145,21 @@
                 <p class="text-base text-gray-500 max-w-2xl">Hubungkan Clincoo dengan alat dan platform favorit Anda untuk memperluas kemampuan AI Agent dalam alur kerja Anda.</p>
             </div>
 
+            <div class="w-full border-t border-gray-100 mb-6"></div>
+
             <div class="mb-5 flex flex-col gap-3">
                 <div class="relative w-full">
                     <i class="ph ph-magnifying-glass absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
                     <input type="text" id="search-integrations" placeholder="Cari integrasi..." class="w-full pl-12 pr-5 py-2.5 bg-white border border-gray rounded-full text-[14px] focus:outline-none  transition-all placeholder-gray-400 font-medium shadow-sm">
                 </div>
                 <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
-                    <button data-filter="all" class="filter-inline-btn active px-4 py-1.5 rounded-full bg-white border border-gray-200 text-gray-900 text-[13px] font-semibold whitespace-nowrap shadow-sm transition-all">Semua</button>
+                    <button data-filter="all" class="filter-inline-btn active px-4 py-1.5 rounded-full bg-[#0f1115] text-white text-[13px] font-semibold whitespace-nowrap transition-all">Semua</button>
                     <button data-filter="developer" class="filter-inline-btn px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 text-[13px] font-semibold whitespace-nowrap transition-all">Developer</button>
                     <button data-filter="komunikasi" class="filter-inline-btn px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 text-[13px] font-semibold whitespace-nowrap transition-all">Komunikasi</button>
                     <button data-filter="cloud" class="filter-inline-btn px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 text-[13px] font-semibold whitespace-nowrap transition-all">Cloud</button>
                     <button data-filter="email" class="filter-inline-btn px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 text-[13px] font-semibold whitespace-nowrap transition-all">Email</button>
                 </div>
             </div>
-
-            <div class="w-full border-t border-gray-100 mb-8"></div>
 
             <div class="flex flex-col gap-3 sm:gap-4" id="integrations-grid">
 
@@ -924,7 +924,7 @@
 
                 inlineBtns.forEach(btn => {
                     if (btn.getAttribute('data-filter') === filterValue) {
-                        btn.className = 'filter-inline-btn active px-4 py-1.5 rounded-full bg-white border border-gray-200 text-gray-900 text-[13px] font-semibold whitespace-nowrap shadow-sm transition-all';
+                        btn.className = 'filter-inline-btn active px-4 py-1.5 rounded-full bg-[#0f1115] text-white text-[13px] font-semibold whitespace-nowrap transition-all';
                     } else {
                         btn.className = 'filter-inline-btn px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 hover:text-gray-800 text-[13px] font-semibold whitespace-nowrap transition-all';
                     }
