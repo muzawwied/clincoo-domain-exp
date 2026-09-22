@@ -80,9 +80,8 @@
             <div class="w-16 h-16 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-4">
                 <i data-lucide="globe" class="w-7 h-7 text-gray-400"></i>
             </div>
-            <p class="text-[15px] font-semibold text-gray-900">Belum ada domain</p>
+            <p class="text-[15px] font-semibold text-gray-900">Belum ada domain terhubung</p>
             <p class="text-[13px] text-gray-500 mt-1 max-w-xs leading-relaxed">Hubungkan domain pertama-mu, verifikasi kepemilikan lewat record TXT, lalu kelola semuanya di sini.</p>
-            <button onclick="location.href='tambah/'" class="mt-5 bg-accent text-white text-sm font-semibold rounded-full px-5 py-2.5 hover:bg-accent-hover transition-all active:scale-95 cursor-pointer shadow-sm hover:shadow-md">Hubungkan Domain Pertama</button>
         </div>
 
         <!-- Tabel domain -->
@@ -156,7 +155,7 @@ function render() {
         card.classList.add('hidden'); card.classList.remove('block');
         searchWrap.classList.add('hidden');
         noMatch.classList.add('hidden');
-        count.textContent = 'Belum ada domain';
+        count.textContent = '0 domain terhubung';
         lucide.createIcons();
         return;
     }
