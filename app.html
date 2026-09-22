@@ -214,7 +214,7 @@
                             <p class="text-[11.5px] text-gray-400 font-medium mt-0.5">Developer &middot; Resmi</p>
                         </div>
                         <div class="flex-shrink-0">
-                            <span id="github-status-badge" class="hidden items-center gap-1.5 text-[12px] font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-3 py-1.5 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Terhubung</span>
+                            <span id="github-status-badge" class="hidden items-center gap-1.5 text-[12px] font-semibold text-emerald-600 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Terhubung</span>
                             <button onclick="openGitHubModal()" id="github-connect-btn" class="px-4 py-2 bg-[#0f1115] text-white rounded-xl text-[12.5px] font-semibold hover:bg-[#1a1d24] transition-all duration-300 active:scale-[0.97] whitespace-nowrap">Hubungkan</button>
                         </div>
                     </div>
@@ -560,7 +560,7 @@
             </div>
             <h3 class="text-lg font-bold text-gray-900 font-montserrat mb-1">GitHub Terhubung</h3>
             <p class="text-[12.5px] text-gray-500 mb-5">Akun GitHub Anda berhasil dihubungkan ke Clincoo.</p>
-            <div id="gh-user-info" class="space-y-2 mb-5 text-left"></div>
+            <div id="gh-user-info" class="space-y-1 mb-5"></div>
             <button onclick="closeConnectedModal()" class="w-full py-3 cta-capsule rounded-full font-semibold text-sm active:scale-95 transition-all cursor-pointer mb-3">Selesai</button>
             <button onclick="confirmDisconnectGitHub()" class="text-[12.5px] font-semibold text-gray-400 hover:text-red-500 transition-colors">Putuskan koneksi</button>
         </div>
@@ -768,16 +768,16 @@
             let repoCount = user.public_repos || 0;
             const infoDiv = document.getElementById('gh-user-info');
             infoDiv.innerHTML = 
-                '<div class="flex items-center gap-3 p-3.5 bg-gray-50 rounded-2xl border border-gray-100">' +
+                '<div class="flex items-center gap-3">' +
                     '<img src="' + (user.avatar_url || '') + '" alt="" class="w-10 h-10 rounded-full flex-shrink-0">' +
-                    '<div class="min-w-0">' +
+                    '<div class="min-w-0 text-left">' +
                         '<p class="font-semibold text-gray-900 text-[14px] truncate">' + (user.name || user.login) + '</p>' +
                         '<p class="text-xs text-gray-500 truncate">@' + user.login + ' \u00b7 ' + repoCount + ' repositori publik</p>' +
                     '</div>' +
                 '</div>' +
-                '<div class="flex items-center gap-2 p-3 rounded-2xl bg-emerald-50/60 border border-emerald-100">' +
+                '<div class="flex items-center justify-center gap-2 mt-3">' +
                     '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>' +
-                    '<p class="text-[11.5px] text-emerald-700 leading-relaxed">Token aktif dengan akses ke repositori publik dan private.</p>' +
+                    '<p class="text-[11.5px] text-emerald-600 leading-relaxed">Token aktif dengan akses ke repositori publik dan private.</p>' +
                 '</div>';
 
             document.getElementById('github-connected-modal').classList.remove('hidden');
