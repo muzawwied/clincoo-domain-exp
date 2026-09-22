@@ -58,7 +58,7 @@
     </button>
     <div class="flex flex-col px-7 pb-6 relative">
         <h2 class="text-[24px] font-extrabold text-gray-900 tracking-tight">Domain</h2>
-        <p id="domain-count" class="text-[14px] text-gray-500 font-medium mt-0.5">Belum ada domain</p>
+        <p class="text-[14px] text-gray-500 font-medium mt-0.5">Hubungkan, verifikasi, dan kelola domain kustom-mu dari satu tempat.</p>
     </div>
 
     <!-- Konten -->
@@ -147,7 +147,6 @@ function render() {
     const card = document.getElementById('table-card');
     const searchWrap = document.getElementById('search-wrap');
     const noMatch = document.getElementById('no-match');
-    const count = document.getElementById('domain-count');
     const aktif = list.filter(d => d.status === 'aktif').length;
     const pending = list.length - aktif;
     if (!list.length) {
@@ -155,7 +154,6 @@ function render() {
         card.classList.add('hidden'); card.classList.remove('block');
         searchWrap.classList.add('hidden');
         noMatch.classList.add('hidden');
-        count.textContent = 'Hubungkan, verifikasi, dan kelola domain kustom-mu dari satu tempat.';
         lucide.createIcons();
         return;
     }
@@ -164,7 +162,6 @@ function render() {
     card.classList.remove('hidden'); card.classList.add('block');
     noMatch.classList.toggle('hidden', shown.length > 0);
     card.classList.toggle('hidden', shown.length === 0);
-    count.textContent = pending ? (list.length + ' domain · ' + aktif + ' aktif · ' + pending + ' belum terverifikasi') : (list.length + ' domain · semua aktif');
     if (!shown.length) { lucide.createIcons(); return; }
     {
         tbody.innerHTML = shown.map(d => `
