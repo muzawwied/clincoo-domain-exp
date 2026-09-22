@@ -74,6 +74,36 @@
             background: #ffffff;
             color: #000000;
         }
+
+
+        /* Theme parity with Chat, Workspace, and Settings */
+        html, body, main { background-color: #ffffff; }
+        body.dark-mode { background: #000000 !important; color: #ffffff !important; }
+        body.dark-mode main { background-color: #000000 !important; }
+        body.dark-mode .bg-white { background-color: #0a0a0a !important; }
+        body.dark-mode .bg-white\/90 { background-color: rgba(10,10,10,.9) !important; }
+        body.dark-mode .bg-gray-50 { background-color: #0a0a0a !important; }
+        body.dark-mode .sidebar-nav-link.bg-gray-50 { background-color: #222222 !important; }
+        body.dark-mode .bg-gray-100 { background-color: #222222 !important; }
+        body.dark-mode .text-gray-900, body.dark-mode .text-black { color: #ffffff !important; }
+        body.dark-mode .text-gray-800 { color: #e0e0e0 !important; }
+        body.dark-mode .text-gray-700 { color: #b0b0b0 !important; }
+        body.dark-mode .text-gray-600, body.dark-mode .text-gray-500 { color: #888888 !important; }
+        body.dark-mode .text-gray-400 { color: #666666 !important; }
+        body.dark-mode .border-gray-100, body.dark-mode .border-gray-200, body.dark-mode .border-gray { border-color: #222222 !important; }
+        body.dark-mode .border-gray-300 { border-color: #333333 !important; }
+        body.dark-mode .hover\:bg-gray-50:hover { background-color: #222222 !important; }
+        body.dark-mode .hover\:bg-gray-100:hover { background-color: #333333 !important; }
+        body.dark-mode #sidebar { background-color: #0a0a0a !important; }
+        body.dark-mode #sidebar-toggle { background-color: rgba(10,10,10,.9) !important; border-color: #222222 !important; color: #e0e0e0 !important; }
+        body.dark-mode .integration-card { background-color: #0a0a0a !important; border-color: #222222 !important; }
+        body.dark-mode .integration-card:hover { border-color: #333333 !important; box-shadow: 0 10px 30px rgba(0,0,0,.5) !important; }
+        body.dark-mode input { background-color: #0a0a0a !important; color: #e0e0e0 !important; border-color: #222222 !important; }
+        body.dark-mode input::placeholder { color: #666666 !important; }
+        body.dark-mode .filter-inline-btn.active, body.dark-mode .filter-dropdown-btn.active,
+        body.dark-mode .bg-\[\#0f1115\] { background-color: #ffffff !important; color: #000000 !important; }
+        body.dark-mode .bg-black { background-color: #ffffff !important; color: #000000 !important; }
+        body.dark-mode ::-webkit-scrollbar-thumb { background: #222222; }
     </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMQ8WBZF6E"></script>
@@ -85,6 +115,7 @@
 </script>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden selection:bg-gray-200">
+    <script>(function(){var t=localStorage.getItem("clinqoo_theme")||"Sistem (Default)";var d=(t==="Gelap")||((!t||t==="Sistem (Default)")&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d)document.body.classList.add("dark-mode");})();</script>
     
     <div id="session-options-popup" class="hidden fixed bg-white rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.1)] z-[100] w-40 p-1.5 text-[13px] text-gray-700 pointer-events-auto">
         <button id="btn-edit-session" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2.5 font-medium transition-none"><i class="ph-bold ph-pencil-simple text-gray-500 text-base"></i> Edit</button>
@@ -120,9 +151,9 @@
                 <span class="font-medium text-[14px]">Editor</span>
                 <span class="clinqoo-editor-crown text-amber-500 shrink-0 cursor-pointer hover:text-amber-600 transition-colors ml-auto" style="display:none" title="Lihat daftar paket" onclick="event.preventDefault(); event.stopPropagation(); clinqooOpenPlansPopup();"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.019a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/></svg></span>
             </a>
-            <a href="/integrasi/" data-page="plugin" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50 text-gray-900 transition-colors">
-                <svg class="w-5 h-5 text-gray-900 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M15 8V2"/><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M9 8V2"/></svg>
-                <span class="font-medium text-[14px] text-gray-900">Plugin</span>
+            <a href="/integrasi/" data-page="plugin" class="sidebar-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors">
+                <svg class="w-5 h-5 text-gray-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M15 8V2"/><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M9 8V2"/></svg>
+                <span class="font-medium text-[14px]">Plugin</span>
             </a>
         </div>
     </aside>
@@ -1001,5 +1032,19 @@
         });
     </script>
 
+
+<script>
+(function(){
+  var seg=location.pathname.split('/').filter(Boolean), path=(seg.pop()||'').replace(/\.html$/,'');
+  document.querySelectorAll('.sidebar-nav-link').forEach(function(link){
+    var href=link.getAttribute('href')||'', hrefSeg=(href.split('?')[0].split('/').filter(Boolean).pop()||'').replace(/\.html$/,'');
+    var current=hrefSeg===path || (link.dataset.page==='plugin' && path==='app' && location.hostname==='muzawwied.github.io');
+    if(!current) return;
+    link.classList.add('bg-gray-50','text-gray-900');
+    link.classList.remove('hover:bg-gray-50','text-gray-700');
+    var svg=link.querySelector('svg'); if(svg){svg.classList.remove('text-gray-500');svg.classList.add('text-gray-900');}
+  });
+})();
+</script>
 </body>
 </html>
