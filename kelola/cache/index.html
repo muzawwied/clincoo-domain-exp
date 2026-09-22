@@ -65,8 +65,9 @@
                 <div>
                     <p class="text-[14px] font-semibold text-gray-900">Purge Cache</p>
                     <p class="text-[12px] text-gray-500 mt-0.5">Hapus semua file domain yang tersimpan di edge Cloudflare</p>
+                    <p id="purged-at" class="text-[11px] text-gray-400 mt-1 hidden"></p>
                 </div>
-                <button onclick="purgeCache()" class="shrink-0 text-[13px] font-semibold text-accent cursor-pointer hover:underline decoration-2 underline-offset-4">Hapus Cache</button>
+                <button id="purge-btn" onclick="purgeCache()" class="shrink-0 text-[13px] font-semibold text-accent cursor-pointer hover:underline decoration-2 underline-offset-4">Hapus Cache</button>
             </div>
             <div class="flex items-center justify-between py-4">
                 <div>
@@ -141,12 +142,33 @@ function initToggles() {
     });
 }
 
-function purgeCache() {  }
+function fmtDateTime(iso) {
+    const d = new Date(iso);
+    return d.toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function showPurgedAt() {
+    const t = getSetting('purged_at', '');
+    const el = document.getElementById('purged-at');
+    if (t) { el.textContent = 'Terakhir dibersihkan: ' + fmtDateTime(t); el.classList.remove('hidden'); }
+}
+function purgeCache() {
+    const btn = document.getElementById('purge-btn');
+    const prev = btn.textContent;
+    btn.textContent = 'Membersihkan…';
+    btn.style.pointerEvents = 'none';
+    setTimeout(() => {
+        saveSetting('purged_at', new Date().toISOString());
+        btn.textContent = 'Cache dibersihkan';
+        showPurgedAt();
+        setTimeout(() => { btn.textContent = prev; btn.style.pointerEvents = ''; }, 2000);
+    }, 1000);
+}
 if (!domain) { location.replace('../../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
     initToggles();
     document.getElementById('cache-label').textContent = CACHE_OPTIONS.find(o => o.v === getSetting('cache_level', 'basic')).l;
+    showPurgedAt();
     lucide.createIcons();
 }
 </script>
