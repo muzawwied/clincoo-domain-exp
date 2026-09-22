@@ -40,6 +40,13 @@
     textarea:focus { outline: none!important; box-shadow: none!important; }
     * { -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; }
     body.dark-mode .hover\:bg-gray-100:hover { background-color: #222222 !important; }
+
+/* Shimmer skeleton */
+.shim{position:relative;overflow:hidden;background:#e9e9ec;border-radius:5px;display:inline-block;vertical-align:middle}
+.shim::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.65) 50%,transparent 80%);animation:shim 1.3s infinite}
+@keyframes shim{to{transform:translateX(100%)}}
+body.dark-mode .shim{background:#262626}
+body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.07) 50%,transparent 80%)}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMQ8WBZF6E"></script>
 <script>
@@ -86,6 +93,13 @@
         </div>
 
         <!-- Tabel domain -->
+        <div id="table-skeleton" class="bg-white rounded-xl border border-gray-100 shadow-[0_2px_12px_rgb(0,0,0,0.05)] overflow-hidden">
+            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-100"><span class="shim w-[18px] h-[18px] rounded-full"></span><span class="shim h-3.5 w-48"></span><span class="shim h-3 w-16"></span><span class="shim h-3 w-10 ml-auto"></span></div>
+            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-100"><span class="shim w-[18px] h-[18px] rounded-full"></span><span class="shim h-3.5 w-48"></span><span class="shim h-3 w-16"></span><span class="shim h-3 w-10 ml-auto"></span></div>
+            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-100"><span class="shim w-[18px] h-[18px] rounded-full"></span><span class="shim h-3.5 w-48"></span><span class="shim h-3 w-16"></span><span class="shim h-3 w-10 ml-auto"></span></div>
+            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-100"><span class="shim w-[18px] h-[18px] rounded-full"></span><span class="shim h-3.5 w-48"></span><span class="shim h-3 w-16"></span><span class="shim h-3 w-10 ml-auto"></span></div>
+            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-100 border-b-0"><span class="shim w-[18px] h-[18px] rounded-full"></span><span class="shim h-3.5 w-48"></span><span class="shim h-3 w-16"></span><span class="shim h-3 w-10 ml-auto"></span></div>
+        </div>
         <div id="table-card" class="hidden bg-white rounded-xl border border-gray-100 shadow-[0_2px_12px_rgb(0,0,0,0.05)] overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left min-w-[560px]">
@@ -136,6 +150,8 @@ function fmtDate(iso) {
 }
 
 async function render() {
+    const skel = document.getElementById('table-skeleton');
+    if (skel) skel.classList.add('hidden');
     const raw = await store.list();
     const list = raw.map(d => ({ id: d.id, name: d.name, note: d.note || '', status: d.status, created: d.created_at || d.created })).sort((a, b) => new Date(b.created || 0) - new Date(a.created || 0));
     const q = (document.getElementById('search-input').value || '').toLowerCase().trim();

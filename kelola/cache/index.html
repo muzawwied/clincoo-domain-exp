@@ -38,6 +38,13 @@
     body.dark-mode button[onclick="goBack()"] svg { color: #ffffff !important; stroke: #ffffff !important; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     input:focus, select:focus, textarea:focus { outline: none!important; box-shadow: none!important; }
+
+/* Shimmer skeleton */
+.shim{position:relative;overflow:hidden;background:#e9e9ec;border-radius:5px;display:inline-block;vertical-align:middle}
+.shim::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.65) 50%,transparent 80%);animation:shim 1.3s infinite}
+@keyframes shim{to{transform:translateX(100%)}}
+body.dark-mode .shim{background:#262626}
+body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.07) 50%,transparent 80%)}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMQ8WBZF6E"></script>
 <script>
@@ -84,7 +91,7 @@
                 </div>
                 <div class="relative shrink-0">
                     <button id="cache-trigger" type="button" onclick="toggleCachePopover()" class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-gray-900 cursor-pointer">
-                        <span id="cache-label">Standard</span>
+                        <span id="cache-label"><span class="shim h-3 w-16"></span></span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-400"></i>
                     </button>
                     <div id="cache-popover" class="hidden absolute right-0 mt-1.5 bg-white border border-gray-200 rounded-lg shadow-lg z-[70] py-1 w-32"></div>

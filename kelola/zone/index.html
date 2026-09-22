@@ -38,6 +38,13 @@
     body.dark-mode button[onclick="goBack()"] svg { color: #ffffff !important; stroke: #ffffff !important; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     input:focus, select:focus, textarea:focus { outline: none!important; box-shadow: none!important; }
+
+/* Shimmer skeleton */
+.shim{position:relative;overflow:hidden;background:#e9e9ec;border-radius:5px;display:inline-block;vertical-align:middle}
+.shim::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.65) 50%,transparent 80%);animation:shim 1.3s infinite}
+@keyframes shim{to{transform:translateX(100%)}}
+body.dark-mode .shim{background:#262626}
+body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.07) 50%,transparent 80%)}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMQ8WBZF6E"></script>
 <script>
@@ -65,9 +72,9 @@
             <div class="flex items-center justify-between py-4">
                 <div>
                     <p class="text-[14px] font-semibold text-gray-900">Status Zone</p>
-                    <p id="zone-status" class="text-[12px] text-gray-500 mt-0.5">Aktif</p>
+                    <p id="zone-status" class="text-[12px] text-gray-500 mt-0.5"><span class="shim h-2.5 w-14"></span></p>
                 </div>
-                <button id="zone-toggle-btn" onclick="toggleZone()" class="text-[13px] font-semibold text-red-600 cursor-pointer hover:underline decoration-2 underline-offset-4">Pause</button>
+                <button id="zone-toggle-btn" onclick="toggleZone()" class="text-[13px] font-semibold text-red-600 cursor-pointer hover:underline decoration-2 underline-offset-4"><span class="shim h-3 w-12"></span></button>
             </div>
             <div class="py-4">
                 <p class="text-[14px] font-semibold text-gray-900">Nameservers</p>

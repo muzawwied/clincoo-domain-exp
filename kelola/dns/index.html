@@ -38,6 +38,13 @@
     body.dark-mode button[onclick="goBack()"] svg { color: #ffffff !important; stroke: #ffffff !important; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     input:focus, select:focus, textarea:focus { outline: none!important; box-shadow: none!important; }
+
+/* Shimmer skeleton */
+.shim{position:relative;overflow:hidden;background:#e9e9ec;border-radius:5px;display:inline-block;vertical-align:middle}
+.shim::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.65) 50%,transparent 80%);animation:shim 1.3s infinite}
+@keyframes shim{to{transform:translateX(100%)}}
+body.dark-mode .shim{background:#262626}
+body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.07) 50%,transparent 80%)}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMQ8WBZF6E"></script>
 <script>
@@ -79,6 +86,14 @@
                 <tbody id="dns-list" class="divide-y divide-gray-100 border-t border-gray-100"></tbody>
             </table>
         </div>
+
+            <tr><td class="py-3.5 pr-4 align-top"><span class="shim h-5 w-11"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-24"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-1/2"></span></td><td class="py-3.5 text-right align-top"><span class="shim h-3 w-6"></span></td></tr>
+            <tr><td class="py-3.5 pr-4 align-top"><span class="shim h-5 w-11"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-24"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-1/2"></span></td><td class="py-3.5 text-right align-top"><span class="shim h-3 w-6"></span></td></tr>
+            <tr><td class="py-3.5 pr-4 align-top"><span class="shim h-5 w-11"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-24"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-1/2"></span></td><td class="py-3.5 text-right align-top"><span class="shim h-3 w-6"></span></td></tr>
+            <tr><td class="py-3.5 pr-4 align-top"><span class="shim h-5 w-11"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-24"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-1/2"></span></td><td class="py-3.5 text-right align-top"><span class="shim h-3 w-6"></span></td></tr>
+            <tr><td class="py-3.5 pr-4 align-top"><span class="shim h-5 w-11"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-24"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-1/2"></span></td><td class="py-3.5 text-right align-top"><span class="shim h-3 w-6"></span></td></tr>
+            <tr><td class="py-3.5 pr-4 align-top"><span class="shim h-5 w-11"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-24"></span></td><td class="py-3.5 pr-4 align-top"><span class="shim h-3 w-1/2"></span></td><td class="py-3.5 text-right align-top"><span class="shim h-3 w-6"></span></td></tr>
+
     </div>
 </main>
 
