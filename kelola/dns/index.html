@@ -153,6 +153,17 @@ const domain = (new URLSearchParams(location.search).get('domain') || '').toLowe
 let records = [];
 let simMode = false;
 
+function pinKey() { return 'clincoo_pinned_dns_' + domain; }
+function getPinned() { try { return JSON.parse(localStorage.getItem(pinKey())) || []; } catch (e) { return []; } }
+function isPinned(id) { return getPinned().includes(id); }
+function togglePin(id) {
+    const p = getPinned();
+    const i = p.indexOf(id);
+    if (i === -1) p.push(id); else p.splice(i, 1);
+    localStorage.setItem(pinKey(), JSON.stringify(p));
+    renderDns();
+}
+
 function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -186,6 +197,8 @@ async function renderDns() {
 
     const sorted = records.length
         ? [...records].sort((a, b) => {
+            const pinDiff = isPinned(b.id) - isPinned(a.id);
+            if (pinDiff) return pinDiff;
             const ka = (a.name === domain ? '' : a.name) + '|' + a.type;
             const kb = (b.name === domain ? '' : b.name) + '|' + b.type;
             return ka.localeCompare(kb);
@@ -199,7 +212,7 @@ async function renderDns() {
                 <span class="mono text-[10px] font-bold uppercase tracking-wide border border-gray-200 bg-gray-100 text-gray-600 rounded px-1.5 py-1">${esc(r.type)}</span>
             </td>
             <td class="py-3.5 pr-4 align-top">
-                <p class="mono text-[13px] font-semibold text-gray-900 truncate max-w-[170px]">${esc(shortName(r.name))}</p>
+                <p class="mono text-[13px] font-semibold text-gray-900 truncate max-w-[170px] flex items-center gap-1">${isPinned(r.id) ? '<i data-lucide="pin" class="w-3 h-3 text-accent shrink-0 fill-current"></i>' : ''}<span class="truncate">${esc(shortName(r.name))}</span></p>
             </td>
             <td class="py-3.5 pr-4 align-top">
                 <p class="mono text-[12px] text-gray-700 truncate max-w-[300px]">${esc(r.content)}</p>
@@ -269,6 +282,7 @@ async function addRecord() {
 function openRowMenu(evt, id) {
     const r = records.find(x => x.id === id); if (!r) return;
     document.getElementById('row-menu-list').innerHTML = `
+        <button onclick="closeRowMenu(); togglePin('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-800 cursor-pointer transition-colors hover:bg-gray-50">${isPinned(r.id) ? 'Lepas Sematan' : 'Sematkan'}</button>
         <button onclick="closeRowMenu(); copyRecordValue('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-800 cursor-pointer transition-colors hover:bg-gray-50">Salin Nilai</button>
         <button onclick="closeRowMenu(); askDeleteRecord('${r.id}')" class="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 cursor-pointer transition-colors hover:bg-gray-50">Hapus</button>`;
     const menu = document.getElementById('row-menu');
