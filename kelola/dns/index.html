@@ -66,13 +66,19 @@
         </div>
 
         <div id="zone-banner" class="hidden"></div>
-        <div class="grid grid-cols-[72px_160px_1fr_64px] gap-6 mt-4 mb-1">
-            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Tipe</span>
-            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nama</span>
-            <span class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Nilai</span>
-            <span></span>
+        <div class="overflow-x-auto mt-3 -mx-5 px-5">
+            <table class="w-full min-w-[520px] border-collapse">
+                <thead>
+                    <tr>
+                        <th class="text-[10px] font-bold text-gray-300 uppercase tracking-widest text-left py-2 pr-4 w-[76px]">Tipe</th>
+                        <th class="text-[10px] font-bold text-gray-300 uppercase tracking-widest text-left py-2 pr-4 w-[170px]">Nama</th>
+                        <th class="text-[10px] font-bold text-gray-300 uppercase tracking-widest text-left py-2 pr-4">Nilai</th>
+                        <th class="w-[52px]"></th>
+                    </tr>
+                </thead>
+                <tbody id="dns-list" class="divide-y divide-gray-100 border-t border-gray-100"></tbody>
+            </table>
         </div>
-        <div id="dns-list" class="divide-y divide-gray-100 border-t border-gray-100"></div>
     </div>
 </main>
 
@@ -157,13 +163,6 @@ async function renderDns() {
     document.getElementById('zone-banner').classList.add('hidden');
     records = res.records || [];
 
-    const TYPE_STYLE = {
-        A:     'bg-slate-100 text-slate-600 border-slate-200',
-        AAAA:  'bg-slate-100 text-slate-600 border-slate-200',
-        CNAME: 'bg-violet-50 text-violet-600 border-violet-100',
-        TXT:   'bg-amber-50 text-amber-600 border-amber-100',
-        MX:    'bg-emerald-50 text-emerald-600 border-emerald-100'
-    };
     const suffix = '.' + domain;
     const shortName = n => n === domain ? '@' : (n.endsWith(suffix) ? n.slice(0, -suffix.length) : n);
     const meta = r => r.proxied === true
@@ -180,22 +179,23 @@ async function renderDns() {
 
     document.getElementById('dns-count').textContent = records.length ? records.length + ' record' : '';
     listEl.innerHTML = sorted.length ? sorted.map(r => `
-        <div class="grid grid-cols-[72px_160px_1fr_64px] gap-6 items-center py-4 group hover:bg-gray-50/60 transition-colors">
-            <span class="mono text-[10px] font-bold uppercase tracking-wide justify-self-start border rounded px-1.5 py-1 ${TYPE_STYLE[r.type] || 'bg-gray-100 text-gray-500 border-gray-200'}">${esc(r.type)}</span>
-            <div class="min-w-0">
-                <p class="mono text-[13px] font-semibold text-gray-900 truncate leading-tight">${esc(shortName(r.name))}</p>
-                <p class="text-[10px] text-gray-300 font-medium truncate leading-tight mt-0.5">${esc(domain)}</p>
-            </div>
-            <div class="min-w-0">
-                <p class="mono text-[12px] text-gray-700 truncate leading-tight">${esc(r.content)}</p>
-                <p class="text-[10px] text-gray-300 font-medium leading-tight mt-0.5">${esc(meta(r))}</p>
-            </div>
-            <div class="flex items-center justify-end gap-1">
-                <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 flex items-center justify-center cursor-pointer bg-transparent opacity-0 group-hover:opacity-100 transition-opacity" title="Aksi lainnya">
+        <tr class="group hover:bg-gray-50/60 transition-colors">
+            <td class="py-3.5 pr-4 align-top">
+                <span class="mono text-[10px] font-bold uppercase tracking-wide border border-gray-200 bg-gray-100 text-gray-600 rounded px-1.5 py-1">${esc(r.type)}</span>
+            </td>
+            <td class="py-3.5 pr-4 align-top">
+                <p class="mono text-[13px] font-semibold text-gray-900 truncate max-w-[170px]">${esc(shortName(r.name))}</p>
+            </td>
+            <td class="py-3.5 pr-4 align-top">
+                <p class="mono text-[12px] text-gray-700 truncate max-w-[300px]">${esc(r.content)}</p>
+                <p class="text-[10px] text-gray-300 font-medium mt-0.5">${esc(meta(r))}</p>
+            </td>
+            <td class="py-3.5 text-right align-top">
+                <button onclick="openRowMenu(event, '${r.id}')" class="w-8 h-8 inline-flex items-center justify-center cursor-pointer bg-transparent opacity-0 group-hover:opacity-100 transition-opacity" title="Aksi lainnya">
                     <i data-lucide="more-horizontal" class="w-[18px] h-[18px] text-gray-400"></i>
                 </button>
-            </div>
-        </div>`).join('') : '<p class="text-[13px] text-gray-500 py-3">Belum ada record DNS.</p>';
+            </td>
+        </tr>`).join('') : '<tr><td colspan="4" class="text-[13px] text-gray-500 py-3">Belum ada record DNS.</td></tr>';
     lucide.createIcons();
 }
 
