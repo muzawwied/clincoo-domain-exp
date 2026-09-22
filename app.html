@@ -145,23 +145,45 @@
                 <p class="text-base text-gray-500 max-w-2xl">Hubungkan Clincoo dengan alat dan platform favorit Anda untuk memperluas kemampuan AI Agent dalam alur kerja Anda.</p>
             </div>
 
+            <div class="mb-5 flex flex-col gap-3">
+                <div class="relative w-full">
+                    <i class="ph ph-magnifying-glass absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+                    <input type="text" id="search-integrations" placeholder="Cari integrasi..." class="w-full pl-12 pr-5 py-2.5 bg-white border border-gray rounded-full text-[14px] focus:outline-none  transition-all placeholder-gray-400 font-medium shadow-sm">
+                </div>
+                <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
+                    <button data-filter="all" class="filter-inline-btn active px-4 py-2 rounded-xl bg-[#0f1115] text-white text-[13px] font-semibold whitespace-nowrap transition-colors">Semua</button>
+                    <button data-filter="developer" class="filter-inline-btn px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-[13px] font-semibold whitespace-nowrap transition-colors">Developer</button>
+                    <button data-filter="komunikasi" class="filter-inline-btn px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-[13px] font-semibold whitespace-nowrap transition-colors">Komunikasi</button>
+                    <button data-filter="cloud" class="filter-inline-btn px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-[13px] font-semibold whitespace-nowrap transition-colors">Cloud</button>
+                    <button data-filter="email" class="filter-inline-btn px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-[13px] font-semibold whitespace-nowrap transition-colors">Email</button>
+                </div>
+            </div>
+
+            <div class="w-full border-t border-gray-100 mb-8"></div>
+
             <div class="flex flex-col gap-3 sm:gap-4" id="integrations-grid">
 
-                <div class="integration-card group flex items-center gap-4 bg-white border border-gray-100 rounded-2xl px-4 sm:px-5 py-4 hover:border-gray-200 hover:shadow-[0_10px_35px_rgba(0,0,0,0.05)] transition-all duration-300 w-full" data-title="github" data-category="developer">
-                    <div class="w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="w-6 h-6 text-[#181717]"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path></svg>
+                <div class="integration-card group flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-3.5 sm:px-4 py-2.5 hover:border-gray-200 hover:shadow-[0_8px_25px_rgba(0,0,0,0.04)] transition-all duration-300 w-full" data-title="github" data-category="developer">
+                    <div class="w-9 h-9 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="w-[18px] h-[18px] text-[#181717]"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"></path></svg>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="text-[15px] font-bold text-gray-900 font-montserrat tracking-tight">GitHub</h3>
-                            <span class="text-[9.5px] uppercase tracking-wider text-gray-400 font-bold border border-gray-100 bg-gray-50 rounded-full px-2 py-0.5">Developer</span>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-[14px] font-bold text-gray-900 font-montserrat tracking-tight">GitHub</h3>
+                            <span class="text-[9px] uppercase tracking-wider text-gray-400 font-bold border border-gray-100 bg-gray-50 rounded-full px-2 py-0.5">Developer</span>
                         </div>
-                        <p class="text-[12.5px] text-gray-500 leading-relaxed mt-1">Analisis kode, review Pull Request, dan kelola repositori langsung dari chat.</p>
+                        <p class="text-[12px] text-gray-500 leading-snug mt-0.5 truncate">Analisis kode, review Pull Request, dan kelola repositori langsung dari chat.</p>
                     </div>
-                    <div class="flex items-center gap-2.5 flex-shrink-0">
+                    <div class="flex items-center gap-2 flex-shrink-0">
                         <span id="github-status-badge" class="hidden items-center gap-1.5 text-[11px] font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-1 whitespace-nowrap"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Terhubung</span>
-                        <button onclick="openGitHubModal()" id="github-connect-btn" class="px-5 py-2.5 bg-[#0f1115] text-white rounded-xl text-[13px] font-semibold hover:bg-[#1a1d24] transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.08)] active:scale-[0.97] whitespace-nowrap">Hubungkan</button>
+                        <button onclick="openGitHubModal()" id="github-connect-btn" class="px-4 py-2 bg-[#0f1115] text-white rounded-lg text-[12.5px] font-semibold hover:bg-[#1a1d24] transition-all duration-300 active:scale-[0.97] whitespace-nowrap">Hubungkan</button>
                     </div>
+                </div>
+
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-16 px-4 text-center w-full">
+                    <i class="ph ph-magnifying-glass text-5xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 font-montserrat mb-2">Tidak ada integrasi</h3>
+                    <p class="text-[14.5px] text-gray-500 max-w-sm mx-auto">Kami tidak dapat menemukan integrasi yang cocok dengan pencarian Anda.</p>
                 </div>
 
             </div>
@@ -633,7 +655,7 @@
             document.getElementById('github-loading').classList.add('hidden');
             const btn = document.getElementById('github-connect-btn');
             if (btn) {
-                btn.className = 'px-5 py-2.5 bg-white text-gray-800 border border-gray-200 rounded-xl text-[13px] font-semibold hover:bg-gray-50 transition-all duration-300 active:scale-[0.97] whitespace-nowrap shadow-sm';
+                btn.className = 'px-4 py-2 bg-white text-gray-800 border border-gray-200 rounded-lg text-[12.5px] font-semibold hover:bg-gray-50 transition-all duration-300 active:scale-[0.97] whitespace-nowrap shadow-sm';
                 btn.innerHTML = 'Kelola';
             }
             setGitHubBadge(true);
@@ -682,7 +704,7 @@
             closeConnectedModal();
             const btn = document.getElementById('github-connect-btn');
             if (btn) {
-                btn.className = 'px-5 py-2.5 bg-[#0f1115] text-white rounded-xl text-[13px] font-semibold hover:bg-[#1a1d24] transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.08)] active:scale-[0.97] whitespace-nowrap';
+                btn.className = 'px-4 py-2 bg-[#0f1115] text-white rounded-lg text-[12.5px] font-semibold hover:bg-[#1a1d24] transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.08)] active:scale-[0.97] whitespace-nowrap';
                 btn.innerHTML = 'Hubungkan';
             }
             setGitHubBadge(false);
@@ -819,7 +841,7 @@
             if (token) {
                 const btn = document.getElementById('github-connect-btn');
                 if (btn) {
-                    btn.className = 'px-5 py-2.5 bg-white text-gray-800 border border-gray-200 rounded-xl text-[13px] font-semibold hover:bg-gray-50 transition-all duration-300 active:scale-[0.97] whitespace-nowrap shadow-sm';
+                    btn.className = 'px-4 py-2 bg-white text-gray-800 border border-gray-200 rounded-lg text-[12.5px] font-semibold hover:bg-gray-50 transition-all duration-300 active:scale-[0.97] whitespace-nowrap shadow-sm';
                     btn.innerHTML = 'Kelola';
                 }
                 setGitHubBadge(true);
@@ -836,7 +858,99 @@
             }
         });
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-integrations');
+            const filterDropdownBtn = document.getElementById('filter-modal-toggle');
+            const filterDropdown = document.getElementById('filter-dropdown');
+            const dropdownBtns = document.querySelectorAll('.filter-dropdown-btn');
+            const inlineBtns = document.querySelectorAll('.filter-inline-btn');
+            const integrationCards = document.querySelectorAll('.integration-card');
+            const emptyState = document.getElementById('empty-state');
+            let currentFilter = 'all';
 
+            if (filterDropdownBtn && filterDropdown) {
+                filterDropdownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    filterDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!filterDropdown.contains(e.target) && !filterDropdownBtn.contains(e.target)) {
+                        filterDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            function applyFilters() {
+                if (!searchInput) return;
+                const searchTerm = searchInput.value.toLowerCase();
+                let visibleCount = 0;
+                
+                integrationCards.forEach(card => {
+                    const title = card.getAttribute('data-title').toLowerCase();
+                    const category = card.getAttribute('data-category');
+                    const matchesSearch = title.includes(searchTerm);
+                    const matchesFilter = currentFilter === 'all' || category === currentFilter;
+
+                    if (matchesSearch && matchesFilter) {
+                        card.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (emptyState) {
+                    if (visibleCount === 0) {
+                        emptyState.classList.remove('hidden');
+                        emptyState.classList.add('flex');
+                    } else {
+                        emptyState.classList.add('hidden');
+                        emptyState.classList.remove('flex');
+                    }
+                }
+            }
+
+            function setActiveFilterUI(filterValue) {
+                currentFilter = filterValue;
+                
+                dropdownBtns.forEach(btn => {
+                    if (btn.getAttribute('data-filter') === filterValue) {
+                        btn.className = 'filter-dropdown-btn active py-2 px-3 rounded-xl bg-[#0f1115] text-white text-[12px] font-semibold text-center transition-colors';
+                    } else {
+                        btn.className = 'filter-dropdown-btn py-2 px-3 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 text-[12px] font-semibold text-center border border-gray-100 transition-colors';
+                    }
+                });
+
+                inlineBtns.forEach(btn => {
+                    if (btn.getAttribute('data-filter') === filterValue) {
+                        btn.className = 'filter-inline-btn active px-4 py-2 rounded-xl bg-[#0f1115] text-white text-[13px] font-semibold whitespace-nowrap transition-colors';
+                    } else {
+                        btn.className = 'filter-inline-btn px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 text-[13px] font-semibold whitespace-nowrap transition-colors';
+                    }
+                });
+
+                applyFilters();
+            }
+
+            dropdownBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setActiveFilterUI(btn.getAttribute('data-filter'));
+                    if (filterDropdown) filterDropdown.classList.add('hidden');
+                });
+            });
+
+            inlineBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setActiveFilterUI(btn.getAttribute('data-filter'));
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFilters);
+            }
+        });
+    </script>
 
 </body>
 </html>
