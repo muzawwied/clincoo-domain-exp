@@ -1,16 +1,9 @@
 import { requireAccount, ensureAccountColumn } from '../../../../shared/account.js';
+import { ensureZone } from '../../../../shared/cloudflare.js';
 
 async function owned(env, account, name) {
   await ensureAccountColumn(env.DB);
   return await env.DB.prepare('SELECT id FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
-}
-
-async function zoneId(name, token) {
-  const res = await fetch('https://api.cloudflare.com/client/v4/zones?name=' + encodeURIComponent(name) + '&per_page=1',
-    { headers: { Authorization: 'Bearer ' + token } });
-  const data = await res.json();
-  if (!data.success || !data.result || !data.result.length) return null;
-  return data.result[0].id;
 }
 
 async function cfJson(res) {
@@ -26,8 +19,9 @@ const CACHE_LEVELS = ['off', 'basic', 'simplified', 'aggressive'];
 
 async function applyToCloudflare(env, name, k, v) {
   if (!env.CF_API_TOKEN) return { applied: false, reason: 'no_token' };
-  const zid = await zoneId(name, env.CF_API_TOKEN);
-  if (!zid) return { applied: false, reason: 'zone_not_found' };
+  const zone = await ensureZone(name, env.CF_API_TOKEN);
+  if (zone.error) return { applied: false, reason: zone.error };
+  const zid = zone.id;
   const api = 'https://api.cloudflare.com/client/v4/zones/' + zid;
   const H = { Authorization: 'Bearer ' + env.CF_API_TOKEN, 'Content-Type': 'application/json' };
   try {

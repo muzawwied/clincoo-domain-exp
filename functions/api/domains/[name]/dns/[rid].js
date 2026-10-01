@@ -1,4 +1,5 @@
 import { requireAccount, ensureAccountColumn } from '../../../../../shared/account.js';
+import { ensureZone } from '../../../../../shared/cloudflare.js';
 
 export async function onRequestDelete({ env, request, params }) {
   const { account, error } = await requireAccount(request);
@@ -9,11 +10,9 @@ export async function onRequestDelete({ env, request, params }) {
   const row = await env.DB.prepare('SELECT id FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
   if (!row) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
   if (!env.CF_API_TOKEN) return Response.json({ ok: false, error: 'no_token' }, { status: 500 });
-  const res = await fetch('https://api.cloudflare.com/client/v4/zones?name=' + encodeURIComponent(name) + '&per_page=1',
-    { headers: { Authorization: 'Bearer ' + env.CF_API_TOKEN } });
-  const data = await res.json();
-  if (!data.success || !data.result || !data.result.length) return Response.json({ ok: false, error: 'zone_not_found', message: 'Domain ini belum berada di akun Cloudflare-mu.' }, { status: 404 });
-  const zid = data.result[0].id;
+  const zone = await ensureZone(name, env.CF_API_TOKEN);
+  if (zone.error) return Response.json({ ok: false, error: zone.error, message: zone.message }, { status: 502 });
+  const zid = zone.id;
   const del = await fetch('https://api.cloudflare.com/client/v4/zones/' + zid + '/dns_records/' + encodeURIComponent(rid), {
     method: 'DELETE',
     headers: { Authorization: 'Bearer ' + env.CF_API_TOKEN }

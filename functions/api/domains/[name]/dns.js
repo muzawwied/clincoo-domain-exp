@@ -1,16 +1,9 @@
 import { requireAccount, ensureAccountColumn } from '../../../../shared/account.js';
+import { ensureZone } from '../../../../shared/cloudflare.js';
 
 async function owned(env, account, name) {
   await ensureAccountColumn(env.DB);
   return await env.DB.prepare('SELECT id FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
-}
-
-async function zoneId(name, token) {
-  const res = await fetch('https://api.cloudflare.com/client/v4/zones?name=' + encodeURIComponent(name) + '&per_page=1',
-    { headers: { Authorization: 'Bearer ' + token } });
-  const data = await res.json();
-  if (!data.success || !data.result || !data.result.length) return null;
-  return data.result[0].id;
 }
 
 export async function onRequestGet({ env, request, params }) {
@@ -19,8 +12,11 @@ export async function onRequestGet({ env, request, params }) {
   const name = decodeURIComponent(params.name || '').toLowerCase();
   if (!await owned(env, account, name)) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
   if (!env.CF_API_TOKEN) return Response.json({ ok: false, error: 'no_token' }, { status: 500 });
-  const zid = await zoneId(name, env.CF_API_TOKEN);
-  if (!zid) return Response.json({ ok: false, error: 'zone_not_found', message: 'Domain ini belum berada di akun Cloudflare-mu.' });
+  // Zona dibuat otomatis di akun Cloudflare Clincoo bila belum ada — pelanggan tak perlu
+  // menambahkannya sendiri lewat dashboard Cloudflare dulu.
+  const zone = await ensureZone(name, env.CF_API_TOKEN);
+  if (zone.error) return Response.json({ ok: false, error: zone.error, message: zone.message }, { status: 502 });
+  const zid = zone.id;
   const res = await fetch('https://api.cloudflare.com/client/v4/zones/' + zid + '/dns_records?per_page=100',
     { headers: { Authorization: 'Bearer ' + env.CF_API_TOKEN } });
   const data = await res.json();
@@ -43,8 +39,9 @@ export async function onRequestPost({ env, request, params }) {
   if (!rname || !content) return Response.json({ ok: false, error: 'missing_fields' }, { status: 400 });
   if (!env.CF_API_TOKEN) return Response.json({ ok: false, error: 'no_token' }, { status: 500 });
 
-  const zid = await zoneId(name, env.CF_API_TOKEN);
-  if (!zid) return Response.json({ ok: false, error: 'zone_not_found', message: 'Domain ini belum berada di akun Cloudflare-mu.' }, { status: 404 });
+  const zone = await ensureZone(name, env.CF_API_TOKEN);
+  if (zone.error) return Response.json({ ok: false, error: zone.error, message: zone.message }, { status: 502 });
+  const zid = zone.id;
 
   const payload = { type, name: rname, content, ttl: parseInt(body.ttl) > 0 ? parseInt(body.ttl) : 1 };
   if (['A', 'AAAA', 'CNAME'].includes(type)) payload.proxied = body.proxied === true;
