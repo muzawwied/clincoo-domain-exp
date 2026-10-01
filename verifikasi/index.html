@@ -202,7 +202,7 @@ function checkVerification() {
             label.textContent = 'Selesai';
             document.getElementById('cta-skip').classList.add('hidden');
         } else {
-            const msg = (res && res.message) || 'Record TXT belum terdeteksi di DNS publik. Pastikan record sudah tersimpan di penyedia domain-mu, lalu periksa lagi.';
+            const msg = (res && res.message) || 'Verifikasi belum terdeteksi. Pastikan record TXT tersimpan, atau nameserver domain sudah diarahkan ke ns1/ns2.clincoo.buzz, lalu periksa lagi.';
             setResult('fail', '<i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-red-700 font-medium leading-relaxed"></p>');
             document.querySelector('#check-result p').textContent = msg;
             label.textContent = 'Periksa Lagi';

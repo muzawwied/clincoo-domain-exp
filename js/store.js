@@ -64,7 +64,7 @@
     verify(name) {
       return probe.then(() => apiMode
         ? api('/api/domains/' + encodeURIComponent(name) + '/verify', { method: 'POST' })
-        : { ok: false, simulated: true, message: 'Record belum terdeteksi. Propagasi DNS butuh beberapa menit — pastikan record sudah tersimpan di penyedia domain-mu, lalu periksa lagi.' });
+        : { ok: false, simulated: true, message: 'Verifikasi belum terdeteksi. Propagasi DNS butuh beberapa menit — pastikan record TXT tersimpan, atau nameserver sudah diarahkan ke ns1/ns2.clincoo.buzz, lalu periksa lagi.' });
     },
     getSettings(domain, defaults) {
       return probe.then(() => apiMode
