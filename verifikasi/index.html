@@ -76,7 +76,7 @@ body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 25%,rgb
     <div class="px-7">
         <!-- Tab: TXT / Nameserver -->
         <div class="flex items-center gap-6 border-b border-gray-100">
-            <button id="tab-txt" onclick="switchTab('txt')" class="tab-btn active flex-1 pb-3 text-[14px] font-semibold border-b-2 transition-colors">Record TXT</button>
+            <button id="tab-txt" onclick="switchTab('txt')" class="tab-btn active flex-1 pb-3 text-[14px] font-semibold border-b-2 border-transparent transition-colors">Record TXT</button>
             <button id="tab-ns" onclick="switchTab('ns')" class="tab-btn flex-1 pb-3 text-[14px] font-semibold text-gray-400 border-b-2 border-transparent transition-colors">Nameserver</button>
         </div>
 
@@ -167,8 +167,10 @@ function switchTab(t) {
     document.getElementById('panel-ns').classList.toggle('hidden', isTxt);
     document.getElementById('tab-txt').classList.toggle('active', isTxt);
     document.getElementById('tab-txt').classList.toggle('text-gray-400', !isTxt);
+    document.getElementById('tab-txt').classList.toggle('border-transparent', !isTxt);
     document.getElementById('tab-ns').classList.toggle('active', !isTxt);
     document.getElementById('tab-ns').classList.toggle('text-gray-400', isTxt);
+    document.getElementById('tab-ns').classList.toggle('border-transparent', isTxt);
 }
 
 function setResult(kind, html) {
