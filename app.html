@@ -620,7 +620,10 @@
             window.location.href = authUrl;
         }
         async function exchangeCodeForToken(code) {
-            const res = await fetch('/api/github-oauth', {
+            // Audit #6: di host luar (GitHub Pages) tidak ada /api/github-oauth lokal —
+            // arahkan absolut ke backend Clincoo (CORS-nya terbuka untuk endpoint ini).
+            const endpoint = (location.hostname.indexOf('clincoo') === -1 ? 'https://app.clincoo.buzz' : '') + '/api/github-oauth';
+            const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + clinqooAuthToken() },
                 body: JSON.stringify({ code: code, redirect_uri: getRedirectUri() })

@@ -5,6 +5,73 @@ async function owned(env, account, name) {
   return await env.DB.prepare('SELECT id FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
 }
 
+async function zoneId(name, token) {
+  const res = await fetch('https://api.cloudflare.com/client/v4/zones?name=' + encodeURIComponent(name) + '&per_page=1',
+    { headers: { Authorization: 'Bearer ' + token } });
+  const data = await res.json();
+  if (!data.success || !data.result || !data.result.length) return null;
+  return data.result[0].id;
+}
+
+async function cfJson(res) {
+  const d = await res.json().catch(() => ({ success: false }));
+  return { ok: !!d.success, errors: (d.errors || []).map(e => e.message).join('; ') };
+}
+
+// Audit #5: pengaturan SSL/Cache/Zone kini benar-benar diterapkan ke Cloudflare API
+// (pola yang sama dengan Kelola DNS, memakai env.CF_API_TOKEN).
+// Kunci yang tidak dipetakan tetap hanya tersimpan ke domain_settings (tidak berubah perilaku).
+const SSL_MODES = ['off', 'flexible', 'full', 'strict'];
+const CACHE_LEVELS = ['off', 'basic', 'simplified', 'aggressive'];
+
+async function applyToCloudflare(env, name, k, v) {
+  if (!env.CF_API_TOKEN) return { applied: false, reason: 'no_token' };
+  const zid = await zoneId(name, env.CF_API_TOKEN);
+  if (!zid) return { applied: false, reason: 'zone_not_found' };
+  const api = 'https://api.cloudflare.com/client/v4/zones/' + zid;
+  const H = { Authorization: 'Bearer ' + env.CF_API_TOKEN, 'Content-Type': 'application/json' };
+  try {
+    if (k === 'ssl_mode') {
+      const mode = SSL_MODES.includes(String(v)) ? String(v) : null;
+      if (!mode) return { applied: false, reason: 'invalid_value' };
+      const r = await cfJson(await fetch(api + '/settings/ssl', { method: 'PATCH', headers: H, body: JSON.stringify({ value: mode }) }));
+      return { applied: r.ok, errors: r.errors };
+    }
+    if (k === 'min_tls') {
+      const r = await cfJson(await fetch(api + '/settings/min_tls_version', { method: 'PATCH', headers: H, body: JSON.stringify({ value: String(v) }) }));
+      return { applied: r.ok, errors: r.errors };
+    }
+    if (k === 'https') {
+      const r = await cfJson(await fetch(api + '/settings/always_use_https', { method: 'PATCH', headers: H, body: JSON.stringify({ value: v === 'on' ? 'on' : 'off' }) }));
+      return { applied: r.ok, errors: r.errors };
+    }
+    if (k === 'cache_level') {
+      const level = CACHE_LEVELS.includes(String(v)) ? String(v) : 'basic';
+      const r = await cfJson(await fetch(api + '/settings/cache_level', { method: 'PATCH', headers: H, body: JSON.stringify({ value: level }) }));
+      return { applied: r.ok, errors: r.errors };
+    }
+    if (k === 'devmode') {
+      // Development Mode: aktifkan via POST, matikan via DELETE (edge action Cloudflare).
+      const r = v === 'on'
+        ? await cfJson(await fetch(api + '/settings/development_mode', { method: 'POST', headers: H }))
+        : await cfJson(await fetch(api + '/settings/development_mode', { method: 'DELETE', headers: H }));
+      return { applied: r.ok, errors: r.errors };
+    }
+    if (k === 'zone') {
+      const r = await cfJson(await fetch(api, { method: 'PATCH', headers: H, body: JSON.stringify({ paused: v === 'paused' }) }));
+      return { applied: r.ok, errors: r.errors };
+    }
+    if (k === 'purged_at') {
+      // Tombol "Bersihkan Cache" menyimpan timestamp — jalankan purge asli juga.
+      const r = await cfJson(await fetch(api + '/purge_cache', { method: 'POST', headers: H, body: JSON.stringify({ purge_everything: true }) }));
+      return { applied: r.ok, errors: r.errors };
+    }
+  } catch (e) {
+    return { applied: false, reason: 'network_error' };
+  }
+  return { applied: false, reason: 'unmapped_key' };
+}
+
 export async function onRequestGet({ env, request, params }) {
   const { account, error } = await requireAccount(request);
   if (error) return error;
@@ -30,5 +97,11 @@ export async function onRequestPost({ env, request, params }) {
       .bind(name, k, String(v)).run();
     await env.DB.prepare('UPDATE domains SET updated_at = ? WHERE account = ? AND name = ?').bind(new Date().toISOString(), account.id, name).run();
   }
-  return Response.json({ ok: true });
+  // Terapkan ke Cloudflare untuk kunci yang dipetakan. Zone tidak ditemukan / token absen
+  // -> tetap ok (nilai tersimpan), info penerapan dikembalikan di field "applied".
+  const applied = {};
+  for (const [k, v] of entries) {
+    applied[k] = await applyToCloudflare(env, name, k, v);
+  }
+  return Response.json({ ok: true, applied });
 }

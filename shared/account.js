@@ -12,7 +12,7 @@ export async function getAccount(request) {
     if (!res.ok) return null;
     const d = await res.json();
     if (!d || !d.authenticated || !d.user) return null;
-    return { id: d.user.id, email: (d.user.email || '').toLowerCase() };
+    return { id: d.user.id, email: (d.user.email || '').toLowerCase(), admin: d.user.role === 'admin' };
   } catch (e) {
     return null;
   }
@@ -24,6 +24,12 @@ export async function requireAccount(request) {
   return { account };
 }
 
+// Audit #7: kolom account pasti sudah ada setelah pemanggilan pertama —
+// jalankan ALTER TABLE sekali per isolate, bukan di setiap request API.
+let accountColPromise = null;
 export async function ensureAccountColumn(db) {
-  try { await db.prepare('ALTER TABLE domains ADD COLUMN account TEXT').run(); } catch (e) {}
+  if (!accountColPromise) {
+    accountColPromise = db.prepare('ALTER TABLE domains ADD COLUMN account TEXT').run().catch(() => {});
+  }
+  await accountColPromise;
 }

@@ -209,6 +209,15 @@ function checkVerification() {
         }
         checking = false;
         lucide.createIcons();
+    }).catch(() => {
+        // Audit #2: koneksi gagal/timeout — pulihkan tombol agar tidak nyangkut permanen.
+        cta.style.pointerEvents = '';
+        const spin = cta.querySelector('i');
+        if (spin) spin.remove();
+        setResult('fail', '<i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-red-700 font-medium leading-relaxed">Gagal memeriksa verifikasi — koneksi terputus. Periksa koneksi internet-mu, lalu coba lagi.</p>');
+        label.textContent = 'Periksa Lagi';
+        checking = false;
+        lucide.createIcons();
     });
 }
 

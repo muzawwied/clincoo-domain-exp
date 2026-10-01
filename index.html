@@ -197,8 +197,6 @@ async function render() {
     const noMatch = document.getElementById('no-match');
     const chip = document.getElementById('premium-domain-chip');
     if (chip) { chip.classList.toggle('hidden', list.length < 1); chip.classList.toggle('flex', list.length >= 1); }
-    const aktif = list.filter(d => d.status === 'aktif').length;
-    const pending = list.length - aktif;
     if (!list.length) {
         empty.classList.remove('hidden'); empty.classList.add('flex');
         card.classList.add('hidden'); card.classList.remove('block');
