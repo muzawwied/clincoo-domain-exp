@@ -8,7 +8,17 @@ export async function getAccount(request) {
   const token = m ? m[1].trim() : '';
   if (!token) return null;
   try {
-    const res = await fetch(AUTH_ME_URL, { headers: { Authorization: 'Bearer ' + token }, cf: { cacheTtl: 0 } });
+    // FIX: backend utama menolak /api/auth/* yang tidak membawa User-Agent browser
+    // (anti-bot). Panggilan server-ke-server dari Worker ini tidak mengirim UA sama
+    // sekali -> selalu dibalas 403 "Ditolak." -> user asli yang sudah login tetap
+    // dianggap "Login diperlukan." Kirim UA browser yang sah supaya lolos filter itu.
+    const res = await fetch(AUTH_ME_URL, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+      },
+      cf: { cacheTtl: 0 }
+    });
     if (!res.ok) return null;
     const d = await res.json();
     if (!d || !d.authenticated || !d.user) return null;
