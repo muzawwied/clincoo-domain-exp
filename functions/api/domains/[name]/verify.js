@@ -1,6 +1,11 @@
-export async function onRequestPost({ env, params }) {
+import { requireAccount, ensureAccountColumn } from '../../../_account.js';
+
+export async function onRequestPost({ env, request, params }) {
+  const { account, error } = await requireAccount(request);
+  if (error) return error;
   const name = decodeURIComponent(params.name || '').toLowerCase();
-  const row = await env.DB.prepare('SELECT id, token, status FROM domains WHERE name = ?').bind(name).first();
+  await ensureAccountColumn(env.DB);
+  const row = await env.DB.prepare('SELECT id, token, status FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
   if (!row) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
 
   const challenge = '_clincoo-challenge.' + name;

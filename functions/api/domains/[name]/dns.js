@@ -1,3 +1,10 @@
+import { requireAccount, ensureAccountColumn } from '../../../_account.js';
+
+async function owned(env, account, name) {
+  await ensureAccountColumn(env.DB);
+  return await env.DB.prepare('SELECT id FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
+}
+
 async function zoneId(name, token) {
   const res = await fetch('https://api.cloudflare.com/client/v4/zones?name=' + encodeURIComponent(name) + '&per_page=1',
     { headers: { Authorization: 'Bearer ' + token } });
@@ -6,8 +13,11 @@ async function zoneId(name, token) {
   return data.result[0].id;
 }
 
-export async function onRequestGet({ env, params }) {
+export async function onRequestGet({ env, request, params }) {
+  const { account, error } = await requireAccount(request);
+  if (error) return error;
   const name = decodeURIComponent(params.name || '').toLowerCase();
+  if (!await owned(env, account, name)) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
   if (!env.CF_API_TOKEN) return Response.json({ ok: false, error: 'no_token' }, { status: 500 });
   const zid = await zoneId(name, env.CF_API_TOKEN);
   if (!zid) return Response.json({ ok: false, error: 'zone_not_found', message: 'Domain ini belum berada di akun Cloudflare-mu.' });
@@ -19,8 +29,11 @@ export async function onRequestGet({ env, params }) {
   return Response.json({ ok: true, zone_id: zid, records });
 }
 
-export async function onRequestPost({ env, params, request }) {
+export async function onRequestPost({ env, request, params }) {
+  const { account, error } = await requireAccount(request);
+  if (error) return error;
   const name = decodeURIComponent(params.name || '').toLowerCase();
+  if (!await owned(env, account, name)) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
   let body;
   try { body = await request.json(); } catch (e) { return Response.json({ ok: false, error: 'bad_json' }, { status: 400 }); }
   const type = (body.type || '').toUpperCase();
@@ -45,6 +58,6 @@ export async function onRequestPost({ env, params, request }) {
   const data = await res.json();
   if (!data.success) return Response.json({ ok: false, error: 'cf_error', message: (data.errors || []).map(e => e.message).join('; ') }, { status: 400 });
   const r = data.result;
-  await env.DB.prepare('UPDATE domains SET updated_at = ? WHERE name = ?').bind(new Date().toISOString(), name).run();
+  await env.DB.prepare('UPDATE domains SET updated_at = ? WHERE account = ? AND name = ?').bind(new Date().toISOString(), account.id, name).run();
   return Response.json({ ok: true, record: { id: r.id, type: r.type, name: r.name, content: r.content, ttl: r.ttl, proxied: r.proxied } });
 }

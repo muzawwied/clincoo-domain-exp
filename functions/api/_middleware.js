@@ -1,12 +1,14 @@
-// CORS untuk /api/* — izinkan halaman Clincoo (GitHub Pages) memakai API ini lintas-origin.
-// Origin https://muzawwied.github.io mencakup aplikasi utama (/) dan situs exp (/clincoo-domain-exp/).
-const ALLOWED_ORIGINS = ['https://muzawwied.github.io'];
+// CORS untuk /api/* — izinkan halaman Domain Clincoo memakai API ini lintas-origin:
+// - https://muzawwied.github.io (repo eksperimen/aplikasi utama di GitHub Pages)
+// - https://app.clincoo.buzz (aplikasi utama)
+// Header Authorization diizinkan karena setiap request kini memuat Bearer token akun (data domain per akun).
+const ALLOWED_ORIGINS = ['https://muzawwied.github.io', 'https://app.clincoo.buzz'];
 
 function corsHeaders(origin) {
   const h = new Headers();
   if (ALLOWED_ORIGINS.includes(origin)) h.set('Access-Control-Allow-Origin', origin);
   h.set('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  h.set('Access-Control-Allow-Headers', 'Content-Type');
+  h.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   h.set('Access-Control-Max-Age', '86400');
   h.set('Vary', 'Origin');
   return h;
