@@ -1,4 +1,4 @@
-import { requireAccount, ensureAccountColumn } from '../../../_account.js';
+import { requireAccount, ensureAccountColumn } from '../../../../shared/account.js';
 
 export async function onRequestPost({ env, request, params }) {
   const { account, error } = await requireAccount(request);

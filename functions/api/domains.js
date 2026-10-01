@@ -1,4 +1,4 @@
-import { requireAccount, ensureAccountColumn } from './_account.js';
+import { requireAccount, ensureAccountColumn } from '../../shared/account.js';
 
 function isValidDomain(s) {
   if (!s || typeof s !== 'string') return false;

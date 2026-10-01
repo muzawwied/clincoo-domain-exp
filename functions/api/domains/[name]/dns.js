@@ -1,4 +1,4 @@
-import { requireAccount, ensureAccountColumn } from '../../../_account.js';
+import { requireAccount, ensureAccountColumn } from '../../../../shared/account.js';
 
 async function owned(env, account, name) {
   await ensureAccountColumn(env.DB);
