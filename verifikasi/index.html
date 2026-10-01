@@ -189,12 +189,12 @@ function checkVerification() {
     const cta = document.getElementById('cta-check');
     const label = document.getElementById('cta-label');
     label.textContent = 'Memeriksa…';
-    cta.insertAdjacentHTML('afterbegin', '<i data-lucide="loader-2" class="w-4 h-4 spin"></i>');
+    cta.insertAdjacentHTML('afterbegin', '<i data-lucide="loader-2" class="w-4 h-4 spin cta-spinner"></i>');
     lucide.createIcons();
     cta.style.pointerEvents = 'none';
     store.verify(domain).then(res => {
         cta.style.pointerEvents = '';
-        const spin = cta.querySelector('i');
+        const spin = cta.querySelector('.cta-spinner');
         if (spin) spin.remove();
         if (res && res.ok) {
             verified = true;
@@ -212,7 +212,7 @@ function checkVerification() {
     }).catch(() => {
         // Audit #2: koneksi gagal/timeout — pulihkan tombol agar tidak nyangkut permanen.
         cta.style.pointerEvents = '';
-        const spin = cta.querySelector('i');
+        const spin = cta.querySelector('.cta-spinner');
         if (spin) spin.remove();
         setResult('fail', '<i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><p class="text-[13px] text-red-700 font-medium leading-relaxed">Gagal memeriksa verifikasi — koneksi terputus. Periksa koneksi internet-mu, lalu coba lagi.</p>');
         label.textContent = 'Periksa Lagi';
