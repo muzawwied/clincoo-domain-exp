@@ -15,6 +15,7 @@ export async function onRequestPost({ env, params, request }) {
   for (const [k, v] of entries) {
     await env.DB.prepare('INSERT INTO domain_settings (domain, k, v) VALUES (?, ?, ?) ON CONFLICT (domain, k) DO UPDATE SET v = excluded.v')
       .bind(name, k, String(v)).run();
+    await env.DB.prepare('UPDATE domains SET updated_at = ? WHERE name = ?').bind(new Date().toISOString(), name).run();
   }
   return Response.json({ ok: true });
 }

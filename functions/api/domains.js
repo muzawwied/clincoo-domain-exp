@@ -16,7 +16,7 @@ function makeToken() {
 }
 
 export async function onRequestGet({ env }) {
-  const { results } = await env.DB.prepare('SELECT id, name, status, note, created_at, verified_at, token FROM domains ORDER BY created_at DESC').all();
+  const { results } = await env.DB.prepare('SELECT id, name, status, note, created_at, verified_at, token, COALESCE(updated_at, created_at) AS updated_at FROM domains ORDER BY created_at DESC').all();
   return Response.json({ ok: true, domains: results });
 }
 
@@ -29,8 +29,8 @@ export async function onRequestPost({ env, request }) {
   const existing = await env.DB.prepare('SELECT id, name, status, note, created_at, verified_at, token FROM domains WHERE name = ?').bind(name).first();
   if (existing) return Response.json({ ok: true, exists: true, domain: existing });
 
-  const row = { id: makeId(), name, token: makeToken(), status: 'pending', note: body.note || '', created_at: new Date().toISOString(), verified_at: null };
-  await env.DB.prepare('INSERT INTO domains (id, name, token, status, note, created_at, verified_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .bind(row.id, row.name, row.token, row.status, row.note, row.created_at, null).run();
+  const row = { id: makeId(), name, token: makeToken(), status: 'pending', note: body.note || '', created_at: new Date().toISOString(), verified_at: null, updated_at: new Date().toISOString() };
+  await env.DB.prepare('INSERT INTO domains (id, name, token, status, note, created_at, verified_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(row.id, row.name, row.token, row.status, row.note, row.created_at, null, row.updated_at).run();
   return Response.json({ ok: true, exists: false, domain: row });
 }

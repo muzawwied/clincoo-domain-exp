@@ -13,5 +13,6 @@ export async function onRequestDelete({ env, params }) {
   });
   const ddata = await del.json();
   if (!ddata.success) return Response.json({ ok: false, error: 'cf_error', message: (ddata.errors || []).map(e => e.message).join('; ') }, { status: 400 });
+  await env.DB.prepare('UPDATE domains SET updated_at = ? WHERE name = ?').bind(new Date().toISOString(), name).run();
   return Response.json({ ok: true });
 }

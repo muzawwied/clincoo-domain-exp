@@ -45,5 +45,6 @@ export async function onRequestPost({ env, params, request }) {
   const data = await res.json();
   if (!data.success) return Response.json({ ok: false, error: 'cf_error', message: (data.errors || []).map(e => e.message).join('; ') }, { status: 400 });
   const r = data.result;
+  await env.DB.prepare('UPDATE domains SET updated_at = ? WHERE name = ?').bind(new Date().toISOString(), name).run();
   return Response.json({ ok: true, record: { id: r.id, type: r.type, name: r.name, content: r.content, ttl: r.ttl, proxied: r.proxied } });
 }
