@@ -75,7 +75,7 @@ body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 25%,rgb
                     <p class="text-[14px] font-semibold text-gray-900">Status Zone</p>
                     <p id="zone-status" class="text-[12px] text-gray-500 mt-0.5"><span class="shim h-2 w-12"></span></p>
                 </div>
-                <span id="zone-toggle-btn" class="text-[12px] text-gray-400"></span>
+                <button id="zone-toggle-btn" onclick="toggleZone()" class="text-[13px] font-semibold text-red-600 cursor-pointer hover:underline decoration-2 underline-offset-4 hidden"></button>
             </div>
             <div class="py-4">
                 <p class="text-[14px] font-semibold text-gray-900">Nameservers</p>
@@ -114,6 +114,32 @@ function initToggles() {
     });
 }
 
+let zonePaused = null; // status live dari Cloudflare (bukan asumsi lokal)
+function toggleZone() {
+    if (zonePaused === null) return;
+    const willPause = !zonePaused;
+    if (willPause && !confirm('Jeda zona domain ini? Semua DNS domain berhenti dijawab sampai zona diaktifkan lagi.')) return;
+    document.getElementById('zone-status').textContent = 'Menyimpan…';
+    store.setSetting(domain, 'zone', willPause ? 'paused' : 'active').then(() => {
+        zonePaused = willPause;
+        paintZone();
+    }).catch(() => { document.getElementById('zone-status').textContent = 'Gagal menyimpan'; });
+}
+function paintZone() {
+    const statusEl = document.getElementById('zone-status');
+    const toggleEl = document.getElementById('zone-toggle-btn');
+    if (zonePaused === null) return;
+    if (zonePaused) {
+        statusEl.textContent = 'Dijeda (paused)';
+        toggleEl.textContent = 'Aktifkan';
+        toggleEl.classList.remove('text-red-600'); toggleEl.classList.add('text-accent');
+    } else {
+        statusEl.textContent = 'Aktif';
+        toggleEl.textContent = 'Pause';
+        toggleEl.classList.add('text-red-600'); toggleEl.classList.remove('text-accent');
+    }
+    toggleEl.classList.remove('hidden');
+}
 if (!domain) { location.replace('../../'); }
 else {
     document.getElementById('v-domain').textContent = domain;
@@ -123,20 +149,20 @@ else {
             const z = d && d.zone;
             const nsEl = document.getElementById('zone-ns');
             const planEl = document.getElementById('zone-plan');
-            const statusEl = document.getElementById('zone-status');
-            const toggleEl = document.getElementById('zone-toggle-btn');
             if (!z) {
                 nsEl.innerHTML = '<p class="text-[12px] text-gray-400">Belum tersedia</p>';
                 planEl.textContent = '-';
-                statusEl.textContent = 'Belum terhubung ke Cloudflare';
+                document.getElementById('zone-status').textContent = 'Belum terhubung ke Cloudflare';
                 return;
             }
             nsEl.innerHTML = (z.name_servers || []).map(n => '<p class="mono text-[12px] text-gray-500 mt-1">' + esc(n) + '</p>').join('') || '<p class="text-[12px] text-gray-400">-</p>';
             planEl.textContent = z.plan || 'Free';
-            if (z.paused) { statusEl.textContent = 'Dijeda (paused)'; toggleEl.textContent = ''; }
-            else if (z.status === 'active') statusEl.textContent = 'Aktif';
-            else if (z.status === 'pending') statusEl.textContent = 'Menunggu nameserver diarahkan';
-            else statusEl.textContent = z.status || '-';
+            zonePaused = !!z.paused;
+            if (!z.paused && z.status === 'pending') {
+                document.getElementById('zone-status').textContent = 'Menunggu nameserver diarahkan';
+                return;
+            }
+            paintZone();
             lucide.createIcons();
         })
         .catch(() => {
