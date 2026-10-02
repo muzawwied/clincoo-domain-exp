@@ -3,7 +3,7 @@
 // izin Zone:Create di akun ini (diverifikasi via probe non-destruktif ke POST /zones).
 const CF_ACCOUNT_ID = '59db6147da9378dbff365a8d52243fcf';
 
-async function findZoneId(name, token) {
+export async function findZoneId(name, token) {
   const res = await fetch('https://api.cloudflare.com/client/v4/zones?name=' + encodeURIComponent(name) + '&per_page=1',
     { headers: { Authorization: 'Bearer ' + token } });
   const data = await res.json();
