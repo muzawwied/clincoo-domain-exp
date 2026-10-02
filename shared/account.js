@@ -2,11 +2,19 @@
 // Data domain discope per akun: hanya pemilik yang melihat & mengelola domainnya.
 const AUTH_ME_URL = 'https://app.clincoo.buzz/api/auth/me';
 
+// Cache hasil validasi token 30 detik per isolate — getAccount dipanggil di SETIAP
+// request API, dan tiap panggilan menunggu fetch auth/me ke server utama.
+// Dengan cache ini request berikutnya (zone, dns, verify, list) jadi instan.
+const authCache = new Map();
+const AUTH_TTL_MS = 30000;
+
 export async function getAccount(request) {
   const h = request.headers.get('Authorization') || '';
   const m = h.match(/^Bearer\s+(.+)$/i);
   const token = m ? m[1].trim() : '';
   if (!token) return null;
+  const hit = authCache.get(token);
+  if (hit && hit.exp > Date.now()) return hit.account;
   try {
     // FIX: backend utama menolak /api/auth/* yang tidak membawa User-Agent browser
     // (anti-bot). Panggilan server-ke-server dari Worker ini tidak mengirim UA sama
@@ -22,7 +30,9 @@ export async function getAccount(request) {
     if (!res.ok) return null;
     const d = await res.json();
     if (!d || !d.authenticated || !d.user) return null;
-    return { id: d.user.id, email: (d.user.email || '').toLowerCase(), admin: d.user.role === 'admin' };
+    const account = { id: d.user.id, email: (d.user.email || '').toLowerCase(), admin: d.user.role === 'admin' };
+    authCache.set(token, { account, exp: Date.now() + AUTH_TTL_MS });
+    return account;
   } catch (e) {
     return null;
   }
