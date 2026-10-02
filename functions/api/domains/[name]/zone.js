@@ -23,7 +23,13 @@ async function zoneDetail(name, token) {
     { headers: { Authorization: 'Bearer ' + token }, cf: { cacheTtl: 0 } });
   const data = await res.json();
   if (!data.success || !data.result) return null;
-  return { id: data.result.id, status: data.result.status, name_servers: data.result.name_servers || [] };
+  return {
+    id: data.result.id,
+    status: data.result.status,
+    paused: !!data.result.paused,
+    plan: (data.result.plan && data.result.plan.name) || 'Free',
+    name_servers: data.result.name_servers || []
+  };
 }
 
 async function requireOwnedRow(env, account, name) {
@@ -51,10 +57,14 @@ export async function onRequestGet({ env, request, params }) {
   const name = decodeURIComponent(params.name || '').toLowerCase();
   const row = await requireOwnedRow(env, account, name);
   if (!row) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
+  // Status/plan harus selalu live (bisa berubah), tapi name_servers boleh dari cache D1
+  // kalau sudah pernah tersimpan — menghindari round-trip API tiap buka halaman.
+  const live = await zoneDetail(name, env.CF_API_TOKEN);
   const saved = parseSaved(row);
+  if (saved && !live) return Response.json({ ok: true, zone: { name_servers: saved } });
+  if (live && live.name_servers.length) await saveNs(env, row.id, live.name_servers);
+  if (live) return Response.json({ ok: true, zone: live });
   if (saved) return Response.json({ ok: true, zone: { name_servers: saved } });
-  const zone = env.CF_API_TOKEN ? await zoneDetail(name, env.CF_API_TOKEN) : null;
-  if (zone && zone.name_servers.length) { await saveNs(env, row.id, zone.name_servers); return Response.json({ ok: true, zone: zone }); }
   return Response.json({ ok: true, zone: null });
 }
 
