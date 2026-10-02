@@ -164,7 +164,7 @@ function togglePin(id) {
     renderDns();
 }
 
-function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
+function goBack() { location.href = '../../detail/?domain=' + encodeURIComponent(domain); }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 function banner(text) {

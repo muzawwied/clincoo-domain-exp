@@ -140,7 +140,7 @@ body.dark-mode .shim::after{background:linear-gradient(90deg,transparent 25%,rgb
 try { lucide.createIcons(); } catch (e) {}
 
 const dName = (new URLSearchParams(location.search).get('domain') || '').trim().toLowerCase();
-function goBack() { if (history.length > 1) history.back(); else location.href = '../'; }
+function goBack() { location.href = '../'; }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtDate(v) {
     if (!v) return '—';

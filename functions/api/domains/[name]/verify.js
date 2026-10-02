@@ -1,28 +1,15 @@
 import { requireAccount, ensureAccountColumn } from '../../../../shared/account.js';
-import { findZoneId } from '../../../../shared/cloudflare.js';
 
-// Cek apakah TXT challenge tersimpan di zona Cloudflare Clincoo (dibuat lewat
-// menu Kelola DNS). Kalau ya tapi domain belum memakai nameserver Cloudflare,
-// record itu BELUM aktif publik — inilah penyebab umum "verifikasi belum
-// terdeteksi" padahal user merasa sudah menambahkan TXT.
-async function txtInClincooZone(name, token, challenge) {
-  if (!token) return false;
-  try {
-    const zid = await findZoneId(name, token);
-    if (!zid) return false;
-    const res = await fetch('https://api.cloudflare.com/client/v4/zones/' + encodeURIComponent(zid) + '/dns_records?type=TXT&name=' + encodeURIComponent(challenge) + '&per_page=5',
-      { headers: { Authorization: 'Bearer ' + token }, cf: { cacheTtl: 0 } });
-    const data = await res.json();
-    return !!(data.success && data.result && data.result.length);
-  } catch (e) { return false; }
-}
-
+// Verifikasi kepemilikan domain. Metode utama: NAMESERVER — cukup NS publik
+// domain mengarah ke Cloudflare (pasangan yang ditugaskan bila ada), tanpa
+// wajib zonanya berada di akun Cloudflare Clincoo. Fallback senyap: record TXT
+// _clincoo-challenge.<domain> dengan nilai token (tetap diterima).
 export async function onRequestPost({ env, request, params }) {
   const { account, error } = await requireAccount(request);
   if (error) return error;
   const name = decodeURIComponent(params.name || '').toLowerCase();
   await ensureAccountColumn(env.DB);
-  const row = await env.DB.prepare('SELECT id, token, status FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
+  const row = await env.DB.prepare('SELECT id, token, status, ns_servers FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
   if (!row) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
 
   const challenge = '_clincoo-challenge.' + name;
@@ -41,22 +28,29 @@ export async function onRequestPost({ env, request, params }) {
     return Response.json({ ok: false, error: 'dns_lookup_failed' }, { status: 502 });
   }
 
-  // Metode alternatif: zona domain ada di akun Cloudflare Clincoo (dibuat lewat
-  // /zone atau saat menambah record DNS) DAN registrar domain sudah mengarahkan
-  // nameserver ke pasangan Cloudflare yang ditugaskan. Mengarahkan nameserver
-  // hanya bisa dilakukan pemilik domain — sama seperti aktivasi zona Cloudflare.
+  // Metode utama (NS): cukup nameserver publik domain menunjuk ke Cloudflare —
+  // TIDAK wajib zonanya ada di akun Cloudflare Clincoo. Mengubah nameserver di
+  // registrar hanya bisa dilakukan pemilik domain, jadi ini bukti kepemilikan yang sah.
+  // Kalau pasangan NS ditugaskan platform tersimpan (ns_servers), cocokkan dengannya;
+  // kalau tidak ada, terima nameserver Cloudflare mana pun.
   if (!found) {
     try {
-      const [nsData, zoneId] = await Promise.all([
+      const [cfNs, gNs] = await Promise.all([
         fetch('https://cloudflare-dns.com/dns-query?name=' + encodeURIComponent(name) + '&type=NS',
           { headers: { accept: 'application/dns-json' }, cf: { cacheTtl: 0 } }).then(r => r.json()),
-        env.CF_API_TOKEN ? findZoneId(name, env.CF_API_TOKEN) : Promise.resolve(null)
+        fetch('https://dns.google/resolve?name=' + encodeURIComponent(name) + '&type=NS',
+          { headers: { accept: 'application/dns-json' }, cf: { cacheTtl: 0 } }).then(r => r.json())
       ]);
-      const nsCloudflare = (nsData.Answer || []).some(a => {
-        const ns = String(a.data || '').toLowerCase().replace(/\.$/, '');
-        return ns.endsWith('.ns.cloudflare.com');
-      });
-      nsOk = !!(zoneId && nsCloudflare);
+      const nsList = (cfNs.Answer || []).concat(gNs.Answer || [])
+        .map(a => String(a.data || '').toLowerCase().replace(/\.$/, ''));
+      let assigned = [];
+      try { assigned = (row.ns_servers ? JSON.parse(row.ns_servers) : []).map(n => String(n).toLowerCase()); } catch (e) {}
+      const nsCloudflare = nsList.some(ns => ns.endsWith('.ns.cloudflare.com'));
+      if (assigned.length >= 2) {
+        nsOk = assigned.every(ns => nsList.includes(ns)); // cocok pasangan yang ditugaskan
+      } else {
+        nsOk = nsCloudflare;
+      }
     } catch (e) { /* NS lookup gagal — tetap lanjut sebagai gagal verifikasi */ }
   }
 
@@ -66,8 +60,5 @@ export async function onRequestPost({ env, request, params }) {
   }
   // TXT ditemukan di zona Cloudflare Clincoo (via Kelola DNS) tapi tidak resolve publik
   // -> domain belum memakai nameserver Cloudflare. Jelaskan dua solusinya.
-  if (await txtInClincooZone(name, env.CF_API_TOKEN, challenge)) {
-    return Response.json({ ok: false, status: row.status, message: 'Record TXT kamu tersimpan di zona Cloudflare Clincoo, tapi domain masih memakai nameserver lain — record itu belum aktif publik. Pilih salah satu: (1) tambahkan record TXT ini langsung di penyedia DNS domain-mu (dashboard registrar tempat domain dibeli), atau (2) arahkan nameserver domain-mu ke nameserver Cloudflare di tab Nameserver. Lalu periksa lagi.' });
-  }
-  return Response.json({ ok: false, status: row.status, message: 'Verifikasi belum terdeteksi. Tambahkan record TXT di penyedia DNS domain-mu (dashboard registrar tempat domain dibeli) — bukan lewat Kelola DNS Clincoo, karena record itu hanya aktif setelah domain memakai nameserver Cloudflare. Atau arahkan nameserver domain-mu ke Cloudflare (tab Nameserver). Setelah itu, tunggu beberapa menit lalu periksa lagi.' });
+  return Response.json({ ok: false, status: row.status, message: 'Nameserver domain-mu belum terdeteksi mengarah ke Cloudflare. Pastikan nameserver di registrar domain sudah diganti sesuai daftar di halaman ini, tunggu propagasi (biasanya beberapa menit, maksimal 24 jam), lalu periksa lagi.' });
 }

@@ -125,7 +125,7 @@ const SSL_MODES = [
     { id: 'strict', label: 'Full (strict)', desc: 'HTTPS end-to-end dengan sertifikat asal tepercaya. Direkomendasikan.' }
 ];
 
-function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
+function goBack() { location.href = '../../detail/?domain=' + encodeURIComponent(domain); }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 let settings = {};
 function getSetting(k, def) { return (k in settings) ? settings[k] : def; }

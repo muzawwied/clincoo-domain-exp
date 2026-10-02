@@ -127,7 +127,7 @@ document.addEventListener('click', (e) => {
     if (!p.contains(e.target) && !t.contains(e.target)) p.classList.add('hidden');
 });
 
-function goBack() { if (history.length > 1) history.back(); else location.href = '../../'; }
+function goBack() { location.href = '../../detail/?domain=' + encodeURIComponent(domain); }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 let settings = {};
 function getSetting(k, def) { return (k in settings) ? settings[k] : def; }
