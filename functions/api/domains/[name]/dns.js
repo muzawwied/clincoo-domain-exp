@@ -16,7 +16,7 @@ async function listLocal(env, name) {
   const { results } = await env.DB.prepare('SELECT id, type, name, content, ttl, proxied, priority, created_at FROM domain_dns_records WHERE domain = ? ORDER BY created_at').bind(name).all();
   return (results || []).map(r => ({ id: r.id, type: r.type, name: r.name, content: r.content, ttl: r.ttl, proxied: !!r.proxied, priority: r.priority, local: true }));
 }
-const LOCAL_NOTE = 'Domain ini tidak dikelola lewat Cloudflare Clincoo (mis. sudah terdaftar di akun Cloudflare lain). Record yang kamu simpan di sini tetap tersimpan di Clincoo — salin juga record berikut ke penyedia DNS domain-mu agar aktif.';
+const LOCAL_NOTE = 'Domain ini tidak dikelola lewat jaringan Clincoo (mis. sudah terdaftar di layanan DNS lain). Record yang kamu simpan di sini tetap tersimpan di Clincoo — salin juga record berikut ke penyedia DNS domain-mu agar aktif.';
 
 async function owned(env, account, name) {
   await ensureAccountColumn(env.DB);

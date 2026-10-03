@@ -78,5 +78,5 @@ export async function onRequestPost({ env, request, params, waitUntil }) {
   }
   // TXT ditemukan di zona Cloudflare Clincoo (via Kelola DNS) tapi tidak resolve publik
   // -> domain belum memakai nameserver Cloudflare. Jelaskan dua solusinya.
-  return Response.json({ ok: false, status: row.status, message: 'Nameserver domain-mu belum terdeteksi mengarah ke Cloudflare. Pastikan nameserver di registrar domain sudah diganti sesuai daftar di halaman ini, tunggu propagasi (biasanya beberapa menit, maksimal 24 jam), lalu periksa lagi.' });
+  return Response.json({ ok: false, status: row.status, message: 'Nameserver domain-mu belum terdeteksi mengarah ke nameserver yang ditugaskan. Pastikan nameserver di registrar domain sudah diganti sesuai daftar di halaman ini, tunggu propagasi (biasanya beberapa menit, maksimal 24 jam), lalu periksa lagi.' });
 }
