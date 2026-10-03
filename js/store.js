@@ -30,7 +30,14 @@
     return parts.every(p => p && p.length <= 63 && /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(p));
   }
 
-  const api = (path, opts) => fetch(path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, opts || {})).then(r => r.json());
+  // Data domain per akun: setiap request membawa token login Clincoo (Bearer).
+  function authToken() { try { return localStorage.getItem('clinqoo_auth_token') || localStorage.getItem('clinqoo_token') || ''; } catch (e) { return ''; } }
+  const api = (path, opts) => {
+    const headers = { 'Content-Type': 'application/json' };
+    const tok = authToken();
+    if (tok) headers['Authorization'] = 'Bearer ' + tok;
+    return fetch(path, Object.assign({ headers: headers }, opts || {})).then(r => r.json());
+  };
 
   window.store = {
     get apiMode() { return apiMode; },
@@ -43,9 +50,11 @@
         ? api('/api/domains').then(d => d.domains || [])
         : lsList());
     },
+    // Respons penuh (bukan cuma .domain) supaya UI bisa deteksi otp_required
+    // saat backend menilai penambahan domain sebagai aktivitas mencurigakan.
     create(name) {
       return probe.then(() => apiMode
-        ? api('/api/domains', { method: 'POST', body: JSON.stringify({ name }) }).then(d => d.domain)
+        ? api('/api/domains', { method: 'POST', body: JSON.stringify({ name }) })
         : (() => {
             const l = lsList();
             let row = l.find(x => x.name === name);
@@ -55,6 +64,11 @@
             }
             return row;
           })());
+    },
+    createWithOtp(name, otp) {
+      return probe.then(() => apiMode
+        ? api('/api/domains', { method: 'POST', body: JSON.stringify({ name: name, otp: String(otp || '') }) })
+        : (function () { const l = lsList(); let row = l.find(x => x.name === name); if (!row) { row = { id: uid(), name: name, note: '', status: 'pending', created: new Date().toISOString() }; l.push(row); lsSave(l); } return { ok: true, exists: false, domain: row }; })());
     },
     zoneInfo(domain) {
       return probe.then(() => apiMode

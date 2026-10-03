@@ -1,15 +1,19 @@
 import { requireAccount, ensureAccountColumn } from '../../../../shared/account.js';
+import { notifyDomain, fire, ensureDomainExtraCols } from '../../../../shared/notify.js';
+
+const NS_ALERT_RESEND_MS = 6 * 3600 * 1000; // email "lepas dari NS" maks 1x / 6 jam
 
 // Verifikasi kepemilikan domain. Metode utama: NAMESERVER — cukup NS publik
 // domain mengarah ke Cloudflare (pasangan yang ditugaskan bila ada), tanpa
 // wajib zonanya berada di akun Cloudflare Clincoo. Fallback senyap: record TXT
 // _clincoo-challenge.<domain> dengan nilai token (tetap diterima).
-export async function onRequestPost({ env, request, params }) {
+export async function onRequestPost({ env, request, params, waitUntil }) {
   const { account, error } = await requireAccount(request);
   if (error) return error;
   const name = decodeURIComponent(params.name || '').toLowerCase();
   await ensureAccountColumn(env.DB);
-  const row = await env.DB.prepare('SELECT id, token, status, ns_servers FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
+  await ensureDomainExtraCols(env.DB);
+  const row = await env.DB.prepare('SELECT id, token, status, ns_servers, COALESCE(ns_alert_at, \'\') AS ns_alert_at FROM domains WHERE account = ? AND name = ?').bind(account.id, name).first();
   if (!row) return Response.json({ ok: false, error: 'not_found' }, { status: 404 });
 
   const challenge = '_clincoo-challenge.' + name;
@@ -55,8 +59,22 @@ export async function onRequestPost({ env, request, params }) {
   }
 
   if (found || nsOk) {
-    await env.DB.prepare("UPDATE domains SET status = 'aktif', verified_at = ?, updated_at = ? WHERE id = ?").bind(new Date().toISOString(), new Date().toISOString(), row.id).run();
+    const wasActive = row.status === 'aktif';
+    await env.DB.prepare("UPDATE domains SET status = 'aktif', verified_at = ?, updated_at = ?, ns_alert_at = NULL, last_ns_check = ? WHERE id = ?").bind(new Date().toISOString(), new Date().toISOString(), new Date().toISOString(), row.id).run();
+    // Email "domain aktif" hanya saat transisi pending -> aktif (bukan setiap kali dicek ulang).
+    if (!wasActive) fire(notifyDomain(request, 'domain_verified', name), waitUntil);
     return Response.json({ ok: true, status: 'aktif' });
+  }
+
+  // Domain sebelumnya AKTIF tapi NS sekarang hilang -> kembalikan ke pending +
+  // email peringatan "lepas dari nameserver" (sekali per 6 jam, anti spam).
+  if (row.status === 'aktif') {
+    const nowIso = new Date().toISOString();
+    const prevAlert = row.ns_alert_at ? Date.parse(row.ns_alert_at) : 0;
+    await env.DB.prepare("UPDATE domains SET status = 'pending', updated_at = ?, ns_alert_at = ? WHERE id = ?").bind(nowIso, nowIso, row.id).run();
+    if (!prevAlert || Date.now() - prevAlert > NS_ALERT_RESEND_MS) {
+      fire(notifyDomain(request, 'domain_ns_lost', name), waitUntil);
+    }
   }
   // TXT ditemukan di zona Cloudflare Clincoo (via Kelola DNS) tapi tidak resolve publik
   // -> domain belum memakai nameserver Cloudflare. Jelaskan dua solusinya.
